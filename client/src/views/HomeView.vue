@@ -15,6 +15,7 @@ function onLoggedIn() {
   <div>
     <img alt="logo" class="logo" src="@/assets/logo.svg" />
     <Login v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
+    <RouterLink v-if="!isLoggedInRef" to="register">Register</RouterLink>
   </div>
 </template>
 

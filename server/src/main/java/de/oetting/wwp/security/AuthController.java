@@ -1,6 +1,8 @@
 package de.oetting.wwp.security;
 
 
+import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.repositories.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ public class AuthController {
     private UserDetailsManager userDetailsManager;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginReq)  {
@@ -71,6 +75,10 @@ public class AuthController {
             return ResponseEntity.badRequest().build();
         }
         userDetailsManager.createUser(new User(registrationRequest.getLogin(), passwordEncoder.encode(registrationRequest.getPassword()), authorities));
+
+        Player player = new Player();
+        player.setName(registrationRequest.getLogin());
+        playerRepository.save(player);
 
         User user = new User(registrationRequest.getLogin(), "", authorities);
         String token = jwtUtil.createToken(user);

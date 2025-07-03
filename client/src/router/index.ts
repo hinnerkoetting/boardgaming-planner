@@ -14,6 +14,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/CreateUser.vue'),
+      meta: {
+        publicArea: true
+      }
+    },
+    {
       path: '/players',
       name: 'players',
       component: () => import('../views/PlayerAdmin.vue')

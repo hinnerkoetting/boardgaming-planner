@@ -1,5 +1,5 @@
 import type { LoginResponse } from '@/model/LoginResponse'
-import { loginRequest } from './ApiService'
+import { loginRequest, registerRequest } from './ApiService'
 
 export function isLoggedIn() {
   return !!localStorage.getItem('access-token')
@@ -7,6 +7,13 @@ export function isLoggedIn() {
 
 export async function login(name: string, password: string) {
   const response = await loginRequest(name, password)
+  if (response as LoginResponse) {
+    localStorage.setItem('access-token', response?.token || '')
+  }
+}
+
+export async function register(name: string, password: string) {
+  const response = await registerRequest(name, password)
   if (response as LoginResponse) {
     localStorage.setItem('access-token', response?.token || '')
   }

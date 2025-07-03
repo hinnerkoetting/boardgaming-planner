@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { logout } from './services/LoginService'
-import router from './router'
 
 function onClickLogout() {
   logout()

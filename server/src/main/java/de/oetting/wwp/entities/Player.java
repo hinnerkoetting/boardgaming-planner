@@ -45,4 +45,6 @@ public class Player {
     public void deleteGameGroup(GameGroup gameGroup) {
         this.gameGroups.remove(gameGroup);
     }
+
+
 }

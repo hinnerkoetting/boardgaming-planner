@@ -5,6 +5,14 @@ import type { GameGroup } from '@/model/GameGroup'
 import type { LoginResponse } from '@/model/LoginResponse'
 import type { Player } from '@/model/Player'
 
+function defaultFetchOptions() {
+  return {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('access-token')
+    }
+  }
+}
+
 // Fetch top level groups
 export async function fetchPlayers(): Promise<Player[]> {
   const response = await authorizedFetch('/api/players')
@@ -111,19 +119,37 @@ export async function loginRequest(
   }
 }
 
+export async function registerRequest(
+  name: String,
+  password: String
+): Promise<LoginResponse | undefined> {
+  try {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        login: name,
+        password
+      })
+    })
+    return (await response.json()) as LoginResponse
+  } catch (error) {
+    console.log('There was an error', error)
+  }
+}
+
 async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {
   if (init?.headers) {
     return fetch(url, {
       ...init,
       ...defaultFetchOptions,
-      headers: { ...init.headers, ...defaultFetchOptions.headers }
+      headers: { ...init.headers, ...defaultFetchOptions().headers }
     })
   }
-  return fetch(url, { ...init, ...defaultFetchOptions })
-}
-
-const defaultFetchOptions = {
-  headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('access-token')
+  if (init) {
+    return fetch(url, { ...init, ...defaultFetchOptions() })
   }
+  return fetch(url, defaultFetchOptions())
 }
