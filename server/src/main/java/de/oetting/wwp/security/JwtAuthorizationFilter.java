@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         this.mapper = mapper;
     }
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         Map<String, Object> errorDetails = new HashMap<>();
 
         try {
@@ -46,7 +46,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if(claims != null & jwtUtil.validateClaims(claims)){
                 String subject = claims.getSubject();
-                List<String> roles= claims.get("roles", List.class);
+                List<String> roles= (List<String>) claims.get("roles", List.class);
                 List<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
                 var authentication = new UsernamePasswordAuthenticationToken(subject,"", authorities);
                 authentication.setDetails(claims);

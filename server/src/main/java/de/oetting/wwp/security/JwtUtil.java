@@ -3,11 +3,14 @@ package de.oetting.wwp.security;
 
 import de.oetting.wwp.entities.Player;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
@@ -27,25 +30,25 @@ public class JwtUtil {
     private final String TOKEN_PREFIX = "Bearer ";
 
     public JwtUtil(){
-        this.jwtParser = Jwts.parser().setSigningKey(secret_key);
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret_key));
+        this.jwtParser = Jwts.parser().verifyWith(key).build();
     }
 
     public String createToken(Player player, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(player.getName());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + Duration.ofDays(1).toMillis());
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret_key));
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(tokenValidity)
-                .addClaims(Map.of())
+                .subject(player.getName())
+                .expiration(tokenValidity)
                 .claim("player_id", player.getId())
                 .claim("roles", roles)
-                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .signWith(key)
                 .compact();
     }
 
     private Claims parseJwtClaims(String token) {
-        return jwtParser.parseClaimsJws(token).getBody();
+        return jwtParser.parseSignedClaims(token).getPayload();
     }
 
     public Claims resolveClaims(HttpServletRequest req) {
@@ -83,10 +86,6 @@ public class JwtUtil {
 
     public String getEmail(Claims claims) {
         return claims.getSubject();
-    }
-
-    private List<String> getRoles(Claims claims) {
-        return (List<String>) claims.get("roles");
     }
 
 

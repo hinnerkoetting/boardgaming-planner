@@ -9,7 +9,6 @@ import de.oetting.wwp.security.LoginRequest;
 import de.oetting.wwp.security.LoginResponse;
 import de.oetting.wwp.security.RegistrationRequest;
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,6 @@ public class AuthController {
         }
     }
 
-    @NotNull
     private LoginResponse createLoginResponseForUser(String username) {
         UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
 

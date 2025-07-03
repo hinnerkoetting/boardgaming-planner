@@ -16,7 +16,6 @@ import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -128,7 +127,6 @@ public class GameGroupController {
         return model;
     }
 
-    @NotNull
     private GameGroupModel map(GameGroup savedEntity) {
         GameGroupModel model = new GameGroupModel();
         model.setId(savedEntity.getId());
