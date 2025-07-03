@@ -14,7 +14,7 @@ export async function wrapResponse<T extends {}>(response: Response): Promise<Re
       success: content,
       error: undefined
     }
-  }
+  }  
   const content = (await response.json()) as ErrorResponse
 
   return {

@@ -3,12 +3,25 @@ package de.oetting.wwp.controller;
 import de.oetting.wwp.controller.model.MeModel;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.exceptions.ForbiddenException;
+import de.oetting.wwp.exceptions.UnprocessableEntityException;
 import de.oetting.wwp.player.PlayerRepository;
+import de.oetting.wwp.security.JwtUtil;
+import de.oetting.wwp.security.LoginResponse;
+import de.oetting.wwp.security.model.UpdateNameRequest;
+import de.oetting.wwp.security.model.UpdatePasswordRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +34,17 @@ public class MeController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private UserDetailsManager userDetailsManager;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
     @GetMapping
     public MeModel getInformationAboutMe() {
         var player = findMyPlayer();
@@ -35,6 +59,58 @@ public class MeController {
     public Collection<GameGroup> findMyGroups() {
         var player = findMyPlayer();
         return player.getGameGroups();
+    }
+
+    @PutMapping(path = "/name")
+    @Transactional
+    public LoginResponse updateName(@RequestBody UpdateNameRequest request) {
+        var player = findMyPlayer();
+        if (player.getName().equals(request.getNewName())) {
+            return new LoginResponse(player.getName(), null, player.getId());
+        }
+        var oldName = player.getName();
+        player.setName(request.getNewName());
+        UserDetails userDetails = userDetailsManager.loadUserByUsername(oldName);
+
+        var updatedUser = new User(request.getNewName(),
+                userDetails.getPassword(),
+                userDetails.isEnabled(),
+                userDetails.isAccountNonExpired(),
+                userDetails.isCredentialsNonExpired(),
+                userDetails.isAccountNonLocked(),
+                userDetails.getAuthorities()
+        );
+        userDetailsManager.createUser(updatedUser);
+        userDetailsManager.deleteUser(oldName);
+
+        String token = jwtUtil.createToken(player, userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+        return new LoginResponse(request.getNewName(), token, player.getId());
+    }
+
+    @PutMapping(path = "/password")
+    @Transactional
+    public void updatePassword(@RequestBody UpdatePasswordRequest request) {
+        var player = findMyPlayer();
+        var authenticationToken = new UsernamePasswordAuthenticationToken(player.getName(), request.getOldPassword());
+        try {
+            authenticationManager.authenticate(authenticationToken);
+        } catch (AuthenticationException e) {
+            throw new UnprocessableEntityException("Authentication faile");
+        }
+
+        var newPassword = passwordEncoder.encode(request.getNewPassword());
+
+        UserDetails userDetails = userDetailsManager.loadUserByUsername(player.getName());
+
+        var updatedUser = new User(player.getName(),
+                newPassword,
+                userDetails.isEnabled(),
+                userDetails.isAccountNonExpired(),
+                userDetails.isCredentialsNonExpired(),
+                userDetails.isAccountNonLocked(),
+                userDetails.getAuthorities()
+        );
+        userDetailsManager.updateUser(updatedUser);
     }
 
     private Player findMyPlayer() {

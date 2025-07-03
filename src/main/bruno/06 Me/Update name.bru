@@ -1,0 +1,34 @@
+meta {
+  name: Update name
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:8080/api/me/name
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "oldName": "user",
+    "newName": "new name"
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("access_token", res.body.token)
+    bru.setVar("playerId", res.body.id)
+  }
+  
+}

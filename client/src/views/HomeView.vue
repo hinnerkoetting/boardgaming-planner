@@ -22,7 +22,8 @@ EventBus.addEventListener('login-status', () => {
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
       <div>
-        <RouterLink v-if="isLoggedInRef" to="gameGroups">Show groups</RouterLink>
+        <RouterLink v-if="isLoggedInRef" to="gameGroups">Show groups</RouterLink> <br/>
+        <RouterLink v-if="isLoggedInRef" to="account">Account settings</RouterLink>
       </div>
     </div>
   </div>

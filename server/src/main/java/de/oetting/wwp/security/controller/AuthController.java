@@ -46,7 +46,6 @@ public class AuthController {
     @Autowired
     private PlayerRepository playerRepository;
 
-
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginReq)  {
 

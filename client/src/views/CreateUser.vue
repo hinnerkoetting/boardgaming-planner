@@ -6,7 +6,7 @@
       <InputText
         name="username"
         placeholder="Name"
-        autocomplete="username"
+        autocomplete="given-name"
         v-on:keyup.enter="onStartRegister"
         v-model="nameModel"
       />

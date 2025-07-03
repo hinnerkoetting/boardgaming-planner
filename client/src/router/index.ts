@@ -31,6 +31,11 @@ const router = createRouter({
       name: 'gameGroup',
       component: () => import('../views/GameGroup/GameGroupView.vue')
     },
+    {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue')
+    },
 
     // Admin
     {

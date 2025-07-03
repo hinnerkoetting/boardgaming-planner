@@ -1,5 +1,5 @@
 import type { LoginResponse } from '@/model/LoginResponse'
-import { loginRequest, registerRequest } from './api/ApiService'
+import { authorizedFetch, loginRequest, registerRequest } from './api/ApiService'
 import EventBus from './EventBus'
 import type { ResponseWrapper } from '@/model/api/Response'
 import type { JwtPayload, Role } from '@/model/api/JwtPayload'
@@ -17,6 +17,10 @@ function getJwtPayload(): JwtPayload | undefined {
       console.log('Could not parse JWT ' + e)
     }
   }
+}
+
+export function updateToken(newToken: string) {
+  localStorage.setItem('access-token', newToken)
 }
 
 function isJwtExpired(): boolean {

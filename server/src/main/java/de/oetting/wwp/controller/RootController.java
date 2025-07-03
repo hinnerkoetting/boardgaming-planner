@@ -28,11 +28,18 @@ public class RootController {
             "/index.html",
             "/register",
             "/gameGroups",
+            "/account",
             "/gameGroup/*",
             "/admin/**"
     })
     @ResponseBody
     public Resource respondForVueRoutes() throws URISyntaxException {
         return new ClassPathResource("/static/index.html");
+    }
+
+    @GetMapping(value = {"/favicon.ico"})
+    @ResponseBody
+    public Resource favicon() {
+        return new ClassPathResource("/static/favicon.ico");
     }
 }
