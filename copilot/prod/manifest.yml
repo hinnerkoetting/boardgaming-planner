@@ -39,6 +39,7 @@ command: ["java","-jar","/app.jar", "--spring.profiles.active=h2"]
 
 variables:
   H2_FILENAME: /data/h2_db
+  BOOTSTRAP_OWNER_ALLOWED: true
 
 secrets:
   JWT_SIGNING_KEY: /copilot/applications/wwwp/jwt_signing_key
