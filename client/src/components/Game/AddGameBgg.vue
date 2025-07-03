@@ -13,7 +13,12 @@ const searchTerm: Ref<String> = ref('')
 const bggSearchItems: Ref<BggSearchItem[]> = ref([])
 
 async function onClickSearch() {
-  bggSearchItems.value = await searchBgg(searchTerm.value)
+  const response = await searchBgg(searchTerm.value)
+  if (response.success) {
+    bggSearchItems.value = response.success
+  } else {
+    console.log(response.error)
+  }
 }
 
 async function onClickAdd(bggId: number) {

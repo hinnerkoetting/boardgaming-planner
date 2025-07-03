@@ -2,10 +2,12 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { searchExistingGames } from '@/services/api/ApiService'
+import { searchBgg, searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 import AddExistingGameTable from './AddExistingGameTable.vue'
 import type { EventMessage } from '@/model/internal/EventMessage'
+import AddBggGameTable from './AddBggGameTable.vue'
+import type { BggSearchItem } from '@/model/BggSearchItem'
 
 const emit = defineEmits<{
   (e: 'game-added', game: Game, callback: (message: EventMessage) => void): void
@@ -13,8 +15,36 @@ const emit = defineEmits<{
 
 const searchTerm: Ref<string> = ref('')
 const searchItems: Ref<Game[]> = ref([])
+const someGamesFound = ref(false)
+const noGameFound = ref(false)
+
+const bggSearchItems: Ref<BggSearchItem[]> = ref([])
+const bggEmptyTableMessage = ref('')
+
+async function onClickSearchBgg() {
+  bggEmptyTableMessage.value = ''
+  bggSearchItems.value = []
+  searchItems.value = []
+  noGameFound.value = false
+  someGamesFound.value = false
+  const bggResponse = await searchBgg(searchTerm.value)
+  if (bggResponse.success) {
+    bggSearchItems.value = bggResponse.success
+    if (bggSearchItems.value.length === 0) {
+      bggEmptyTableMessage.value = 'Nothing found on BGG'
+    }
+  } else {
+    bggEmptyTableMessage.value = 'Error when loading from BGG: ' + bggResponse.error?.detail
+  }
+}
+
 async function onClickSearch() {
+  bggEmptyTableMessage.value = ''
+  bggSearchItems.value = []
+  searchItems.value = []
   searchItems.value = await searchExistingGames(searchTerm.value)
+  someGamesFound.value = searchItems.value.length > 0
+  noGameFound.value = searchItems.value.length === 0
 }
 
 async function onClickAdd(game: Game, callback: (message: EventMessage) => void) {
@@ -33,7 +63,20 @@ async function onClickAdd(game: Game, callback: (message: EventMessage) => void)
     ></InputText>
     <Button @click="onClickSearch" class="searchButton">Search</Button>
 
-    <AddExistingGameTable :searchItems="searchItems" v-on:game-added="onClickAdd" />
+    <AddExistingGameTable :searchItems="searchItems" @game-added="onClickAdd" />
+    <template v-if="someGamesFound">
+      Did not find what you were looking for?
+      <Button @click="onClickSearchBgg" class="searchButton">Search on BGG</Button>
+    </template>
+    <template v-if="noGameFound">
+      No game found in our database.
+      <Button @click="onClickSearchBgg" class="searchButton">Search on BGG</Button>
+    </template>
+    <AddBggGameTable
+      :searchItems="bggSearchItems"
+      @game-added="onClickAdd"
+      :emptyTableMessage="bggEmptyTableMessage"
+    />
   </div>
 </template>
 

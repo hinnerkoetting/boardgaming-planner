@@ -13,9 +13,6 @@
     <template v-if="isPartOfGroup">
       <h2 class="green">Add game</h2>
       <AddGameToGroupComponent @game-added="onGameAdded" />
-
-      <h2 class="green">Import from Boardgamegeek</h2>
-      <AddGameBgg @game-added="onGameAdded" />
     </template>
 
     <h2>Players</h2>
@@ -36,7 +33,6 @@ import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
 import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
-import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import type { RatedGame } from '@/model/RatedGame'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
@@ -84,7 +80,11 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     callback(new EventMessage('Game already exists', false))
     return
   }
-  await addGameToGroup(gameGroupId, game.id!)
+  const response = await addGameToGroup(gameGroupId, game.id!)
+  if (response.error) {
+    callback(new EventMessage(response.error.detail, false))
+    return
+  }
   const ratedGame: RatedGame = {
     ...game,
     rating: {

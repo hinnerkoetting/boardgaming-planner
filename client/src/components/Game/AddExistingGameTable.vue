@@ -44,6 +44,7 @@ async function onClickAdd(game: GameInTable) {
 <template>
   <div>
     <DataView :value="gamesInTable">
+      <template #empty> <div></div></template>
       <template #list="slotProps">
         <div v-for="(item, index) in slotProps.items" :key="index">
           <div class="row">
@@ -84,6 +85,7 @@ async function onClickAdd(game: GameInTable) {
 }
 
 .interaction {
+  margin-left: 4px;
   display: flex;
   align-items: end;
   flex-direction: column;

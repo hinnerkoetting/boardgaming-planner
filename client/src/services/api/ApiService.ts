@@ -48,7 +48,7 @@ export async function deleteGame(id: Number) {
 }
 
 // Add top-level entities
-export async function addGame(game: Game): Promise<Game> {
+export async function addGame(game: Game): Promise<ResponseWrapper<Game>> {
   const response = await authorizedFetch(`/api/games`, {
     method: 'POST',
     headers: {
@@ -56,14 +56,24 @@ export async function addGame(game: Game): Promise<Game> {
     },
     body: JSON.stringify(game)
   })
-  return await response.json()
+  return await wrapResponse<Game>(response)
 }
 
 // BGG
-export async function searchBgg(searchTerm: String): Promise<BggSearchItem[]> {
+export async function searchBgg(searchTerm: String): Promise<ResponseWrapper<BggSearchItem[]>> {
   const response = await authorizedFetch(`/api/bgg/search/${searchTerm}`)
-  const json = (await response.json()) as any[]
-  return json.map((item) => new BggSearchItem(item.id, item.name?.value, item.year?.value))
+  const wrapped = await wrapResponse<any[]>(response)
+  if (wrapped.success) {
+    const items = wrapped.success.map(
+      (item) => new BggSearchItem(item.id, item.name?.value, item.year?.value)
+    )
+    return {
+      success: items,
+      error: undefined
+    }
+  } else {
+    return wrapped
+  }
 }
 
 export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> {

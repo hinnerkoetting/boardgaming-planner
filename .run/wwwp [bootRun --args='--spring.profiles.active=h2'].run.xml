@@ -3,6 +3,7 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="BOOTSTRAP_OWNER_ALLOWED" value="yes" />
           <entry key="H2_FILENAME" value="$PROJECT_DIR$/../../../temp/h2_db3" />
           <entry key="JWT_SIGNING_KEY" value="example" />
         </map>

@@ -1,6 +1,6 @@
 import type { GameGroup } from '@/model/GameGroup'
 import { authorizedFetch } from './ApiService'
-import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
+import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
 import { getCurrentPlayerId } from '../LoginService'
@@ -68,7 +68,10 @@ export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
   })
 }
 
-export async function addGameToGroup(gameGroupId: number, gameId: number): Promise<boolean> {
+export async function addGameToGroup(
+  gameGroupId: number,
+  gameId: number
+): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`, {
     method: 'POST',
     headers: {
@@ -76,5 +79,5 @@ export async function addGameToGroup(gameGroupId: number, gameId: number): Promi
     },
     body: JSON.stringify({ id: gameId })
   })
-  return response.status < 300
+  return wrapEmptySuccessResponse(response)
 }

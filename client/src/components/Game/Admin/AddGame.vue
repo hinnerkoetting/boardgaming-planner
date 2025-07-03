@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AddGameBgg from './AddGameBgg.vue'
-import AddGameManual from './Admin/AddGameManual.vue'
+import AddGameBgg from '../AddGameBgg.vue'
+import AddGameManual from './AddGameManual.vue'
 
 const emit = defineEmits(['game-added'])
 

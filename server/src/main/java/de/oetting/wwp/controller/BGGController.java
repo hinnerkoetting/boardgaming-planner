@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,9 @@ public class BGGController {
     @GetMapping(path = "/search/{searchTerm}")
     public List<SearchItem> searchBgg(@PathVariable("searchTerm") String searchTerm) throws SearchException {
         SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME);
+        if (output == null) {
+            return Collections.emptyList();
+        }
         return output.getItems();
     }
 
