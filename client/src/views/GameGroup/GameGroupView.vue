@@ -153,7 +153,7 @@ h2 {
   margin: 16x 0 16px 0;
 }
 
-.players::v-deep tr {
+.players:v-deep(tr) {
   --p-datatable-header-cell-background: var(--color-background);
   --p-datatable-row-background: var(--color-background);
 }

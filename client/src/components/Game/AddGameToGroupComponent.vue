@@ -71,7 +71,7 @@ defineExpose({
       v-model="searchTerm"
       placeholder="Searchterm..."
       v-on:keyup.enter="onClickSearch"
-      @focus="$event.target.select()"
+      @focus="($event.target as any).select()"
     ></InputText>
     <Button @click="onClickSearch" class="searchButton">Search</Button>
 

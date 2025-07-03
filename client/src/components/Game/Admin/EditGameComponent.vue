@@ -22,12 +22,14 @@ const name: Ref<string> = ref(props.game?.name || '')
 const description: Ref<string> = ref(props.game?.description || '')
 const imageUrl: Ref<string> = ref(props.game?.imageUrl || '')
 const thumbnailUrl: Ref<string> = ref(props.game?.thumbnailUrl || '')
-const url: Ref<string | undefined> = ref(props.game?.url || '')
-const minPlayers: Ref<number | undefined> = ref(props.game?.minPlayers)
-const maxPlayers: Ref<number | undefined> = ref(props.game?.maxPlayers)
+const url: Ref<string | null> = ref(props.game?.url || '')
+const minPlayers: Ref<string | null> = ref(props.game?.minPlayers?.toString() || null)
+const maxPlayers: Ref<string | null> = ref(props.game?.maxPlayers?.toString() || null)
 const recommendedPlayers: Ref<string> = ref(props.game?.recommendedNumberOfPlayers.join(',') || '')
 const bestPlayers: Ref<string> = ref(props.game?.bestNumberOfPlayers.join(',') || '')
-const playingTimeMinutes: Ref<number | undefined> = ref(props.game?.playingTimeMinutes)
+const playingTimeMinutes: Ref<string | null> = ref(
+  props.game?.playingTimeMinutes?.toString() || null
+)
 
 const errorMessage = ref('')
 
@@ -47,10 +49,10 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     imageUrl: imageUrl.value,
     thumbnailUrl: thumbnailUrl.value,
     id: props.game?.id || undefined,
-    minPlayers: minPlayers.value,
-    maxPlayers: maxPlayers.value,
-    url: url.value,
-    playingTimeMinutes: playingTimeMinutes.value,
+    minPlayers: Number(minPlayers.value) || undefined,
+    maxPlayers: Number(maxPlayers.value) || undefined,
+    url: url.value || undefined,
+    playingTimeMinutes: Number(playingTimeMinutes.value) || undefined,
     recommendedNumberOfPlayers: recommendedPlayers.value.split(',').map((it) => +it),
     bestNumberOfPlayers: bestPlayers.value.split('').map((it) => +it)
   }

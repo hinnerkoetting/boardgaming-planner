@@ -8,7 +8,7 @@ import { importFromBgg, searchBgg } from '@/services/api/BggApiService'
 
 const emit = defineEmits(['game-added'])
 
-const searchTerm: Ref<String> = ref('')
+const searchTerm = ref('')
 const bggSearchItems: Ref<BggSearchItem[]> = ref([])
 
 async function onClickSearch() {
@@ -41,7 +41,7 @@ async function onClickAdd(bggId: number) {
     ></InputText>
     <Button @click="onClickSearch">Search</Button>
 
-    <DataView :value="bggSearchItems">
+    <DataView :value="bggSearchItems" dataKey="id">
       <template #list="slotProps">
         <div v-for="(item, index) in slotProps.items" :key="index">
           <div class="row">

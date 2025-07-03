@@ -1,24 +1,26 @@
 <template>
-  <div>
-    <RouterLink to="/">back</RouterLink>
-    <h1>Sign up</h1>
-    <div class="wrapper">
-      <InputText
-        name="username"
-        placeholder="Name"
-        autocomplete="given-name"
-        v-on:keyup.enter="onStartRegister"
-        v-model="nameModel"
-      />
-      <InputText
-        name="password"
-        placeholder="Password"
-        autocomplete="new-password"
-        type="password"
-        v-on:keyup.enter="onStartRegister"
-        v-model="passwordModel"
-      />
-      <Button @click="onStartRegister">Register</Button>
+  <div class="content">
+    <div class="fit-content">
+      <RouterLink to="/">back</RouterLink>
+      <h1>Register</h1>
+      <div class="wrapper">
+        <InputText
+          name="username"
+          placeholder="Name"
+          autocomplete="given-name"
+          v-on:keyup.enter="onStartRegister"
+          v-model="nameModel"
+        />
+        <InputText
+          name="password"
+          placeholder="Password"
+          autocomplete="new-password"
+          type="password"
+          v-on:keyup.enter="onStartRegister"
+          v-model="passwordModel"
+        />
+        <Button @click="onStartRegister">Register</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -44,5 +46,18 @@ async function onStartRegister() {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.content {
+  justify-content: space-around;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.fit-content {
+  max-width: fit-content;
 }
 </style>
