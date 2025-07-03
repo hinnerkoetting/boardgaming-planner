@@ -9,8 +9,11 @@ import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.wwp.bgg.service.BggUpdateService;
 import de.oetting.wwp.exceptions.BadRequestException;
+import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.entity.Game;
+import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.security.Role;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +31,9 @@ public class BGGController {
     @Autowired
     private BggUpdateService bggUpdateService;
 
+    @Autowired
+    private GameRepository gameRepository;
+
     @GetMapping(path = "/search/{searchTerm}")
     public List<SearchItem> searchBgg(@PathVariable("searchTerm") String searchTerm) throws SearchException {
         SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
@@ -37,8 +43,21 @@ public class BGGController {
         return output.getItems();
     }
 
-    @PostMapping(path = "/import/{id}")
-    public Game importFromBgg(@PathVariable("id") int id) throws FetchException {
+    @PutMapping(path = "/sync/game/{gameId}")
+    @Transactional
+    public Game syncGameFromBgg(@PathVariable("gameId") long gameId) throws FetchException {
+        Game game = gameRepository.findById(gameId).orElseThrow();
+
+        try {
+            return bggUpdateService.updateGame(game)
+                    .orElseThrow(() -> new ConflictException("Could not sync game"));
+        } catch (SearchException e) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
+
+    @PutMapping(path = "/import/{id}")
+    public Game importGameFromBgg(@PathVariable("id") int id) throws FetchException {
         return bggUpdateService.importFromBgg(id).orElseThrow();
     }
 

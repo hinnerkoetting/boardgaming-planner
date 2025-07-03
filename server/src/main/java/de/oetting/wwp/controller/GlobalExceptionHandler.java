@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
@@ -104,6 +105,17 @@ public class GlobalExceptionHandler {
         problem.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
         problem.setType(CLIENT_ERROR);
         problem.setDetail("Endpoint unknown");
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public HttpErrorResponse controllerNotFound(HttpMessageConversionException e) {
+        LOG.info("Request could not be parsed: {}", e.getMessage());
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        problem.setType(CLIENT_ERROR);
+        problem.setDetail("Request could not be parsed");
         return problem;
     }
 

@@ -1,4 +1,3 @@
-import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
@@ -33,28 +32,6 @@ function defaultFetchOptions() {
 }
 
 // Fetch top level groups
-
-// BGG
-export async function searchBgg(searchTerm: String): Promise<ResponseWrapper<BggSearchItem[]>> {
-  const response = await authorizedFetch(`/api/bgg/search/${searchTerm}`)
-  const wrapped = await wrapResponse<any[]>(response)
-  if (wrapped.success) {
-    const items = wrapped.success.map(
-      (item) => new BggSearchItem(item.id, item.name?.value, item.year?.value)
-    )
-    return {
-      success: items,
-      error: undefined
-    }
-  } else {
-    return wrapped
-  }
-}
-
-export async function importFromBgg(bggId: Number): Promise<ResponseWrapper<Game>> {
-  const response = await authorizedFetch(`/api/bgg/import/${bggId}`, { method: 'POST' })
-  return wrapResponse(response)
-}
 
 export async function registerRequest(
   name: String,
@@ -102,4 +79,3 @@ export async function getInformationAboutMe(): Promise<Me> {
   const response = await authorizedFetch('/api/me')
   return (await response.json()) as Me
 }
-

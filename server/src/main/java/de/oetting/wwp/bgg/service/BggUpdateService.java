@@ -45,7 +45,7 @@ public class BggUpdateService {
     }
 
     public void updateFromBgg() {
-        gameRepository.findAll().forEach(game -> updateGame(game));
+        gameRepository.findAll().forEach(game -> updateGameInOwnTransaction(game));
     }
 
     public Optional<Game> importFromBgg(int bggId) throws FetchException {
@@ -62,15 +62,10 @@ public class BggUpdateService {
         return Optional.of(writtenGame);
     }
 
-    private void updateGame(Game game) {
+    private void updateGameInOwnTransaction(Game game) {
         new TransactionTemplate(transactionManager).executeWithoutResult((__) -> {
             try {
-                LOG.info("Updating game {}", game.getName());
-                Optional<SearchItem> optionalItem = findMatchingSearchItem(game);
-                optionalItem.ifPresent(item -> {
-                    sleepRandom(500);
-                    updateGame(game, item);
-                });
+                updateGame(game);
                 sleepRandom(2000);
             } catch (SearchException e) {
                 LOG.warn("Could not update game {}: {}", game.getName(), e.getMessage());
@@ -78,26 +73,36 @@ public class BggUpdateService {
         });
     }
 
-    private void updateGame(Game game, SearchItem item) {
+    public Optional<Game> updateGame(Game game) throws SearchException {
+        LOG.info("Updating game {}", game.getName());
+        Optional<SearchItem> optionalItem = findMatchingSearchItem(game);
+        return optionalItem.flatMap(item -> {
+            sleepRandom(100);
+            return updateGame(game, item);
+        });
+    }
+
+    private Optional<Game> updateGame(Game game, SearchItem item) {
         try {
             Collection<FetchItem> fetchItems = BGG.fetch(List.of(item.getId()), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
             if (fetchItems.size() == 0) {
                 LOG.error("Fetch from BGG did not find anything for {}", game.getName());
-                return;
+                return Optional.empty();
             }
             FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
             try {
-                updateGameFromBgg(game, firstItem);
+                return Optional.of(updateGameFromBgg(game, firstItem));
             } catch (Exception e){
                 LOG.error("Could not update item", e);
             }
         } catch (FetchException e) {
             LOG.warn("Could not update game during fetch {}: {}", game.getName(), e.getMessage());
         }
+        return Optional.empty();
     }
 
     private Optional<SearchItem> findMatchingSearchItem(Game game) throws SearchException {
-        SearchOutput searchOutput = BGG.search(game.getName(), ThingType.BOARDGAME);
+        SearchOutput searchOutput = BGG.search(game.getName(), ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
         if (searchOutput.getItems() ==null) {
             LOG.info("Did not find matching game game {}", game.getName());
             return Optional.empty();
@@ -105,7 +110,9 @@ public class BggUpdateService {
         if (searchOutput.getItems().size() == 1) {
             return Optional.of( searchOutput.getItems().get(0));
         }
-        return searchOutput.getItems().stream().filter(item -> item.getName().getValue().equals(game.getName())).findAny();
+        return searchOutput.getItems().stream()
+                .filter(item -> item.getName().getValue().equals(game.getName()))
+                .findAny();
     }
 
     private Game updateGameFromBgg(Game game, FetchItem fetchItem) {

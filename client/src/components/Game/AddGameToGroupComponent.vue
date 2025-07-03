@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import { getCurrentInstance, ref, type Ref } from 'vue'
-import { searchBgg, searchExistingGames } from '@/services/api/ApiService'
+import { ref, type Ref } from 'vue'
+import { searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 import AddExistingGameTable from './AddExistingGameTable.vue'
 import type { EventMessage } from '@/model/internal/EventMessage'
 import AddBggGameTable from './AddBggGameTable.vue'
 import type { BggSearchItem } from '@/model/BggSearchItem'
+import { searchBgg } from '@/services/api/BggApiService'
 
 const emit = defineEmits<{
   (e: 'game-added', game: Game, callback: (message: EventMessage) => void): void
@@ -25,7 +26,7 @@ async function onClickSearchBgg() {
 }
 
 async function searchFromBgg() {
-  reset()  
+  reset()
   const bggResponse = await searchBgg(searchTerm.value)
   if (bggResponse.success) {
     bggSearchItems.value = bggResponse.success
@@ -46,7 +47,6 @@ async function onClickSearch() {
   }
 }
 
-
 async function onClickAdd(game: Game, callback: (message: EventMessage) => void) {
   emit('game-added', game, callback)
 }
@@ -62,7 +62,7 @@ defineExpose({
   reset
 })
 </script>
- 
+
 <template>
   <div>
     <InputText

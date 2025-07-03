@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/playedGames
+  url: {{server}}/api/gameGroups/{{gameGroupId}}/playedGames
   body: json
   auth: none
 }

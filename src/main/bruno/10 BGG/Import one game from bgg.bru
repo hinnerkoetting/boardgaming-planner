@@ -1,17 +1,21 @@
 meta {
-  name: Get player
+  name: Import one game from bgg
   type: http
-  seq: 3
+  seq: 4
 }
 
-get {
-  url: {{server}}/api/players/{{playerId}}
+put {
+  url: {{server}}/api/bgg/sync/game/{{gameId}}
   body: none
   auth: none
 }
 
 headers {
   Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  ids: 295770,402666
 }
 
 assert {

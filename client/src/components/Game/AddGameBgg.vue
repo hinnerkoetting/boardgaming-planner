@@ -2,9 +2,9 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { importFromBgg, searchBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
 import DataView from 'primevue/dataview'
+import { importFromBgg, searchBgg } from '@/services/api/BggApiService'
 
 const emit = defineEmits(['game-added'])
 
