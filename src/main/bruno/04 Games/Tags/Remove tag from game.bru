@@ -1,24 +1,17 @@
 meta {
-  name: Remove role
+  name: Remove tag from game
   type: http
-  seq: 3
+  seq: 2
 }
 
 delete {
-  url: http://localhost:8080/api/player/{{playerId}}/roles/{{role}}
+  url: http://localhost:8080/api/games/{{gameId}}/globalTag/{{tagId}}
   body: none
   auth: none
 }
 
 headers {
   Authorization: Bearer {{access_token}}
-}
-
-body:json {
-  {
-    "login": "user",
-    "password": "user"
-  }
 }
 
 vars:pre-request {

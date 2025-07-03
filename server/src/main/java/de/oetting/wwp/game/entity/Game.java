@@ -1,7 +1,9 @@
-package de.oetting.wwp.entities;
+package de.oetting.wwp.game.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import de.oetting.wwp.entities.GameGroup;
+import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -28,6 +30,14 @@ public class Game {
     @ManyToMany(mappedBy = "games")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
+
+    @ManyToMany
+    @JoinTable(name="GAMES_2_TAGS",
+            joinColumns=
+            @JoinColumn(name="GAME_ID", referencedColumnName="ID"),
+            inverseJoinColumns=
+            @JoinColumn(name="TAG_ID", referencedColumnName="ID"))
+    private Set<TagEntity> globalTags;
 
     public Long getId() {
         return id;
@@ -73,11 +83,23 @@ public class Game {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    void addGameGroup(GameGroup gameGroup) {
+    public void addGameGroup(GameGroup gameGroup) {
         this.gameGroups.add(gameGroup);
     }
 
-    void deleteGameGroup(GameGroup gameGroup) {
+    public void deleteGameGroup(GameGroup gameGroup) {
         this.gameGroups.remove(gameGroup);
+    }
+
+    public Set<TagEntity> getGlobalTags() {
+        return globalTags;
+    }
+
+    public void setGlobalTags(Set<TagEntity> globalTags) {
+        this.globalTags = globalTags;
+    }
+
+    public void addGlobalTag(TagEntity tag) {
+        globalTags.add(tag);
     }
 }

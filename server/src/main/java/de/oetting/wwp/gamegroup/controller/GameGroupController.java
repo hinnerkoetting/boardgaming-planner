@@ -2,7 +2,7 @@ package de.oetting.wwp.gamegroup.controller;
 
 import de.oetting.wwp.controller.IdWrapper;
 import de.oetting.wwp.game.model.RatedGameModel;
-import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;

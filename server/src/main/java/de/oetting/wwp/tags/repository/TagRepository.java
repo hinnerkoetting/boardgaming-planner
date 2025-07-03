@@ -11,4 +11,5 @@ public interface TagRepository extends PagingAndSortingRepository<TagEntity, Lon
 
     @Query(value = "SELECT MAX(t.ranking) FROM TagEntity t")
     Integer findMaxRanking();
+
 }

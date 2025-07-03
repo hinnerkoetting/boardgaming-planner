@@ -1,11 +1,17 @@
 package de.oetting.wwp.game.controller;
 
 import com.github.marcioos.bggclient.search.SearchException;
-import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.controller.IdWrapper;
+import de.oetting.wwp.entities.GameGroup;
+import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
+import de.oetting.wwp.tags.entity.TagEntity;
+import de.oetting.wwp.tags.entity.TagType;
+import de.oetting.wwp.tags.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +29,9 @@ public class GameController {
 
     @Autowired
     private RatingRepository ratingRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @GetMapping
     public Iterable<Game> findAll() {
@@ -67,5 +76,23 @@ public class GameController {
     @GetMapping("/search/{searchTerm}")
     public List<Game> searchGames(@PathVariable("searchTerm") String searchTerm) throws SearchException {
         return gameRepository.findByNameContaining(searchTerm);
+    }
+
+    @Transactional
+    @PostMapping(path = "/{gameId}/globalTag")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addGlobalTagById(@RequestBody IdWrapper gameTagId, @PathVariable("gameId") long gameId) {
+        Game game = gameRepository.findById(gameId).orElseThrow();
+        TagEntity tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
+        if (!TagType.GLOBAL.equals(tag.getType())) {
+            throw new ConflictException("Only global tags can be added directly to games");
+        }
+        game.addGlobalTag(tag);
+    }
+
+    @Transactional
+    @DeleteMapping(path = "/{gameId}/globalTag/{tagId}")
+    public void removeGlobalTagById(@PathVariable("gameId") long gameId, @PathVariable("tagId") long tagId) {
+        gameRepository.findById(gameId).orElseThrow().getGlobalTags().removeIf(tag -> tag.getId() == tagId);
     }
 }

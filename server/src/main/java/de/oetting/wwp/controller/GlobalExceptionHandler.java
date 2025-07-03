@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
@@ -49,10 +51,32 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public HttpErrorResponse authorizationDenied(AuthorizationDeniedException e) {
+        LOG.info("authorizationDenied: {}", e.getMessage());
+
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
+        problem.setType("CLIENT_ERROR");
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public HttpErrorResponse httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        LOG.info("HttpRequestMethodNotSupportedException: {}", e.getMessage());
+
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
+        problem.setType("CLIENT_ERROR");
+        return problem;
+    }
+
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public HttpErrorResponse otherError(Exception e) {
-        LOG.info("Exception: {}", e.getMessage());
+        LOG.info("Exception: Type: {}, Message: {}", e.getClass().getSimpleName(), e.getMessage());
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());

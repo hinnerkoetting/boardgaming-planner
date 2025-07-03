@@ -3,7 +3,7 @@ package de.oetting.wwp.controller;
 import de.oetting.wwp.controller.model.RatingModel;
 import de.oetting.wwp.controller.model.RatingRequest;
 import de.oetting.wwp.controller.model.RatingResponse;
-import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.entities.Player;

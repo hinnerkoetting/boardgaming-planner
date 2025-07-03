@@ -1,7 +1,7 @@
 package de.oetting.wwp.service;
 
 import de.oetting.wwp.controller.model.RatingModel;
-import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.infrastructure.CurrentUser;
 import org.springframework.stereotype.Service;

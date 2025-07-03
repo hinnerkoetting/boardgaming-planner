@@ -1,5 +1,6 @@
 package de.oetting.wwp.entities;
 
+import de.oetting.wwp.game.entity.Game;
 import jakarta.persistence.*;
 
 import java.util.Set;

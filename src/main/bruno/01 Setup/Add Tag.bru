@@ -1,11 +1,11 @@
 meta {
-  name: Update Tag
+  name: Add Tag
   type: http
-  seq: 3
+  seq: 9
 }
 
-put {
-  url: http://localhost:8080/api/tags/{{tagId}}
+post {
+  url: http://localhost:8080/api/tags
   body: json
   auth: none
 }
@@ -17,7 +17,6 @@ headers {
 body:json {
   {
     "description": "DESCRIPTION",
-    "ranking": null,
     "type": "GLOBAL"
   }
 }
@@ -28,4 +27,10 @@ vars:pre-request {
 
 assert {
   res.status: eq 200
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("tagId", res.body.id)
+  }
 }

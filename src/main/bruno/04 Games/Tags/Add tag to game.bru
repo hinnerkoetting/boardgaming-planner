@@ -1,11 +1,11 @@
 meta {
-  name: Update Tag
+  name: Add tag to game
   type: http
-  seq: 3
+  seq: 1
 }
 
-put {
-  url: http://localhost:8080/api/tags/{{tagId}}
+post {
+  url: http://localhost:8080/api/games/{{gameId}}/globalTag
   body: json
   auth: none
 }
@@ -16,9 +16,7 @@ headers {
 
 body:json {
   {
-    "description": "DESCRIPTION",
-    "ranking": null,
-    "type": "GLOBAL"
+    "id": "{{tagId}}"
   }
 }
 

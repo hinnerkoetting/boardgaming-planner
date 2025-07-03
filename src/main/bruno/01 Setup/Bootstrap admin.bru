@@ -1,11 +1,11 @@
 meta {
-  name: Remove role
+  name: Bootstrap admin
   type: http
-  seq: 3
+  seq: 2
 }
 
-delete {
-  url: http://localhost:8080/api/player/{{playerId}}/roles/{{role}}
+post {
+  url: {{server}}/api/players/{{playerId}}/roles/bootstrapOwner
   body: none
   auth: none
 }
@@ -19,10 +19,6 @@ body:json {
     "login": "user",
     "password": "user"
   }
-}
-
-vars:pre-request {
-  role: ROLE_ADMIN
 }
 
 assert {

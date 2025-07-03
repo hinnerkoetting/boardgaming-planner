@@ -1,6 +1,6 @@
 package de.oetting.wwp.infrastructure;
 
-import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import org.springframework.context.annotation.Configuration;
