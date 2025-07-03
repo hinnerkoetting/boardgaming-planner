@@ -18,6 +18,7 @@ public class GameGroup {
     @ManyToMany
     private Set<Player> players;
 
+    @Column(unique = true)
     private String name;
 
 

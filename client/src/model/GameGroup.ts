@@ -1,5 +1,5 @@
 export class GameGroup {
-  id: Number
+  id: Number | undefined
   name: String
 
   constructor(id: Number, name: String) {

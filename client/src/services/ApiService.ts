@@ -85,6 +85,16 @@ export async function addPlayerToGroup(gameGroupId: Number, playerId: Number) {
   })
 }
 
+export async function addGameGroup(gameGroup: GameGroup) {
+  await authorizedFetch('/api/gameGroups', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: gameGroup.name })
+  })
+}
+
 // BGG
 export async function searchBgg(searchTerm: String): Promise<BggSearchItem[]> {
   const response = await authorizedFetch(`/api/bgg/search/${searchTerm}`)

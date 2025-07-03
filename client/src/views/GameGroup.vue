@@ -9,6 +9,7 @@
         </template>
       </Column>
     </DataTable>
+    <AddGameGroup @game-group-added="onGameGroupAdded" />
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
 import { getCurrentUserId } from '@/services/LoginService'
+import AddGameGroup from '@/components/GameGroup/AddGameGroup.vue'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
