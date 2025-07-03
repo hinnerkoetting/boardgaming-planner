@@ -7,13 +7,15 @@
       <Button @click="onClickRating(4)">Ok</Button>
       <Button @click="onClickRating(1)">Meh</Button>
       <Button @click="onClickRating(0)">Veto</Button>
+
+      <Button severity="danger" @click="oncClickDeleteRating()">Forget rating</Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Game } from '@/model/Game'
-import { updateInterest } from '@/services/ApiService'
+import { deleteInterest, updateInterest } from '@/services/ApiService'
 import { getCurrentUserId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import { ref } from 'vue'
@@ -29,7 +31,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['game-rated'])
+const emit = defineEmits(['game-rated', 'game-rating-deleted'])
 
 const game = ref(props.game)
 
@@ -41,6 +43,16 @@ async function onClickRating(rating: number) {
     rating: rating
   })
   emit('game-rated', rating)
+}
+
+async function oncClickDeleteRating() {
+  await deleteInterest({
+    gameId: game.value.id!,
+    playerId: getCurrentUserId(),
+    gameGroupId: props.gameGroupId,
+    rating: undefined
+  })
+  emit('game-rating-deleted')
 }
 </script>
 

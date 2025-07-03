@@ -14,9 +14,6 @@
       <Column header="Actions">
         <template #body="slotProps">
           <Button severity="secondary" @click="onClickRate(slotProps.data)"> Rate</Button>
-          <Button severity="danger" @click="oncClickDeleteRating(slotProps.data)">
-            Delete rating
-          </Button>
         </template>
       </Column>
     </DataTable>
@@ -36,6 +33,7 @@
         :game="selectedGame!"
         :game-group-id="gameGroupId"
         @game-rated="onGameRated"
+        @game-rating-deleted="onGameRatingDeleted"
       />
     </Dialog>
   </div>
@@ -131,16 +129,9 @@ async function onClickRate(game: RatedGame) {
   ratingWindowVisible.value = true
 }
 
-async function oncClickDeleteRating(game: RatedGame) {
-  await deleteInterest({
-    gameId: game.id!,
-    playerId: getCurrentUserId(),
-    gameGroupId: gameGroupId,
-    rating: undefined
-  })
-  games.value
-    .filter((existingGame) => existingGame.id === game.id)
-    .forEach((game) => (game.rating = undefined))
+async function onGameRatingDeleted(game: RatedGame) {
+  selectedGame.value!.rating = undefined
+  ratingWindowVisible.value = false
 }
 
 function onGameRated(rating: number) {
