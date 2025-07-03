@@ -8,6 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.util.List;
+import java.util.Optional;
 
 @RepositoryRestResource(collectionResourceRel = "players", path = "players")
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Long>, CrudRepository<Player,Long> {
@@ -15,7 +16,7 @@ public interface PlayerRepository extends PagingAndSortingRepository<Player, Lon
     @Override
     List<Player> findAll();
 
-    Player findByName(String name);
+    Optional<Player> findByName(String name);
 
     @Override
     @RestResource(exported = false)

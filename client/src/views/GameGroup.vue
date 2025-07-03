@@ -1,16 +1,11 @@
 <template>
   <div>
-    <h1>Manage gaming group</h1>
+    <h1>Gaming group</h1>
     <DataTable :value="gameGroups" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
       <Column header="Actions">
         <template #body="slotProps">
-          <Button severity="secondary">
-            <RouterLink :to="'/admin/gameGroups/' + slotProps.data.id">Manage players</RouterLink>
-          </Button>
-          <Button @click="onClickDelete(slotProps.data.id)" severity="danger">
-            Delete group
-          </Button>
+          <Button @click="onClickJoinGroup(slotProps.data)"> Join </Button>
         </template>
       </Column>
     </DataTable>
@@ -31,10 +26,11 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { deleteGameGroup, fetchGameGroups } from '@/services/ApiService'
+import { addPlayerToGroup, fetchGameGroups } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
+import { getCurrentUserId } from '@/services/LoginService'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
@@ -42,9 +38,8 @@ onMounted(async () => {
   gameGroups.value = await fetchGameGroups()
 })
 
-function onClickDelete(id: Number) {
-  deleteGameGroup(id)
-  gameGroups.value = gameGroups.value.filter((item) => !(item.id === id))
+function onClickJoinGroup(gameGroup: GameGroup) {
+  addPlayerToGroup(gameGroup.id, getCurrentUserId())
 }
 
 function onGameGroupAdded(gameGroup: GameGroup) {

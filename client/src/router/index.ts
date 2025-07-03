@@ -22,24 +22,31 @@ const router = createRouter({
       }
     },
     {
-      path: '/players',
-      name: 'players',
-      component: () => import('../views/PlayerAdmin.vue')
-    },
-    {
-      path: '/games',
-      name: 'games',
-      component: () => import('../views/GamesAdmin.vue')
-    },
-    {
       path: '/gameGroups',
       name: 'gameGroups',
-      component: () => import('../views/GameGroupAdmin.vue')
+      component: () => import('../views/GameGroup.vue')
+    },
+
+    // Admin
+    {
+      path: '/admin/players',
+      name: 'adminPlayers',
+      component: () => import('../views/Admin/PlayerAdmin.vue')
     },
     {
-      path: '/gameGroups/:gameGroupId',
-      name: 'playersInGameGroups',
-      component: () => import('../views/PlayersInGameGroupAdmin.vue')
+      path: '/admin/games',
+      name: 'adminGames',
+      component: () => import('../views/Admin/GamesAdmin.vue')
+    },
+    {
+      path: '/admin/gameGroups',
+      name: 'adminGameGroups',
+      component: () => import('../views/Admin/GameGroupAdmin.vue')
+    },
+    {
+      path: '/admin/gameGroups/:gameGroupId',
+      name: 'adminPlayersInGameGroups',
+      component: () => import('../views/Admin/PlayersInGameGroupAdmin.vue')
     }
   ]
 })

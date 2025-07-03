@@ -3,7 +3,9 @@ import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import type { GameGroup } from '@/model/GameGroup'
 import type { LoginResponse } from '@/model/LoginResponse'
+import { Me } from '@/model/Me'
 import type { Player } from '@/model/Player'
+import { isLoggedIn } from './LoginService'
 
 function defaultFetchOptions() {
   return {
@@ -70,6 +72,16 @@ export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]
 export async function removePlayerFromGroup(gameGroupId: Number, playerId: Number) {
   await authorizedFetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
     method: 'DELETE'
+  })
+}
+
+export async function addPlayerToGroup(gameGroupId: Number, playerId: Number) {
+  await authorizedFetch(`/api/gameGroups/${gameGroupId}/players`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: playerId })
   })
 }
 
@@ -141,6 +153,9 @@ export async function registerRequest(
 }
 
 async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {
+  if (!isLoggedIn()) {
+    throw new Error('User currently not logged in')
+  }
   if (init?.headers) {
     return fetch(url, {
       ...init,
@@ -152,4 +167,11 @@ async function authorizedFetch(url: string | URL | globalThis.Request, init?: Re
     return fetch(url, { ...init, ...defaultFetchOptions() })
   }
   return fetch(url, defaultFetchOptions())
+}
+
+// Me
+
+export async function getInformationAboutMe(): Promise<Me> {
+  const response = await authorizedFetch('/api/me')
+  return (await response.json()) as Me
 }

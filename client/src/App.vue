@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { isLoggedIn, logout } from './services/LoginService'
+import { isLoggedIn, loadMe, logout } from './services/LoginService'
 import EventBus from './services/EventBus'
 import { ref } from 'vue'
 
@@ -13,6 +13,10 @@ EventBus.addEventListener('login-status', () => {
 function onClickLogout() {
   logout()
 }
+
+if (isLoggedIn()) {
+  loadMe()
+}
 </script>
 
 <template>
@@ -20,14 +24,15 @@ function onClickLogout() {
     <div class="wrapper">
       <nav>
         <RouterLink to="/" v-if="isLoggedInRef">Home</RouterLink>
+        <RouterLink to="/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
         <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
       </nav>
 
       <h1>Admin</h1>
       <nav>
-        <RouterLink to="/players" v-if="isLoggedInRef">Players</RouterLink>
-        <RouterLink to="/games" v-if="isLoggedInRef">Games</RouterLink>
-        <RouterLink to="/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
+        <RouterLink to="/admin/players" v-if="isLoggedInRef">Players</RouterLink>
+        <RouterLink to="/admin/games" v-if="isLoggedInRef">Games</RouterLink>
+        <RouterLink to="/admin/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
       </nav>
     </div>
   </header>

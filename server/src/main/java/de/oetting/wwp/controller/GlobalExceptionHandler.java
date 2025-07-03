@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
         LOG.info("No such element: {}", e.getMessage());
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle("Not found");
-        problem.setType("NOT_FOUND");
+        problem.setType("CLIENT_ERROR");
+        problem.setDetail(e.getMessage());
         return problem;
     }
 
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.CONFLICT.getReasonPhrase());
-        problem.setType(HttpStatus.CONFLICT.getReasonPhrase());
+        problem.setType("CLIENT_ERROR");
         return problem;
     }
 }

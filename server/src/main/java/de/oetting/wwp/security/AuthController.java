@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -53,7 +54,8 @@ public class AuthController {
             UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
             User user = new User(loginReq.getLogin(), "", userDetails.getAuthorities());
             String token = jwtUtil.createToken(user);
-            LoginResponse loginRes = new LoginResponse(username, token);
+            long playerId = playerRepository.findByName(loginReq.getLogin()).orElseThrow(() -> new NoSuchElementException("Player not found")).getId();
+            LoginResponse loginRes = new LoginResponse(username, token, playerId);
 
             return ResponseEntity.ok(loginRes);
 
@@ -78,14 +80,14 @@ public class AuthController {
 
         Player player = new Player();
         player.setName(registrationRequest.getLogin());
-        playerRepository.save(player);
+        Player savedPlayer = playerRepository.save(player);
 
         User user = new User(registrationRequest.getLogin(), "", authorities);
         String token = jwtUtil.createToken(user);
 
-        RegistrationResponse registrationResponse = new RegistrationResponse(registrationRequest.getLogin(), token);
+        LoginResponse loginResponse = new LoginResponse(registrationRequest.getLogin(), token, savedPlayer.getId());
 
-        return ResponseEntity.ok(registrationResponse);
+        return ResponseEntity.ok(loginResponse);
     }
 
     private boolean doesUserAlreadyExist(String name) {
