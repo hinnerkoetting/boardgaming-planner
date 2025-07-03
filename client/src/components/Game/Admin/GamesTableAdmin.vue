@@ -6,7 +6,7 @@ import DataTable from 'primevue/datatable'
 import Image from 'primevue/image'
 import type { PropType } from 'vue'
 
-const props = defineProps({
+defineProps({
   games: Array as PropType<Array<Game>>,
   default: () => []
 })

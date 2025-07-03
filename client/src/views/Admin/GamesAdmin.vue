@@ -7,16 +7,6 @@
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
-
 <script setup lang="ts">
 import { deleteGame, fetchGames } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
@@ -40,5 +30,3 @@ function onGameAdded(game: Game) {
   games.value.push(game)
 }
 </script>
-
-<script lang="ts"></script>

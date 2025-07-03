@@ -20,6 +20,7 @@
           <RouterLink to="/admin/players">Players</RouterLink>
           <RouterLink to="/admin/games">Games</RouterLink>
           <RouterLink to="/admin/gameGroups">Groups</RouterLink>
+          <RouterLink to="/admin/tags">Tags</RouterLink>
         </template>
       </nav>
     </div>

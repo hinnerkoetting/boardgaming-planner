@@ -52,6 +52,11 @@ const router = createRouter({
       path: '/admin/gameGroups/:gameGroupId',
       name: 'adminPlayersInGameGroups',
       component: () => import('../views/Admin/PlayersInGameGroupAdmin.vue')
+    },
+    {
+      path: '/admin/tags',
+      name: 'tags',
+      component: () => import('../views/Admin/TagView.vue')
     }
   ]
 })
