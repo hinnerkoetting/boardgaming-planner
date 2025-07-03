@@ -42,7 +42,8 @@ const props = defineProps({
 const numberOfVisibleGames = ref()
 
 const emit = defineEmits<{
-  (e: 'updated-filter', visibleGames: GameGroupGame[]): void
+  (e: 'updated-filter', visibleGames: GameGroupGame[]): void,
+  (e: 'opened'): void
 }>()
 
 watch(
@@ -56,6 +57,7 @@ const showDialog = ref(false)
 
 function onClickShowFilter() {
   showDialog.value = true
+  emit('opened')
 }
 
 function onFilterUpdated(games: GameGroupGame[]) {

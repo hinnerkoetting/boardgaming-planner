@@ -4,6 +4,7 @@ import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.exceptions.ForbiddenException;
 import de.oetting.wwp.player.PlayerRepository;
+import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class PlayerController {
     @Autowired
     private UserDetailsManager userDetailsService;
 
+    @Autowired
+    private RatingRepository ratingRepository;
+
     @DeleteMapping(path = "/{playerId}")
     @ResponseStatus(value = HttpStatus.OK)
     @Transactional
@@ -40,7 +44,7 @@ public class PlayerController {
         if (isOwner(userDetails)) {
             throw new ForbiddenException("Owner cannot be deleted");
         }
-
+        ratingRepository.deleteByPlayerId(playerId);
         player.getGameGroups().forEach(gameGroup -> gameGroup.deletePlayer(player));
 
         playerRepository.delete(player);

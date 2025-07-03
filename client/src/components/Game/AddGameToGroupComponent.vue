@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import { ref, type Ref } from 'vue'
+import { getCurrentInstance, ref, type Ref } from 'vue'
 import { searchBgg, searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 import AddExistingGameTable from './AddExistingGameTable.vue'
@@ -16,17 +16,16 @@ const emit = defineEmits<{
 const searchTerm: Ref<string> = ref('')
 const searchItems: Ref<Game[]> = ref([])
 const someGamesFound = ref(false)
-const noGameFound = ref(false)
 
 const bggSearchItems: Ref<BggSearchItem[]> = ref([])
 const bggEmptyTableMessage = ref('')
 
 async function onClickSearchBgg() {
-  bggEmptyTableMessage.value = ''
-  bggSearchItems.value = []
-  searchItems.value = []
-  noGameFound.value = false
-  someGamesFound.value = false
+  searchFromBgg()
+}
+
+async function searchFromBgg() {
+  reset()  
   const bggResponse = await searchBgg(searchTerm.value)
   if (bggResponse.success) {
     bggSearchItems.value = bggResponse.success
@@ -39,19 +38,31 @@ async function onClickSearchBgg() {
 }
 
 async function onClickSearch() {
-  bggEmptyTableMessage.value = ''
-  bggSearchItems.value = []
-  searchItems.value = []
+  reset()
   searchItems.value = await searchExistingGames(searchTerm.value)
   someGamesFound.value = searchItems.value.length > 0
-  noGameFound.value = searchItems.value.length === 0
+  if (searchItems.value.length === 0) {
+    searchFromBgg()
+  }
 }
+
 
 async function onClickAdd(game: Game, callback: (message: EventMessage) => void) {
   emit('game-added', game, callback)
 }
-</script>
 
+function reset() {
+  bggEmptyTableMessage.value = ''
+  bggSearchItems.value = []
+  searchItems.value = []
+  someGamesFound.value = false
+}
+
+defineExpose({
+  reset
+})
+</script>
+ 
 <template>
   <div>
     <InputText
@@ -60,16 +71,13 @@ async function onClickAdd(game: Game, callback: (message: EventMessage) => void)
       v-model="searchTerm"
       placeholder="Searchterm..."
       v-on:keyup.enter="onClickSearch"
+      @focus="$event.target.select()"
     ></InputText>
     <Button @click="onClickSearch" class="searchButton">Search</Button>
 
     <AddExistingGameTable :searchItems="searchItems" @game-added="onClickAdd" />
     <template v-if="someGamesFound">
       Did not find what you were looking for?
-      <Button @click="onClickSearchBgg" class="searchButton">Search on BGG</Button>
-    </template>
-    <template v-if="noGameFound">
-      No game found in our database.
       <Button @click="onClickSearchBgg" class="searchButton">Search on BGG</Button>
     </template>
     <AddBggGameTable

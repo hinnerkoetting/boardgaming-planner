@@ -53,6 +53,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['ratingOpened'])
+
 const games: Ref<GameGroupGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
 const ratingWindowVisible = ref(false)
@@ -68,6 +70,7 @@ watch(
 async function onClickRate(game: GameGroupGame) {
   selectedGame.value = game
   ratingWindowVisible.value = true
+  emit('ratingOpened')
 }
 
 async function onGameRatingDeleted(rating: Rating) {

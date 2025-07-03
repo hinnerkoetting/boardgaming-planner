@@ -6,10 +6,11 @@
       Games
       <FilterGamesDialog
         :allTags="tags"
-        :allGames="allGames"
-        @updatedFilter="onUpdatedFilters"
+        :allGames="allGames"        
         :visibleGames="displayedGames"
         :numberOfPlayersInGroup="players.length"
+        @updatedFilter="onUpdatedFilters"
+        @opened="onDialogOpened"
       />
     </h2>
 
@@ -18,11 +19,12 @@
       :games="displayedGames"
       :game-group-id="gameGroupId"
       :with-rate-button="isPartOfGroup"
+      @ratingOpened="onDialogOpened"
     />
 
     <template v-if="isPartOfGroup">
       <h2 class="green">Add game</h2>
-      <AddGameToGroupComponent @game-added="onGameAdded" />
+      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent"/>
     </template>
 
     <h2>Players</h2>
@@ -70,6 +72,7 @@ const isPartOfGroup = ref(false)
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
+const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined);
 
 onMounted(async () => {
   loadGameGroup(gameGroupId).then((result) => {
@@ -133,6 +136,11 @@ async function onClickLeaveButton() {
 function onUpdatedFilters(filteredGames: GameGroupGame[]) {
   displayedGames.value = filteredGames
 }
+
+function onDialogOpened() {
+  addGameComponent.value?.reset()
+
+} 
 </script>
 
 <style lang="css" scoped>
