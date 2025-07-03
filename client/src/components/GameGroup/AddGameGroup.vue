@@ -9,19 +9,19 @@ const emit = defineEmits(['game-group-added'])
 
 const name: Ref<string> = ref('')
 
-function onClickAddGameGroup() {
+async function onClickAddGameGroup() {
   const gameGroup: GameGroup = {
     name: name.value,
     id: undefined
   }
-  const savedGameGroup = addGameGroup(gameGroup)
+  const savedGameGroup = await addGameGroup(gameGroup)
   emit('game-group-added', savedGameGroup)
 }
 </script>
 
 <template>
   <div>
-    <InputText name="name" v-model="name" placeholder="Name"></InputText><br />
+    <InputText name="name" v-model="name" placeholder="Name" v-on:keyup.enter="onClickAddGameGroup"></InputText><br />
     <Button @click="onClickAddGameGroup">Create</Button>
   </div>
 </template>

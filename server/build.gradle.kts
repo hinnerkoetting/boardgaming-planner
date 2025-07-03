@@ -49,7 +49,9 @@ tasks.register<Copy>("copy_client_resources") {
     into("build/client/static")
 }
 
-
+tasks.processResources {
+    dependsOn("copy_client_resources")
+}
 
 java.sourceSets["main"].resources {
     srcDir("build/client")

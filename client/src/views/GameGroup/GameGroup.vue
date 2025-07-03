@@ -104,7 +104,7 @@ async function onGameAdded(game: Game) {
     console.log('Game has no id')
     return
   }
-  if (games.value.find((game) => game.id == game.id)) {
+  if (games.value.find((existingGame) => existingGame.id == game.id)) {
     console.log('Game already exists')
     return
   }

@@ -30,7 +30,7 @@ if (isLoggedIn()) {
         <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
       </nav>
 
-      <h1>Admin</h1>
+      <h1 v-if="isLoggedInRef">Admin</h1>
       <nav>
         <RouterLink to="/admin/players" v-if="isLoggedInRef">Players</RouterLink>
         <RouterLink to="/admin/games" v-if="isLoggedInRef">Games</RouterLink>

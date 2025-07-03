@@ -5,12 +5,15 @@
       <InputText
         name="username"
         placeholder="Name"
+        autocomplete="username"
         v-on:keyup.enter="onStartRegister"
         v-model="nameModel"
       />
       <InputText
         name="password"
         placeholder="Password"
+        autocomplete="new-password"
+        type="password"
         v-on:keyup.enter="onStartRegister"
         v-model="passwordModel"
       />
@@ -24,13 +27,13 @@ import { register } from '@/services/LoginService'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import router from '@/router'
 
 const nameModel = ref('')
 const passwordModel = ref('')
-const router = useRouter()
+
 async function onStartRegister() {
   await register(nameModel.value, passwordModel.value)
-  router.push('/')
+  router.push('/gameGroups')
 }
 </script>
