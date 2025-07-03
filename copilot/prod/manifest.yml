@@ -36,13 +36,15 @@ exec: true     # Enable running commands in your container.
 network:
   connect: true # Enable Service Connect for intra-environment traffic between services.
 
+command: ["java","-jar","/app.jar", "--spring.profiles.active=h2"]
 
 variables:
   H2_FILENAME: /data/h2_db
   BOOTSTRAP_OWNER_ALLOWED: true
 
 secrets:
-  JWT_SIGNING_KEY: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/JWT_SIGNING_KEY
+  JWT_SIGNING_KEY:
+    secretsmanager: 'arn:aws:ssm:eu-central-1:826764853040:parameter/copilot/wwwp/prod/secrets/JWT_SIGNING_KEY'
 
 # You can override any of the values defined above by environment.
 #environments:

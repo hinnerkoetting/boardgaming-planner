@@ -3,4 +3,4 @@ RUN groupadd spring && adduser spring -g spring
 USER spring:spring
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar", "--spring.profiles.active=h2"]
