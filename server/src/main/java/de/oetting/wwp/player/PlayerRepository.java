@@ -1,4 +1,4 @@
-package de.oetting.wwp.repositories;
+package de.oetting.wwp.player;
 
 import de.oetting.wwp.entities.Player;
 import org.springframework.data.repository.CrudRepository;

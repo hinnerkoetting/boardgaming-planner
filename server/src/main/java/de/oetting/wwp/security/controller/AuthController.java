@@ -3,7 +3,7 @@ package de.oetting.wwp.security.controller;
 
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.infrastructure.HttpErrorResponse;
-import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.security.JwtUtil;
 import de.oetting.wwp.security.LoginRequest;
 import de.oetting.wwp.security.LoginResponse;
@@ -18,14 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.GroupManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 

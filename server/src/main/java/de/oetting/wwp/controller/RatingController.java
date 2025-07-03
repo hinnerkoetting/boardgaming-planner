@@ -10,7 +10,7 @@ import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.RatingRepository;
-import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.service.RatingService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

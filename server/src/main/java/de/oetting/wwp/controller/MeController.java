@@ -2,7 +2,7 @@ package de.oetting.wwp.controller;
 
 import de.oetting.wwp.controller.model.MeModel;
 import de.oetting.wwp.entities.Player;
-import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.player.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;

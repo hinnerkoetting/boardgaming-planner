@@ -1,29 +1,23 @@
 package de.oetting.wwp.controller;
 
 import de.oetting.wwp.controller.model.RatedGameModel;
-import de.oetting.wwp.controller.model.RatingModel;
 import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.exceptions.ConflictException;
-import de.oetting.wwp.infrastructure.CurrentUser;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
-import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.service.RatingService;
 import jakarta.transaction.Transactional;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "api/gameGroups/{gameGroupId}/")

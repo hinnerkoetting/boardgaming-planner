@@ -2,7 +2,7 @@ package de.oetting.wwp.security.controller;
 
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ConflictException;
-import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.security.Role;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
