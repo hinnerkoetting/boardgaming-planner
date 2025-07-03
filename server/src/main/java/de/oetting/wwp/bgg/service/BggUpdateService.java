@@ -159,7 +159,7 @@ public class BggUpdateService {
                 .findAny();
         return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
                 .filter(BggUpdateService::isPlayerNumberRecommended)
-                .map(results -> Integer.parseInt(results.getNumPlayers()))
+                .map(results -> parseNumberOfPlayers(results))
                 .collect(Collectors.toSet())).orElse(Collections.emptySet());
     }
 
@@ -169,8 +169,16 @@ public class BggUpdateService {
                 .findAny();
         return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
                 .filter(BggUpdateService::isPlayerNumberBest)
-                .map(results -> Integer.parseInt(results.getNumPlayers()))
+                .map(BggUpdateService::parseNumberOfPlayers)
                 .collect(Collectors.toSet())).orElse(Collections.emptySet());
+    }
+
+    private static int parseNumberOfPlayers(Poll.Results results) {
+        String numPlayers = results.getNumPlayers();
+        if (numPlayers.contains("+")) {
+            return Integer.parseInt( numPlayers.substring(0, numPlayers.indexOf("+"))) + 1;
+        }
+        return Integer.parseInt(numPlayers);
     }
 
     private static boolean isPlayerNumberRecommended(Poll.Results pollResults) {
