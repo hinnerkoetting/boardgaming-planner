@@ -1,18 +1,18 @@
 meta {
-  name: Setup - Create gamegroup
+  name: Delete gamegroup
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
-  url: http://localhost:8080/api/gameGroups
-  body: json
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}
+  body: none
   auth: none
 }
 
 body:json {
   {
-    "name": "Boardgames"
+    "name": "test"
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Manage games</h1>
-    <DataTable :value="games" tableStyle="min-width: 50rem">
+    <h1>Manage gamegroups</h1>
+    <DataTable :value="gameGroups" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
       <Column header="Actions">
         <template #body="slotProps">
@@ -9,8 +9,6 @@
         </template>
       </Column>
     </DataTable>
-
-    <AddGame v-on:game-added="onGameAdded" />
   </div>
 </template>
 
@@ -28,25 +26,25 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { deleteGame, fetchGames } from '@/services/ApiService'
+import { deleteGameGroup, fetchGameGroups } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
-import AddGame from '@/components/AddGame.vue'
+import type { GameGroup } from '@/model/GameGroup'
 
-const games: Ref<Game[]> = ref([] as Game[])
+const gameGroups: Ref<Game[]> = ref([] as GameGroup[])
 
 onMounted(async () => {
-  games.value = await fetchGames()
+  gameGroups.value = await fetchGameGroups()
 })
 
 function onClickDelete(id: Number) {
-  deleteGame(id)
-  games.value = games.value.filter((item) => !(item.id === id))
+  deleteGameGroup(id)
+  gameGroups.value = gameGroups.value.filter((item) => !(item.id === id))
 }
 
-function onGameAdded(game: Game) {
-  games.value.push(game)
+function onGameGroupAdded(gameGroup: GameGroup) {
+  gameGroups.value.push(gameGroup)
 }
 </script>
 

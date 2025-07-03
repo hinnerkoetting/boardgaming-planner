@@ -18,7 +18,5 @@ public interface GameGroupRepository extends PagingAndSortingRepository<GameGrou
             "where gg.id = :gameGroupId and p.id = :playerId")
     Optional<Player> playerAssignedToGameGroup(long playerId, long gameGroupId);
 
-    @Override
-    @RestResource(exported = false)
-    void delete(GameGroup entity);
+
 }

@@ -1,19 +1,10 @@
 plugins {
-    id("java")
+  id("com.github.node-gradle.node") version("7.0.2")
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
+node {    
+    download = true
+    version = "20.12.2"
+    npmVersion = "10.8.3"
 }
 
-dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
