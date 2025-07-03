@@ -1,9 +1,15 @@
-package de.oetting.wwp.security;
+package de.oetting.wwp.security.controller;
 
 
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.infrastructure.HttpErrorResponse;
 import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.security.JwtUtil;
+import de.oetting.wwp.security.LoginRequest;
+import de.oetting.wwp.security.LoginResponse;
+import de.oetting.wwp.security.RegistrationRequest;
+import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +23,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.GroupManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,22 +48,17 @@ public class AuthController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private GroupManager groupManager;
+
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginReq)  {
 
         try {
-            Authentication authentication =
-                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginReq.getLogin(), loginReq.getPassword()));
-            String username = authentication.getName();
-            UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
+            var authenticationToken = new UsernamePasswordAuthenticationToken(loginReq.getLogin(), loginReq.getPassword());
+            authenticationManager.authenticate(authenticationToken);
 
-            Player player = playerRepository.findByName(loginReq.getLogin()).orElseThrow(() -> new NoSuchElementException("Player not found"));
-            String token = jwtUtil.createToken(player, userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
-
-            LoginResponse loginRes = new LoginResponse(username, token, player.getId());
-
-            return ResponseEntity.ok(loginRes);
-
+            return ResponseEntity.ok(createLoginResponseForUser(loginReq.getLogin()));
         }catch (BadCredentialsException e){
             HttpErrorResponse errorResponse = new HttpErrorResponse();
             errorResponse.setType("CLIENT_ERROR");
@@ -70,22 +68,33 @@ public class AuthController {
         }catch (Exception e){
             LOG.error("error during login", e);
             HttpErrorResponse errorResponse = new HttpErrorResponse();
-            errorResponse.setType("SERVERT_ERROR");
+            errorResponse.setType("SERVER_ERROR");
             errorResponse.setDetail("Unknown error");
             errorResponse.setTitle("Could not login");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
+    @NotNull
+    private LoginResponse createLoginResponseForUser(String username) {
+        UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
+
+        Player player = playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
+        String token = jwtUtil.createToken(player, userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+
+        return new LoginResponse(username, token, player.getId());
+    }
+
     @PostMapping(value = "/register")
+    @Transactional
     public ResponseEntity<?> register(@RequestBody RegistrationRequest registrationRequest)  {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         if (doesUserAlreadyExist(registrationRequest.getLogin())) {
             return ResponseEntity.badRequest().build();
         }
-        userDetailsManager.createUser(new User(registrationRequest.getLogin(), passwordEncoder.encode(registrationRequest.getPassword()), authorities));
-
+        String encryptedPassword = passwordEncoder.encode(registrationRequest.getPassword());
+        userDetailsManager.createUser(new User(registrationRequest.getLogin(), encryptedPassword, authorities));
         Player player = new Player();
         player.setName(registrationRequest.getLogin());
         Player savedPlayer = playerRepository.save(player);
@@ -95,6 +104,29 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(registrationRequest.getLogin(), token, savedPlayer.getId());
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping(value = "/bootstrapAdmin/{playerId}")
+    @Transactional
+    public ResponseEntity<?> bootstrapAdmin(@PathVariable("playerId") long playerId)  {
+        List<String> admins = groupManager.findUsersInGroup("admin");
+        Player player =  playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("Player not found"));
+        if (!admins.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        LOG.warn("No admin exists!");
+        if (groupManager.findAllGroups().isEmpty()) {
+            LOG.warn("No group exists at all. Creating admin group");
+            groupManager.createGroup("admin", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        }
+        LOG.warn("Promoting {} to admin", playerId);
+
+        groupManager.addUserToGroup(player.getName(), "admin");
+        UserDetails userDetails = userDetailsManager.loadUserByUsername(player.getName());
+        Collection<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
+        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        userDetailsManager.updateUser(new User(userDetails.getUsername(), userDetails.getPassword(), authorities));
+        return ResponseEntity.ok("ok");
     }
 
     private boolean doesUserAlreadyExist(String name) {

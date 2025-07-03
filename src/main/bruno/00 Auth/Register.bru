@@ -24,5 +24,6 @@ assert {
 script:post-response {
   if (res.body.token) {
     bru.setVar("access_token", res.body.token)
+    bru.setVar("player_id", res.body.id)
   }
 }

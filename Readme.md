@@ -8,9 +8,9 @@
 
 Server
 ```shell
-JWT_SIGNING_KEY=TEST ./gradlew :server:bootRun
+JWT_SIGNING_KEY=TEST./gradlew :server:bootRun
 # Oder mit persistenter Datenbank
-JWT_SIGNING_KEY=TEST ./gradlew :server:bootRun --args='--spring.profiles.active=h2'
+JWT_SIGNING_KEY=TEST H2_DB=~/wwwp_h2 ./gradlew :server:bootRun --args='--spring.profiles.active=h2'
 ```
 
 Frontend

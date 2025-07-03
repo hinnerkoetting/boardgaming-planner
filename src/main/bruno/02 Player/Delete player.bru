@@ -1,17 +1,17 @@
 meta {
   name: Delete player
   type: http
-  seq: 3
-}
-
-headers {
-  Authorization: Bearer {{access_token}}
+  seq: 2
 }
 
 delete {
   url: http://localhost:8080/api/players/{{playerId}}
   body: none
   auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
 }
 
 assert {

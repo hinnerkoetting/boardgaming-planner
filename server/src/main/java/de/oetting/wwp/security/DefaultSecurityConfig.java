@@ -11,6 +11,8 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +30,7 @@ import javax.sql.DataSource;
 
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity
 public class DefaultSecurityConfig {
 
     private static final Logger LOG= LoggerFactory.getLogger(DefaultSecurityConfig.class);
@@ -36,9 +39,10 @@ public class DefaultSecurityConfig {
 
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         if (!databaseAlreadyInitialized(dataSource)) {
-            resourceDatabasePopulator.addScript(new UrlResource(
-                    JdbcDaoImpl.class.getResource("/" + JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION
-                    )));
+            var usersSql = new UrlResource(JdbcDaoImpl.class.getResource("/" + JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION));
+            resourceDatabasePopulator.addScript(usersSql);
+            var groupsSql = DefaultSecurityConfig.class.getResource("/sql/group_init.sql");
+            resourceDatabasePopulator.addScript(new UrlResource(groupsSql));
         }
 
         DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
@@ -60,7 +64,6 @@ public class DefaultSecurityConfig {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthorizationFilter authorizationFilter) throws Exception {

@@ -1,6 +1,5 @@
 package de.oetting.wwp.repositories;
 
-import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.Player;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RepositoryRestResource(collectionResourceRel = "players", path = "players")
+
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Long>, CrudRepository<Player,Long> {
 
     @Override
