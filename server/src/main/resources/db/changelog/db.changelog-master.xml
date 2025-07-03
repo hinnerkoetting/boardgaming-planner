@@ -322,4 +322,66 @@
             <column name="BEST_NUMBER_OF_PLAYERS" type="VARCHAR(200)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="Hinnerk" id="gamegroup-2-tag">
+        <!-- Adds a mapping table for tags to games -->
+        <createTable tableName="GAME_GROUP_2_TAGS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_GROUP_2_TAGS_PK"/>
+            </column>
+            <column name="GAME_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GAME_GROUP_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex associatedWith="" indexName="GAME_GROUP_TAGS_GAME_IDX" tableName="GAME_GROUP_2_TAGS" unique="true">
+            <column name="GAME_GROUP_ID"/>
+            <column name="GAME_ID"/>
+            <column name="TAG_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint
+                baseColumnNames="GAME_ID"
+                baseTableName="GAME_GROUP_2_TAGS"
+                constraintName="GAME_GROUP_TAGS_GAME_FK"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedColumnNames="ID"
+                referencedTableName="GAME"
+                validate="true"/>
+
+        <addForeignKeyConstraint
+                baseColumnNames="GAME_GROUP_ID"
+                baseTableName="GAME_GROUP_2_TAGS"
+                constraintName="GAME_GROUP_TAGS_GAME_GROUP_FK"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedColumnNames="ID"
+                referencedTableName="GAME_GROUP"
+                validate="true"/>
+
+        <addForeignKeyConstraint
+                baseColumnNames="TAG_ID"
+                baseTableName="GAME_GROUP_2_TAGS"
+                constraintName="GAME_GROUP_TAGS_TAG_FK"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedColumnNames="ID"
+                referencedTableName="GAME_TAG"
+                validate="true"/>
+
+        <createSequence sequenceName="GAME_GROUP_2_TAGS_SEQ" incrementBy="50"/>
+    </changeSet>
 </databaseChangeLog>

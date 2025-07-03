@@ -1,12 +1,15 @@
 package de.oetting.wwp.gamegroup.controller;
 
 import de.oetting.wwp.controller.IdWrapper;
+import de.oetting.wwp.entities.GameGroupTag;
+import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.model.RatedGameModel;
 import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.game.model.TagModel;
+import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
 import de.oetting.wwp.gamegroup.service.GameGroupService;
@@ -15,6 +18,9 @@ import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import de.oetting.wwp.tags.entity.TagEntity;
+import de.oetting.wwp.tags.entity.TagType;
+import de.oetting.wwp.tags.repository.GameGroupTagRepository;
+import de.oetting.wwp.tags.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -42,6 +49,15 @@ public class GameGroupController {
 
     @Autowired
     private GameGroupService gameGroupService;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private GameGroupTagRepository gameGroupTagRepository;
 
     @Transactional
     @PostMapping
@@ -96,13 +112,29 @@ public class GameGroupController {
     public Collection<RatedGameModel> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
         Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
+        var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
 
         return playedGames.stream()
-                .map(game -> map(ratings, game))
+                .map(game -> map(ratings, game, gameGroupTags))
                 .toList();
     }
 
-    private RatedGameModel map(List<Rating> ratings, Game game) {
+    @Transactional
+    @PostMapping(path = "/{gameGroupId}/{gameId}/gameGroupTag")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
+    public void addGameGroupTagById(@RequestBody IdWrapper gameTagId, @PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId) {
+        Game game = gameRepository.findById(gameId).orElseThrow();
+        TagEntity tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
+        GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        if (!TagType.GAME_GROUP.equals(tag.getType())) {
+            throw new ConflictException("Only game group tags can be added to game groups");
+        }
+        GameGroupTag gameGroupTag = new GameGroupTag(game, tag, gameGroup);
+        gameGroup.addGameGroupTag(gameGroupTagRepository.save(gameGroupTag));
+    }
+
+    private RatedGameModel map(List<Rating> ratings, Game game, List<GameGroupTag> tags) {
         RatedGameModel ratedGame =new RatedGameModel();
         ratedGame.setDescription(game.getDescription());
         ratedGame.setThumbnailUrl(game.getThumbnailUrl());
@@ -114,7 +146,11 @@ public class GameGroupController {
         ratedGame.setMinPlayers(game.getMinPlayers());
         ratedGame.setUrl(game.getUrl());
         ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
-        ratedGame.setTags(game.getGlobalTags().stream().map(this::map).collect(Collectors.toList()));
+        var gameGroupTags = tags.stream()
+                .filter(gameGroupTag -> gameGroupTag.getGame().getId().equals(game.getId()))
+                .map(GameGroupTag::getTag).map(this::map);
+        var globalTags = game.getGlobalTags().stream().map(this::map);
+        ratedGame.setTags(Stream.concat(gameGroupTags, globalTags).collect(Collectors.toList()));
         ratedGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
         ratedGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
         return ratedGame;

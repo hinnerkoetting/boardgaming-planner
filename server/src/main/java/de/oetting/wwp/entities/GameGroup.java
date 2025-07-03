@@ -19,6 +19,9 @@ public class GameGroup {
     @ManyToMany
     private Set<Player> players;
 
+    @ManyToMany(mappedBy = "gameGroup")
+    private Set<GameGroupTag> tags;
+
     @Column(unique = true)
     private String name;
 
@@ -73,5 +76,21 @@ public class GameGroup {
     public void deletePlayer(Player player) {
         this.players.remove(player);
         player.deleteGameGroup(this);
+    }
+
+    public void addGameGroupTag(GameGroupTag tag) {
+        this.tags.add(tag);
+    }
+
+    public void removeGameGroupTag(GameGroupTag tag) {
+        this.tags.remove(tag);
+    }
+
+    public Set<GameGroupTag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<GameGroupTag> tags) {
+        this.tags = tags;
     }
 }

@@ -4,8 +4,8 @@
       <option name="env">
         <map>
           <entry key="BOOTSTRAP_OWNER_ALLOWED" value="yes" />
-          <entry key="H2_FILENAME" value="$PROJECT_DIR$/../../../temp/h2_db3" />
-          <entry key="JWT_SIGNING_KEY" value="example" />
+          <entry key="H2_FILENAME" value="$PROJECT_DIR$/../../../temp/h2_db4" />
+          <entry key="JWT_SIGNING_KEY" value="examplejhbjhbhjbjhbhjb98h98232fffsfd2rr223fsd232323rf23f233" />
         </map>
       </option>
       <option name="executionName" />
@@ -26,7 +26,7 @@
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <ForceTestExec>false</ForceTestExec>
+    <RunAsTest>false</RunAsTest>
     <method v="2" />
   </configuration>
 </component>
