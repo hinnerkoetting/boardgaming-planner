@@ -1,0 +1,15 @@
+meta {
+  name: Sync BGG
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/bgg/sync
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}

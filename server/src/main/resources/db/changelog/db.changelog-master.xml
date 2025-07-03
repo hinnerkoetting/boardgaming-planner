@@ -295,4 +295,13 @@
                 referencedTableName="GAME_TAG"
                 validate="true"/>
     </changeSet>
+
+    <changeSet author="Hinnerk" id="game-2">
+        <addColumn tableName="GAME">
+            <column name="MIN_PLAYERS" type="INT"/>
+            <column name="MAX_PLAYERS" type="INT"/>
+            <column name="PLAYING_TIME_MINUTES" type="INT"/>
+            <column name="url" type="VARCHAR(1000)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

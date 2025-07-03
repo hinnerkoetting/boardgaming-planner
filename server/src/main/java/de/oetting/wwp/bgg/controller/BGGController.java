@@ -1,4 +1,4 @@
-package de.oetting.wwp.controller;
+package de.oetting.wwp.bgg.controller;
 
 import com.github.marcioos.bggclient.BGG;
 import com.github.marcioos.bggclient.common.ThingType;
@@ -7,12 +7,15 @@ import com.github.marcioos.bggclient.fetch.domain.FetchItem;
 import com.github.marcioos.bggclient.search.SearchException;
 import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
+import de.oetting.wwp.bgg.service.BggUpdateService;
+import de.oetting.wwp.exceptions.BadRequestException;
+import de.oetting.wwp.security.Role;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,9 +25,14 @@ import java.util.List;
 @RequestMapping(path = "api/bgg")
 public class BGGController {
 
+    private LocalDateTime lastBggUpdateRun;
+
+    @Autowired
+    private BggUpdateService bggUpdateService;
+
     @GetMapping(path = "/search/{searchTerm}")
     public List<SearchItem> searchBgg(@PathVariable("searchTerm") String searchTerm) throws SearchException {
-        SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME);
+        SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
         if (output == null) {
             return Collections.emptyList();
         }
@@ -34,5 +42,16 @@ public class BGGController {
     @GetMapping(path = "/fetch/{ids}")
     public Collection<FetchItem> searchBgg(@PathVariable("ids") Integer[] ids) throws FetchException {
          return BGG.fetch(Arrays.asList(ids), ThingType.BOARDGAME);
+    }
+
+    @PostMapping(path = "/sync")
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateGamesFromBgg() {
+        if (lastBggUpdateRun != null && lastBggUpdateRun.isAfter(LocalDateTime.now().minusDays(1))) {
+            throw new BadRequestException("Cannot run updates right now. Please wait some time. We do not want to overload bgg servers");
+        }
+        lastBggUpdateRun = LocalDateTime.now();
+        bggUpdateService.updateAsynchronous();
     }
 }

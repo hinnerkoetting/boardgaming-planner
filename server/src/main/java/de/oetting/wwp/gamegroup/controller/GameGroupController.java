@@ -123,10 +123,13 @@ public class GameGroupController {
             ratedGame.setId(game.getId());
             ratedGame.setName(game.getName());
             ratedGame.setRating(ratingService.computeRating(game, ratings));
+            ratedGame.setMaxPlayers(game.getMaxPlayers());
+            ratedGame.setMinPlayers(game.getMinPlayers());
+            ratedGame.setUrl(game.getUrl());
+            ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
             ratedGame.setTags(game.getGlobalTags().stream().map(this::map).collect(Collectors.toList()));
             return ratedGame;
         }).toList();
-
     }
 
     private TagModel map(TagEntity tag) {

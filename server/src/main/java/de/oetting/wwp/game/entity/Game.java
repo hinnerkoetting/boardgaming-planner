@@ -27,6 +27,12 @@ public class Game {
     private String imageUrl;
     private String thumbnailUrl;
 
+    private Integer minPlayers;
+    private Integer maxPlayers;
+    private Integer playingTimeMinutes;
+    @Column(length = 1000)
+    private String url;
+
     @ManyToMany(mappedBy = "games")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
@@ -101,5 +107,37 @@ public class Game {
 
     public void addGlobalTag(TagEntity tag) {
         globalTags.add(tag);
+    }
+
+    public Integer getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setMinPlayers(Integer minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    public Integer getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(Integer maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public Integer getPlayingTimeMinutes() {
+        return playingTimeMinutes;
+    }
+
+    public void setPlayingTimeMinutes(Integer playingTimeMinutes) {
+        this.playingTimeMinutes = playingTimeMinutes;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

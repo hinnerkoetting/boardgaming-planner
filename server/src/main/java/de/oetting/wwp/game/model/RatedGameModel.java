@@ -1,6 +1,7 @@
 package de.oetting.wwp.game.model;
 
 import de.oetting.wwp.controller.model.RatingModel;
+import jakarta.persistence.Column;
 
 import java.util.List;
 
@@ -12,6 +13,11 @@ public class RatedGameModel {
 
     private String thumbnailUrl;
     private RatingModel rating;
+    private Integer minPlayers;
+    private Integer maxPlayers;
+    private Integer playingTimeMinutes;
+    private String url;
+
     private List<TagModel> tags;
 
     public Long getId() {
@@ -52,6 +58,38 @@ public class RatedGameModel {
 
     public void setRating(RatingModel rating) {
         this.rating = rating;
+    }
+
+    public Integer getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setMinPlayers(Integer minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    public Integer getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(Integer maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public Integer getPlayingTimeMinutes() {
+        return playingTimeMinutes;
+    }
+
+    public void setPlayingTimeMinutes(Integer playingTimeMinutes) {
+        this.playingTimeMinutes = playingTimeMinutes;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public List<TagModel> getTags() {
