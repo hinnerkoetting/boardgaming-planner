@@ -1,7 +1,12 @@
 <template>
   <div>
     <h1>Gaming group</h1>
-    <DataTable :value="gameGroups" tableStyle="min-width: 50rem" @row-click="onRowClick($event)">
+    <DataTable
+      :value="gameGroups"
+      tableStyle="min-width: 50rem"
+      @row-click="onRowClick($event)"
+      selectionMode="single"
+    >
       <Column field="name" header="Name"></Column>
       <Column header="Actions">
         <template #body="slotProps">

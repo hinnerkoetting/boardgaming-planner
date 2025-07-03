@@ -69,6 +69,11 @@ export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]
   return (await response.json()) as Player[]
 }
 
+export async function fetchGamesInGroup(gameGroupId: Number): Promise<Game[]> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/playedGames`)
+  return (await response.json()) as Game[]
+}
+
 export async function removePlayerFromGroup(gameGroupId: Number, playerId: Number) {
   await authorizedFetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
     method: 'DELETE'
