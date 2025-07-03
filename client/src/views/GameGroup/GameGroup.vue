@@ -3,30 +3,7 @@
     <h1>Group {{ gameGroup.name }}</h1>
 
     <h2>Already played games</h2>
-    <DataTable :value="games" tableStyle="min-width: 20rem">
-      <Column field="name" header="Name"></Column>
-      <Column header="Rating (Average / Mine)">
-        <template #body="slotProps">
-          <div v-if="slotProps.data.rating?.existsVeto">
-            <Tag severity="danger">Vetoed</Tag>
-            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
-          </div>
-          <div v-if="!slotProps.data.rating?.existsVeto">
-            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
-          </div>
-        </template>
-      </Column>
-      <Column field="thumbnailUrl" header="Thumbnail">
-        <template #body="slotProps">
-          <Image :src="slotProps.data.thumbnailUrl" />
-        </template>
-      </Column>
-      <Column header="Actions">
-        <template #body="slotProps">
-          <Button severity="secondary" @click="onClickRate(slotProps.data)"> Rate</Button>
-        </template>
-      </Column>
-    </DataTable>
+    <GamesList v-if="games.length > 0" :games="games" :game-group-id="gameGroupId" />
 
     <h2 class="green">Add game</h2>
     <AddExistingGame @game-added="onGameAdded" />
@@ -38,14 +15,6 @@
     <DataTable :value="players" tableStyle="min-width: 20rem">
       <Column field="name" header="Name"></Column>
     </DataTable>
-    <Dialog v-model:visible="ratingWindowVisible" modal :header="selectedGame?.name">
-      <RatingComponent
-        :game="selectedGame!"
-        :game-group-id="gameGroupId"
-        @game-rated="onGameRated"
-        @game-rating-deleted="onGameRatingDeleted"
-      />
-    </Dialog>
   </div>
 </template>
 
@@ -74,15 +43,10 @@ import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
 import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
-import Image from 'primevue/image'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { RatedGame } from '@/model/RatedGame'
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
-import RatingComponent from '@/components/RatingComponent.vue'
-import Tag from 'primevue/tag'
-import type { Rating } from '@/model/Rating'
+import GamesList from '@/components/Game/GamesList.vue'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -90,8 +54,6 @@ const games: Ref<RatedGame[]> = ref([])
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
-const ratingWindowVisible = ref(false)
-const selectedGame: Ref<RatedGame | undefined> = ref()
 
 onMounted(async () => {
   loadGameGroup(gameGroupId).then((result) => {
@@ -124,20 +86,5 @@ async function onGameAdded(game: Game) {
     }
   }
   games.value.push(ratedGame)
-}
-
-async function onClickRate(game: RatedGame) {
-  selectedGame.value = game
-  ratingWindowVisible.value = true
-}
-
-async function onGameRatingDeleted(rating: Rating) {
-  selectedGame.value!.rating = rating
-  ratingWindowVisible.value = false
-}
-
-function onGameRated(rating: Rating) {
-  selectedGame.value!.rating = rating
-  ratingWindowVisible.value = false
 }
 </script>

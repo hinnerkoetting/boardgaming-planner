@@ -74,7 +74,7 @@ export async function addGame(game: Game): Promise<Game> {
 }
 
 // Gamegroups
-export async function loadGameGroup(gameGroupId: Number): Promise<GameGroup> {
+export async function loadGameGroup(gameGroupId: number): Promise<GameGroup> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}`)
   return (await response.json()) as GameGroup
 }
