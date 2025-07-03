@@ -1,3 +1,5 @@
+import { BggFetchItem } from '@/model/BggFetchItem'
+import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import type { GameGroup } from '@/model/GameGroup'
 import type { Player } from '@/model/Player'
@@ -60,4 +62,27 @@ export async function removePlayerFromGroup(gameGroupId: Number, playerId: Numbe
   await fetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
     method: 'DELETE'
   })
+}
+
+// BGG
+export async function searchBgg(searchTerm: String): Promise<BggSearchItem[]> {
+  const response = await fetch(`/api/bgg/search/${searchTerm}`)
+  const json = (await response.json()) as any[]
+  return json.map((item) => new BggSearchItem(item.id, item.name.value, item.year.value))
+}
+
+export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> {
+  const response = await fetch(`/api/bgg/fetch/${bggId}`)
+  const json = (await response.json()) as any[]
+  if (json.length > 0) {
+    const firstItem = json[0]
+    return new BggFetchItem(
+      firstItem.id,
+      firstItem.name,
+      firstItem.description,
+      firstItem.thumbnailUrl,
+      firstItem.imageUrl
+    )
+  }
+  return null
 }

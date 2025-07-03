@@ -23,7 +23,7 @@ public class BGGController {
     @GetMapping(path = "/search/{searchTerm}")
     public List<SearchItem> searchBgg(@PathVariable("searchTerm") String searchTerm) throws SearchException {
         SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME);
-        return  output.getItems();
+        return output.getItems();
     }
 
     @GetMapping(path = "/fetch/{ids}")
