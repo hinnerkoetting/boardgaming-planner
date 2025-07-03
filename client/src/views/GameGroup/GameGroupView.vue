@@ -3,9 +3,11 @@
     <h1>Group {{ gameGroup.name }}</h1>
 
     <h2>Games</h2>
+    <FilterGamesDialog :allTags="tags" :allGames="allGames" @updatedFilter="onUpdatedFilters" />
+
     <GamesCollection
-      v-if="games.length > 0"
-      :games="games"
+      v-if="displayedGames.length > 0"
+      :games="displayedGames"
       :game-group-id="gameGroupId"
       :with-rate-button="isPartOfGroup"
     />
@@ -47,10 +49,15 @@ import EventBus from '@/services/EventBus'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue'
 import { EventMessage } from '@/model/internal/EventMessage'
+import type { TagModel } from '@/model/TagModel'
+import { fetchTags } from '@/services/api/TagApiService'
+import FilterGamesDialog from '@/components/Game/FilterGamesDialog.vue'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
-const games: Ref<GameGroupGame[]> = ref([])
+const allGames: Ref<GameGroupGame[]> = ref([])
+const displayedGames: Ref<GameGroupGame[]> = ref([])
+const tags: Ref<TagModel[]> = ref([])
 const isPartOfGroup = ref(false)
 
 const route = useRoute()
@@ -65,8 +72,12 @@ onMounted(async () => {
     isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
-    games.value = result
+    allGames.value = result
+    displayedGames.value = result
     sortGames()
+  })
+  fetchTags().then((response) => {
+    tags.value = response
   })
 })
 
@@ -75,7 +86,7 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     callback(new EventMessage('Game has no id', false))
     return
   }
-  if (games.value.find((existingGame) => existingGame.id == game.id)) {
+  if (allGames.value.find((existingGame) => existingGame.id == game.id)) {
     callback(new EventMessage('Game already exists', false))
     return
   }
@@ -93,12 +104,15 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     },
     tags: []
   }
-  games.value.push(gameGroupGame)
+  allGames.value.push(gameGroupGame)
+  displayedGames.value.push(gameGroupGame)
   callback(new EventMessage('Game added', true))
 }
 
 function sortGames() {
-  games.value.sort((game1, game2) => game2.rating.averageRating - game1.rating.averageRating)
+  displayedGames.value.sort(
+    (game1, game2) => game2.rating.averageRating - game1.rating.averageRating
+  )
 }
 
 async function onClickLeaveButton() {
@@ -107,10 +121,18 @@ async function onClickLeaveButton() {
   await router.push({ name: 'gameGroups' })
   router.go(0) // not sure why this is necessary, otherwise the page will not be displayed
 }
+
+function onUpdatedFilters(filteredGames: GameGroupGame[]) {
+  displayedGames.value = filteredGames
+}
 </script>
 
 <style lang="css" scoped>
 h2 {
   margin-top: 16px;
+}
+
+.filter {
+  margin: 16x 0 16px 0;
 }
 </style>
