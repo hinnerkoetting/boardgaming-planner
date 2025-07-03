@@ -7,6 +7,12 @@
       placeholder="Description"
       @keyup.enter="onClickSubmit"
     />
+    <InputText
+      name="sourceName"
+      v-model="sourceName"
+      placeholder="Name from source"
+      @keyup.enter="onClickSubmit"
+    />
     <Select v-model="type" :options="options" />
     <Button @click="onClickSubmit">Submit</Button>
   </div>
@@ -27,17 +33,8 @@ const props = defineProps({
     type: String as PropType<'CREATE' | 'EDIT'>,
     required: true
   },
-  propDescription: {
-    type: String
-  },
-  propId: {
-    type: Number
-  },
-  propRanking: {
-    type: Number
-  },
-  propType: {
-    type: String
+  tag: {
+    type: TagModel
   }
 })
 const emit = defineEmits<{
@@ -45,8 +42,9 @@ const emit = defineEmits<{
 }>()
 
 const errorMessage = ref('')
-const description = ref(props.propDescription || '')
-const type = ref(props.propType || 'GLOBAL')
+const description = ref(props.tag?.description || '')
+const sourceName = ref(props.tag?.importedSourceName || '')
+const type = ref(props.tag?.type || 'GLOBAL')
 const options = ['GLOBAL', 'GAME_GROUP']
 
 async function onClickSubmit() {
@@ -59,15 +57,16 @@ async function onClickSubmit() {
 }
 
 async function createOrUpdate(): Promise<ResponseWrapper<TagModel>> {
-  const tag = new CreateTagModel(description.value, null, type.value)
+  const tag = new CreateTagModel(description.value, sourceName.value, null, type.value)
 
   if (props.mode === 'CREATE') {
     return await createTag(tag)
   } else {
     const updateRequestModel = new TagModel(
-      props.propId!,
+      props.tag?.id!,
       description.value,
-      props.propRanking!,
+      sourceName.value,
+      props.tag?.ranking!,
       type.value
     )
     const updateResponse = await updateTag(updateRequestModel)
@@ -78,7 +77,13 @@ async function createOrUpdate(): Promise<ResponseWrapper<TagModel>> {
       }
     }
     return {
-      success: new TagModel(props.propId!, description.value, props.propRanking!, type.value),
+      success: new TagModel(
+        props.tag?.id!,
+        description.value,
+        sourceName.value,
+        props.tag?.ranking!,
+        type.value
+      ),
       error: undefined
     }
   }

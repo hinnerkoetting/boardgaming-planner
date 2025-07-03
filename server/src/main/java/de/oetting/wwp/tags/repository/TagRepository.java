@@ -1,10 +1,13 @@
 package de.oetting.wwp.tags.repository;
 
 import de.oetting.wwp.tags.entity.TagEntity;
+import de.oetting.wwp.tags.entity.TagType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface TagRepository extends PagingAndSortingRepository<TagEntity, Long>, CrudRepository<TagEntity,Long> {
@@ -12,4 +15,5 @@ public interface TagRepository extends PagingAndSortingRepository<TagEntity, Lon
     @Query(value = "SELECT MAX(t.ranking) FROM TagEntity t")
     Integer findMaxRanking();
 
+    List<TagEntity> findByType(TagType tagType);
 }

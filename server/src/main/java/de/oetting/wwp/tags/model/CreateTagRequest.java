@@ -7,6 +7,7 @@ public class CreateTagRequest {
     private String description;
     private Integer ranking;
     private TagType type;
+    private String importedSourceName;
 
     public String getDescription() {
         return description;
@@ -30,5 +31,13 @@ public class CreateTagRequest {
 
     public void setType(TagType type) {
         this.type = type;
+    }
+
+    public String getImportedSourceName() {
+        return importedSourceName;
+    }
+
+    public void setImportedSourceName(String importedSourceName) {
+        this.importedSourceName = importedSourceName;
     }
 }

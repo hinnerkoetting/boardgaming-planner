@@ -34,6 +34,7 @@ public class TagController {
         TagEntity entity= new TagEntity();
         entity.setDescription(tag.getDescription());
         entity.setType(tag.getType());
+        entity.setImportedSourceName(tag.getImportedSourceName());
         if (tag.getRanking() == null) {
             Integer maxRanking = tagRepository.findMaxRanking();
             entity.setRanking(maxRanking == null ? 0 : maxRanking + 1);
@@ -56,5 +57,6 @@ public class TagController {
         storedTag.setDescription(tag.getDescription());
         storedTag.setRanking(tag.getRanking());
         storedTag.setType(tag.getType());
+        storedTag.setImportedSourceName(tag.getImportedSourceName());
     }
 }

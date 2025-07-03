@@ -304,4 +304,10 @@
             <column name="url" type="VARCHAR(1000)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="Hinnerk" id="tag-2">
+        <addColumn tableName="GAME_TAG">
+            <column name="IMPORTED_SOURCE_NAME" type="VARCHAR(200)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

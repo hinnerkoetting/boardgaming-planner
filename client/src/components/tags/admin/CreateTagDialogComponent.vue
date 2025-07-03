@@ -3,7 +3,7 @@
     <Button @click="onClickCreateTag"> Create tag</Button>
     <Dialog v-model:visible="showDialog" modal header="Create Tag"
       ><div>
-        <EditTagComponent v-on:tag-added="onTagAdded" mode="CREATE" />
+        <EditOrCreateTagComponent v-on:tag-added="onTagAdded" mode="CREATE" />
       </div>
     </Dialog>
   </div>
@@ -13,7 +13,7 @@
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import EditTagComponent from './EditOrCreateTagComponent.vue'
+import EditOrCreateTagComponent from './EditOrCreateTagComponent.vue'
 import type { TagModel } from '@/model/TagModel'
 
 const emit = defineEmits(['tag-added'])

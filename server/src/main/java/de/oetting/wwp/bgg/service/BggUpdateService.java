@@ -9,19 +9,19 @@ import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.game.repository.GameRepository;
+import de.oetting.wwp.tags.entity.TagEntity;
+import de.oetting.wwp.tags.entity.TagType;
+import de.oetting.wwp.tags.repository.TagRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -31,6 +31,9 @@ public class BggUpdateService {
 
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -45,7 +48,8 @@ public class BggUpdateService {
     }
 
     public void updateFromBgg() {
-        gameRepository.findAll().forEach(game -> updateGameInOwnTransaction(game));
+        var globalTags = tagRepository.findByType(TagType.GLOBAL);
+        gameRepository.findAll().forEach(game -> updateGameInOwnTransaction(game, globalTags));
     }
 
     public Optional<Game> importFromBgg(int bggId) throws FetchException {
@@ -56,16 +60,29 @@ public class BggUpdateService {
         }
 
         FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
+        var globalTags = tagRepository.findByType(TagType.GLOBAL);
+
         Game game = new Game();
         game.setName(firstItem.getName());
-        Game writtenGame = updateGameFromBgg(game, firstItem);
+        Game writtenGame = updateGameFromBgg(game, firstItem, globalTags);
         return Optional.of(writtenGame);
     }
 
-    private void updateGameInOwnTransaction(Game game) {
+    private List<TagEntity> findMatchingTags(FetchItem fetchItem, List<TagEntity> tags) {
+        return tags.stream()
+                .filter(tag -> isMatchingTag(fetchItem, tag))
+                .toList();
+    }
+
+    private boolean isMatchingTag(FetchItem fetchItem, TagEntity tag) {
+        return fetchItem.getCategories().contains(tag.getImportedSourceName()) ||
+                fetchItem.getMechanics().contains(tag.getImportedSourceName());
+    }
+
+    private void updateGameInOwnTransaction(Game game, List<TagEntity> globalTags) {
         new TransactionTemplate(transactionManager).executeWithoutResult((__) -> {
             try {
-                updateGame(game);
+                updateGame(game, globalTags);
                 sleepRandom(2000);
             } catch (SearchException e) {
                 LOG.warn("Could not update game {}: {}", game.getName(), e.getMessage());
@@ -74,15 +91,20 @@ public class BggUpdateService {
     }
 
     public Optional<Game> updateGame(Game game) throws SearchException {
+        var globalTags = tagRepository.findByType(TagType.GLOBAL);
+        return updateGame(game, globalTags);
+    }
+
+    private Optional<Game> updateGame(Game game, List<TagEntity> globalTags) throws SearchException {
         LOG.info("Updating game {}", game.getName());
         Optional<SearchItem> optionalItem = findMatchingSearchItem(game);
         return optionalItem.flatMap(item -> {
             sleepRandom(100);
-            return updateGame(game, item);
+            return updateGame(game, item, globalTags);
         });
     }
 
-    private Optional<Game> updateGame(Game game, SearchItem item) {
+    private Optional<Game> updateGame(Game game, SearchItem item, List<TagEntity> globalTags) {
         try {
             Collection<FetchItem> fetchItems = BGG.fetch(List.of(item.getId()), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
             if (fetchItems.size() == 0) {
@@ -91,7 +113,7 @@ public class BggUpdateService {
             }
             FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
             try {
-                return Optional.of(updateGameFromBgg(game, firstItem));
+                return Optional.of(updateGameFromBgg(game, firstItem, globalTags));
             } catch (Exception e){
                 LOG.error("Could not update item", e);
             }
@@ -115,7 +137,7 @@ public class BggUpdateService {
                 .findAny();
     }
 
-    private Game updateGameFromBgg(Game game, FetchItem fetchItem) {
+    private Game updateGameFromBgg(Game game, FetchItem fetchItem, List<TagEntity> globalTags) {
         game.setUrl(String.format("https://boardgamegeek.com/boardgame/%s", fetchItem.getId()));
         game.setMaxPlayers(Integer.parseInt(fetchItem.getMaxPlayers().getValue()));
         game.setMinPlayers(Integer.parseInt(fetchItem.getMinPlayers().getValue()));
@@ -123,6 +145,8 @@ public class BggUpdateService {
         game.setImageUrl(fetchItem.getImageUrl());
         game.setThumbnailUrl(fetchItem.getThumbnailUrl());
         game.setPlayingTimeMinutes(Integer.parseInt(fetchItem.getPlayingTime().getValue()));
+        findMatchingTags(fetchItem, globalTags)
+                .forEach(game::addGlobalTag);
         return gameRepository.save(game);
     }
 

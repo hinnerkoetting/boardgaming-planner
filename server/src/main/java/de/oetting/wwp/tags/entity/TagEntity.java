@@ -22,6 +22,10 @@ public class TagEntity {
     @NotNull
     private TagType type;
 
+    /** Used to create a mapping so that we can automatically add tags to imported games */
+    @Column@Length(max = 200)
+    private String importedSourceName;
+
     public Long getId() {
         return id;
     }
@@ -52,5 +56,13 @@ public class TagEntity {
 
     public void setType(TagType type) {
         this.type = type;
+    }
+
+    public String getImportedSourceName() {
+        return importedSourceName;
+    }
+
+    public void setImportedSourceName(String importedSourceName) {
+        this.importedSourceName = importedSourceName;
     }
 }

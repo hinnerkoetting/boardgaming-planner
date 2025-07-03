@@ -13,14 +13,7 @@
       </Column>
     </DataTable>
     <Dialog v-model:visible="editDialogVisible" modal header="Edit tag">
-      <EditOrCreateTagComponent
-        mode="EDIT"
-        :prop-description="selectedTag?.description"
-        :prop-id="selectedTag?.id"
-        :prop-ranking="selectedTag?.ranking"
-        v-bind:prop-type="selectedTag?.type"
-        @tag-added="onTagEdited"
-      />
+      <EditOrCreateTagComponent mode="EDIT" :tag="selectedTag" @tag-added="onTagEdited" />
     </Dialog>
   </div>
 </template>
