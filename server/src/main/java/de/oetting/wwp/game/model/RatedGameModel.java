@@ -2,6 +2,8 @@ package de.oetting.wwp.game.model;
 
 import de.oetting.wwp.controller.model.RatingModel;
 
+import java.util.List;
+
 public class RatedGameModel {
 
     private Long id;
@@ -10,6 +12,7 @@ public class RatedGameModel {
 
     private String thumbnailUrl;
     private RatingModel rating;
+    private List<TagModel> tags;
 
     public Long getId() {
         return id;
@@ -49,5 +52,13 @@ public class RatedGameModel {
 
     public void setRating(RatingModel rating) {
         this.rating = rating;
+    }
+
+    public List<TagModel> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagModel> tags) {
+        this.tags = tags;
     }
 }

@@ -7,6 +7,7 @@ import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.exceptions.ConflictException;
+import de.oetting.wwp.game.model.TagModel;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
 import de.oetting.wwp.repositories.GameGroupRepository;
@@ -15,6 +16,7 @@ import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import de.oetting.wwp.service.RatingService;
+import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -120,9 +123,17 @@ public class GameGroupController {
             ratedGame.setId(game.getId());
             ratedGame.setName(game.getName());
             ratedGame.setRating(ratingService.computeRating(game, ratings));
+            ratedGame.setTags(game.getGlobalTags().stream().map(this::map).collect(Collectors.toList()));
             return ratedGame;
         }).toList();
 
+    }
+
+    private TagModel map(TagEntity tag) {
+        TagModel model = new TagModel();
+        model.setDescription(tag.getDescription());
+        model.setId(tag.getId());
+        return model;
     }
 
     @NotNull

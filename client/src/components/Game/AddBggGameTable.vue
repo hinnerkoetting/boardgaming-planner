@@ -48,8 +48,7 @@ async function onClickAdd(game: GameInTable) {
         description: fetchGameFound.description,
         thumbnailUrl: fetchGameFound.thumbnailUrl,
         imageUrl: fetchGameFound.imageUrl,
-        id: undefined,
-        globalTags: []
+        id: undefined
       })
       if (addedGameResponse.success) {
         emit('game-added', addedGameResponse.success, (message) => {

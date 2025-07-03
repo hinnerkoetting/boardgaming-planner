@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { RatedGame } from '@/model/RatedGame'
+import { GameGroupGame } from '@/model/Game'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Image from 'primevue/image'
@@ -49,7 +49,7 @@ import { ref } from 'vue'
 
 const props = defineProps({
   game: {
-    type: RatedGame,
+    type: GameGroupGame,
     required: true
   },
   withRateButton: {
@@ -59,7 +59,7 @@ const props = defineProps({
 })
 
 defineEmits<{
-  (e: 'game', game: RatedGame): void
+  (e: 'game', game: GameGroupGame): void
 }>()
 
 const game = ref(props.game)

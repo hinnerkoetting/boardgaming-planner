@@ -32,8 +32,7 @@ import { ref } from 'vue'
 import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
 import type { Player } from '@/model/Player/Player'
-import type { Game } from '@/model/Game'
-import type { RatedGame } from '@/model/RatedGame'
+import type { Game, GameGroupGame } from '@/model/Game'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
 import {
@@ -51,7 +50,7 @@ import { EventMessage } from '@/model/internal/EventMessage'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
-const games: Ref<RatedGame[]> = ref([])
+const games: Ref<GameGroupGame[]> = ref([])
 const isPartOfGroup = ref(false)
 
 const route = useRoute()
@@ -66,7 +65,7 @@ onMounted(async () => {
     isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
-    games.value = result as RatedGame[]
+    games.value = result
     sortGames()
   })
 })
@@ -85,15 +84,16 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     callback(new EventMessage(response.error.detail, false))
     return
   }
-  const ratedGame: RatedGame = {
+  const gameGroupGame: GameGroupGame = {
     ...game,
     rating: {
       myRating: undefined,
       averageRating: 0,
       existsVeto: false
-    }
+    },
+    tags: []
   }
-  games.value.push(ratedGame)
+  games.value.push(gameGroupGame)
   callback(new EventMessage('Game added', true))
 }
 

@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { Game } from '@/model/Game'
+import { AdminGame } from '@/model/Game'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -44,41 +44,41 @@ import type { TagModel } from '@/model/TagModel'
 import { fetchTags } from '@/services/api/TagApiService'
 
 defineProps({
-  games: Array as PropType<Array<Game>>,
+  games: Array as PropType<Array<AdminGame>>,
   default: () => []
 })
 
 const showEditDialog = ref(false)
 const showTagsDialog = ref(false)
-const editingGame: Ref<Game | undefined> = ref(undefined)
+const editingGame: Ref<AdminGame | undefined> = ref(undefined)
 const tags: Ref<TagModel[]> = ref([])
 
 const emit = defineEmits<{
-  (e: 'clickDelete', game: Game): void
-  (e: 'game-edited', game: Game): void
+  (e: 'clickDelete', game: AdminGame): void
+  (e: 'game-edited', game: AdminGame): void
 }>()
 
 onMounted(async () => {
   tags.value = await fetchTags()
 })
 
-function onClickEdit(game: Game) {
+function onClickEdit(game: AdminGame) {
   editingGame.value = game
   showEditDialog.value = true
 }
 
-function onClickTags(game: Game) {
+function onClickTags(game: AdminGame) {
   editingGame.value = game
   showTagsDialog.value = true
 }
 
-function onGameSaved(game: Game) {
+function onGameSaved(game: AdminGame) {
   editingGame.value = undefined
   showEditDialog.value = false
   emit('game-edited', game)
 }
 
-function onClickDelete(game: Game) {
+function onClickDelete(game: AdminGame) {
   emit('clickDelete', game)
 }
 </script>

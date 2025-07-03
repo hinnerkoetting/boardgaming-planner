@@ -5,6 +5,7 @@ import de.oetting.wwp.infrastructure.HttpErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -17,6 +18,7 @@ import java.util.NoSuchElementException;
 public class GlobalExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    public static final String CLIENT_ERROR = "CLIENT_ERROR";
 
     @ResponseStatus(value= HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
@@ -24,7 +26,7 @@ public class GlobalExceptionHandler {
         LOG.info("No such element: {}", e.getMessage());
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle("Not found");
-        problem.setType("CLIENT_ERROR");
+        problem.setType(CLIENT_ERROR);
         problem.setDetail(e.getMessage());
         return problem;
     }
@@ -47,7 +49,7 @@ public class GlobalExceptionHandler {
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.CONFLICT.getReasonPhrase());
-        problem.setType("CLIENT_ERROR");
+        problem.setType(CLIENT_ERROR);
         return problem;
     }
 
@@ -58,7 +60,7 @@ public class GlobalExceptionHandler {
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.FORBIDDEN.getReasonPhrase());
-        problem.setType("CLIENT_ERROR");
+        problem.setType(CLIENT_ERROR);
         return problem;
     }
 
@@ -69,14 +71,23 @@ public class GlobalExceptionHandler {
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
-        problem.setType("CLIENT_ERROR");
+        problem.setType(CLIENT_ERROR);
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public HttpErrorResponse notFound(ResourceNotFoundException e) {
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
+        problem.setType(CLIENT_ERROR);
         return problem;
     }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public HttpErrorResponse otherError(Exception e) {
-        LOG.info("Exception: Type: {}, Message: {}", e.getClass().getSimpleName(), e.getMessage());
+        LOG.error("Exception: Type: {}, Message: {}", e);
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());

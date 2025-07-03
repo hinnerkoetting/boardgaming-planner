@@ -29,16 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import type { RatedGame } from '@/model/RatedGame'
 import type { Rating } from '@/model/Rating'
 import Dialog from 'primevue/dialog'
-import { ref, type Ref } from 'vue'
+import { ref, type PropType, type Ref } from 'vue'
 import RatingComponent from '../RatingComponent.vue'
 import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
+import type { GameGroupGame } from '@/model/Game'
 
 const props = defineProps({
   games: {
+    type: Array as PropType<GameGroupGame[]>,
     required: true
   },
   gameGroupId: {
@@ -52,13 +53,12 @@ const props = defineProps({
   }
 })
 
-const games: Ref<RatedGame[]> = ref(props.games as RatedGame[])
+const games: Ref<GameGroupGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
 const ratingWindowVisible = ref(false)
-const selectedGame: Ref<RatedGame | undefined> = ref()
+const selectedGame: Ref<GameGroupGame | undefined> = ref()
 
-async function onClickRate(game: RatedGame) {
-  console.log('bla')
+async function onClickRate(game: GameGroupGame) {
   selectedGame.value = game
   ratingWindowVisible.value = true
 }

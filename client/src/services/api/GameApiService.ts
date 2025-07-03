@@ -1,8 +1,8 @@
-import type { Game } from '@/model/Game'
+import type { AdminGame, Game } from '@/model/Game'
 import { authorizedFetch } from './ApiService'
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 
-export async function fetchGames(): Promise<Game[]> {
+export async function fetchGames(): Promise<AdminGame[]> {
   const response = await authorizedFetch('/api/games')
   return await response.json()
 }
