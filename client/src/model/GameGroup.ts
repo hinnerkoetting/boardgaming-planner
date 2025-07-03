@@ -1,13 +1,9 @@
-import type { Player } from './Player'
-
-export class Game {
+export class GameGroup {
   id: Number
   name: String
-  players: Player[]
 
-  constructor(id: Number, name: String, players: Player[]) {
+  constructor(id: Number, name: String) {
     this.id = id
     this.name = name
-    this.players = players
   }
 }

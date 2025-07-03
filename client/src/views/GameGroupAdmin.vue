@@ -1,11 +1,16 @@
 <template>
   <div>
-    <h1>Manage gamegroups</h1>
+    <h1>Manage gaming group</h1>
     <DataTable :value="gameGroups" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
       <Column header="Actions">
         <template #body="slotProps">
-          <Button @click="onClickDelete(slotProps.data.id)" severity="danger"> Delete </Button>
+          <Button severity="secondary">
+            <RouterLink :to="'/gameGroups/' + slotProps.data.id">Manage players</RouterLink>
+          </Button>
+          <Button @click="onClickDelete(slotProps.data.id)" severity="danger">
+            Delete group
+          </Button>
         </template>
       </Column>
     </DataTable>
@@ -29,10 +34,9 @@ import Button from 'primevue/button'
 import { deleteGameGroup, fetchGameGroups } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
-import type { Game } from '@/model/Game'
 import type { GameGroup } from '@/model/GameGroup'
 
-const gameGroups: Ref<Game[]> = ref([] as GameGroup[])
+const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
 onMounted(async () => {
   gameGroups.value = await fetchGameGroups()

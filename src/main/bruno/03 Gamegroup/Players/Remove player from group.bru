@@ -1,0 +1,25 @@
+meta {
+  name: Remove player from group
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/players/{{playerId}}
+  body: none
+  auth: none
+}
+
+body:json {
+  { 
+    "id": {{playerId}}
+  }
+}
+
+body:text {
+  1
+}
+
+assert {
+  res.status: in 201, 409
+}
