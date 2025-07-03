@@ -1,14 +1,20 @@
 <template>
   <div>
-    <h1>Play this next time?</h1>
-    <div id="ratingButtons">      
+    <h1>Want to play game next time?</h1>
+    <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
+    <div id="ratingButtons">
       <Button @click="onClickRating(10)">&#128077;&#128077;&#128077; Absolutely</Button>
       <Button @click="onClickRating(7)">&#128077;&#128077; </Button>
       <Button @click="onClickRating(4)">&#128077; </Button>
       <Button @click="onClickRating(1)" severity="warn"><div class="meh">&#128077;</div></Button>
-      <Button @click="onClickRating(0)" severity="danger"><div class="veto">&#128077;</div>Veto</Button>
+      <Button @click="onClickRating(0)" severity="danger"
+        ><div class="veto">&#128077;</div>
+        Veto</Button
+      >
 
-      <Button severity="secondary" @click="oncClickDeleteRating()" class="delete">Forget rating</Button>
+      <Button severity="secondary" @click="oncClickDeleteRating()" class="delete"
+        >Forget rating</Button
+      >
     </div>
   </div>
 </template>
@@ -16,10 +22,11 @@
 <script setup lang="ts">
 import { Game } from '@/model/Game'
 import type { Rating } from '@/model/Rating'
-import { deleteInterest, updateRating } from '@/services/api/ApiService'
+import { deleteInterest, updateRating } from '@/services/api/RatingService'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import Message from 'primevue/message'
+import { ref, type Ref } from 'vue'
 
 const props = defineProps({
   game: {
@@ -38,6 +45,7 @@ const emit = defineEmits<{
 }>()
 
 const game = ref(props.game)
+const errorMessage: Ref<string> = ref('')
 
 async function onClickRating(rating: number) {
   const response = await updateRating({
@@ -49,7 +57,7 @@ async function onClickRating(rating: number) {
   if (response.success) {
     emit('gameRated', response.success)
   } else {
-    console.info(` Error when rating a game ${JSON.stringify(response.error)}`)
+    errorMessage.value = response.error?.detail || 'Error'
   }
 }
 
@@ -91,5 +99,4 @@ Button {
 .delete {
   margin-top: 16px;
 }
-
 </style>

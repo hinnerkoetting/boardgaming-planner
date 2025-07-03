@@ -2,7 +2,6 @@
 import LoginComponent from '@/components/LoginComponent.vue'
 import EventBus from '@/services/EventBus'
 import { isLoggedIn } from '@/services/LoginService'
-import Button from 'primevue/button'
 import { ref } from 'vue'
 
 const isLoggedInRef = ref(isLoggedIn())

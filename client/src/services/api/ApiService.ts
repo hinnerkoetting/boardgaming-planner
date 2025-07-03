@@ -3,10 +3,8 @@ import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
-import { getCurrentPlayerId, isLoggedIn } from '../LoginService'
-import type { Interest } from '@/model/Interest'
+import { isLoggedIn } from '../LoginService'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
-import type { Rating } from '@/model/Rating'
 
 // Auth
 
@@ -59,34 +57,6 @@ export async function addGame(game: Game): Promise<Game> {
     body: JSON.stringify(game)
   })
   return await response.json()
-}
-
-export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
-  const playerId = getCurrentPlayerId()
-  const response = await authorizedFetch(`/api/ratings/gameGroup/${gameGroupId}/player/${playerId}`)
-  return await response.json()
-}
-
-export async function updateRating(rating: Interest): Promise<ResponseWrapper<Rating>> {
-  const response = await authorizedFetch('/api/ratings', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(rating)
-  })
-  return wrapResponse(response)
-}
-
-export async function deleteInterest(rating: Interest): Promise<ResponseWrapper<Rating>> {
-  const response = await authorizedFetch('/api/ratings', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(rating)
-  })
-  return wrapResponse(response)
 }
 
 // BGG

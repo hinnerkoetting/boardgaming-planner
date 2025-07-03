@@ -25,7 +25,11 @@
             >
               Not rated yet
             </div>
-            <Button severity="secondary" @click="$emit('game', game)" class="center-horizontally"
+            <Button
+              v-if="withRateButton"
+              severity="secondary"
+              @click="$emit('game', game)"
+              class="center-horizontally"
               >Rate</Button
             >
           </div>
@@ -47,6 +51,10 @@ const props = defineProps({
   game: {
     type: RatedGame,
     required: true
+  },
+  withRateButton: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -72,11 +80,11 @@ const game = ref(props.game)
   text-align: center;
 }
 
-.title {  
+.title {
   display: block;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;  
+  white-space: nowrap;
   text-align: center;
   max-width: 320px;
 }

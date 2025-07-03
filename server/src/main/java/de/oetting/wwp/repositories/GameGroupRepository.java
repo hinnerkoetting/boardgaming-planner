@@ -18,5 +18,6 @@ public interface GameGroupRepository extends PagingAndSortingRepository<GameGrou
             "where gg.id = :gameGroupId and p.id = :playerId")
     Optional<Player> playerAssignedToGameGroup(long playerId, long gameGroupId);
 
+
     boolean existsByName(String name);
 }

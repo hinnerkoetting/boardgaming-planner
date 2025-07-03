@@ -9,6 +9,7 @@
                 :game="item"
                 @game-rating-selected="onClickRate"
                 v-on:game="onClickRate"
+                :withRateButton="withRateButton"
               />
             </div>
           </template>
@@ -43,6 +44,11 @@ const props = defineProps({
   gameGroupId: {
     type: Number,
     required: true
+  },
+  withRateButton: {
+    type: Boolean,
+    required: true,
+    default: true
   }
 })
 
@@ -71,7 +77,7 @@ function onGameRated(rating: Rating) {
 <style lang="css" scoped>
 .grid {
   display: flex;
-  justify-content: space-between;  
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -79,7 +85,7 @@ function onGameRated(rating: Rating) {
 .grid-card {
   flex: 0 0 250px;
   margin-bottom: auto;
-  align-self: stretch;  
+  align-self: stretch;
 }
 
 @media (max-width: 500px) {
@@ -87,7 +93,7 @@ function onGameRated(rating: Rating) {
     display: block;
   }
   .grid-card {
-    flex: 0 0 100%;  
+    flex: 0 0 100%;
   }
 }
 </style>

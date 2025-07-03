@@ -3,20 +3,27 @@
     <h1>Group {{ gameGroup.name }}</h1>
 
     <h2>Games</h2>
-    <GamesCollection v-if="games.length > 0" :games="games" :game-group-id="gameGroupId" />
+    <GamesCollection
+      v-if="games.length > 0"
+      :games="games"
+      :game-group-id="gameGroupId"
+      :with-rate-button="isPartOfGroup"
+    />
 
-    <h2 class="green">Add game</h2>
-    <AddExistingGame @game-added="onGameAdded" />
+    <template v-if="isPartOfGroup">
+      <h2 class="green">Add game</h2>
+      <AddExistingGame @game-added="onGameAdded" />
 
-    <h2 class="green">Import from Boardgamegeek</h2>
-    <AddGameBgg @game-added="onGameAdded" />
+      <h2 class="green">Import from Boardgamegeek</h2>
+      <AddGameBgg @game-added="onGameAdded" />
+    </template>
 
     <h2>Players</h2>
     <DataTable :value="players" tableStyle="min-width: 20rem">
       <Column field="name" header="Name"></Column>
     </DataTable>
 
-    <Button severity="danger" @click="onClickLeaveButton">Leave group</Button>
+    <Button v-if="isPartOfGroup" severity="danger" @click="onClickLeaveButton">Leave group</Button>
   </div>
 </template>
 
@@ -43,10 +50,12 @@ import {
 } from '@/services/api/GameGroupApiService'
 import Button from 'primevue/button'
 import EventBus from '@/services/EventBus'
+import { getCurrentPlayerId } from '@/services/LoginService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
 const games: Ref<RatedGame[]> = ref([])
+const isPartOfGroup = ref(false)
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
@@ -57,6 +66,7 @@ onMounted(async () => {
   })
   fetchPlayersInGroup(gameGroupId).then((result) => {
     players.value = result
+    isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     games.value = result as RatedGame[]

@@ -7,14 +7,17 @@ import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.exceptions.UnprocessableEntityException;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.service.RatingService;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +42,7 @@ public class RatingController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @Transactional
     public RatingModel updateRating(@RequestBody RatingRequest request) {
+        checkUserIsPartOfGroup(request.getGameGroupId());
         var optionalRating = ratingRepository.findByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
 
         if (optionalRating.isPresent()) {
@@ -56,6 +60,7 @@ public class RatingController {
     @ResponseStatus(value = HttpStatus.OK)
     @Transactional
     public RatingModel deleteRating(@RequestBody RatingRequest request) {
+        checkUserIsPartOfGroup(request.getGameGroupId());
         ratingRepository.deleteByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
         return computeRating(request);
     }
@@ -89,5 +94,17 @@ public class RatingController {
         Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
         List<Rating> ratings = ratingRepository.findByGameGroupIdAndGameId(request.getGameGroupId(), request.getGameId());
         return ratingService.computeRating(game, ratings);
+    }
+
+    private void checkUserIsPartOfGroup(long gameGroupId){
+        var myPlayer = findMyPlayer();
+        if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
+            throw new UnprocessableEntityException("You cannot rate games in groups that you did not join");
+        };
+    }
+
+    private Player findMyPlayer() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
     }
 }

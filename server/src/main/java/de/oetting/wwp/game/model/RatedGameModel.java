@@ -1,4 +1,6 @@
-package de.oetting.wwp.controller.model;
+package de.oetting.wwp.game.model;
+
+import de.oetting.wwp.controller.model.RatingModel;
 
 public class RatedGameModel {
 
