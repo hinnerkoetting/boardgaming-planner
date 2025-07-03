@@ -2,3 +2,7 @@ spring:
   data:
     rest:
       basePath: /api
+
+security:
+  ignored: '/assets/**'
+

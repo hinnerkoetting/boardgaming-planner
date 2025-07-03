@@ -49,7 +49,7 @@ async function onClickRating(rating: number) {
   if (response.success) {
     emit('gameRated', response.success)
   } else {
-    console.info(` Error when rating a game ${response.error}`)
+    console.info(` Error when rating a game ${JSON.stringify(response.error)}`)
   }
 }
 
@@ -63,7 +63,7 @@ async function oncClickDeleteRating() {
   if (response.success) {
     emit('gameRatingDeleted', response.success)
   } else {
-    console.info(` Error when deleting rating for a game ${response.error}`)
+    console.info(` Error when deleting rating for a game ${JSON.stringify(response.error)}`)
   }
 }
 </script>
