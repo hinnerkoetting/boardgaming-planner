@@ -21,12 +21,6 @@
 <script setup lang="ts">
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import {
-  addGameToGroup,
-  fetchGamesInGroup,
-  fetchPlayersInGroup,
-  loadGameGroup
-} from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { GameGroup } from '@/model/GameGroup'
@@ -37,6 +31,12 @@ import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { RatedGame } from '@/model/RatedGame'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
+import {
+  addGameToGroup,
+  fetchGamesInGroup,
+  fetchPlayersInGroup,
+  loadGameGroup
+} from '@/services/api/GameGroupApiService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])

@@ -1,37 +1,34 @@
 <template>
-  <div class="wrapper">    
+  <div class="wrapper">
     <div class="pageContent">
       <h1>Groups</h1>
       <DataView :value="gameGroups" class="collection">
+        <template #empty> No group exists. Try creating one below. </template>
         <template #list="slotProps">
-        
-            <div v-for="(item, index) in slotProps.items" :key="index">
-              <div class="row" @click="onRowClick(item)">
-                {{  item.name }}              
-                <Button @click="onClickJoinGroup(item)"> Join </Button>                    
-              </div>
+          <div v-for="(item, index) in slotProps.items" :key="index">
+            <div class="row" @click="onRowClick(item)">
+              {{ item.name }}
+              <Button @click="onClickJoinGroup(item)"> Join </Button>
             </div>
-        
+          </div>
         </template>
       </DataView>
-
-      <AddGameGroup @game-group-added="onGameGroupAdded" class="addGameGroup"/>
+      <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
 import Button from 'primevue/button'
-import { addPlayerToGroup, fetchGameGroups } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
 import { getCurrentPlayerId } from '@/services/LoginService'
-import AddGameGroup from '@/components/GameGroup/AddGameGroup.vue'
 import router from '@/router'
 import EventBus from '@/services/EventBus'
 import DataView from 'primevue/dataview'
+import CreateGameGroupWrapper from '@/components/GameGroup/CreateGameGroupWrapper.vue'
+import { addPlayerToGroup, fetchGameGroups } from '@/services/api/GameGroupApiService'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
@@ -52,7 +49,7 @@ function onGameGroupAdded(gameGroup: GameGroup) {
   gameGroups.value.push(gameGroup)
 }
 
-function onRowClick(gameGroup: GameGroup) {  
+function onRowClick(gameGroup: GameGroup) {
   const gameGroupId = gameGroup.id
   if (!gameGroupId) {
     console.error('Gamegroup has no id')
@@ -73,11 +70,10 @@ function openGroup(gameGroup: GameGroup) {
 </script>
 
 <style scoped lang="css">
-
 .row {
   border-color: #e2e8f0;
   border-style: solid;
-  border-width: 1px 0 1px 0;  
+  border-width: 1px 0 1px 0;
   padding: 8px;
   font-size: 15px;
   line-height: 1.6;
@@ -90,15 +86,11 @@ function openGroup(gameGroup: GameGroup) {
 }
 
 .row:hover {
-  background: #f1f5f9
+  background: #f1f5f9;
 }
 
 button {
   margin-left: 20px;
-}
-
-.addGameGroup {
-  margin-top: 32px
 }
 
 .wrapper {
@@ -106,10 +98,10 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
 }
 
-.pageContent { 
+.pageContent {
   width: 100%;
   max-width: 600px;
 }
@@ -117,5 +109,4 @@ button {
 .collection {
   margin-top: 8px;
 }
-
-</style>>
+</style>

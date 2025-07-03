@@ -1,10 +1,8 @@
 import { BggFetchItem } from '@/model/BggFetchItem'
 import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
-import type { GameGroup } from '@/model/GameGroup'
 import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
-import type { Player } from '@/model/Player/Player'
 import { getCurrentPlayerId, isLoggedIn } from '../LoginService'
 import type { Interest } from '@/model/Interest'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
@@ -45,20 +43,10 @@ export async function fetchGames(): Promise<Game[]> {
   return json._embedded.games as Game[]
 }
 
-export async function fetchGameGroups(): Promise<GameGroup[]> {
-  const response = await authorizedFetch('/api/gameGroups')
-  const json = await response.json()
-  return json._embedded.gameGroups
-}
-
 // Delete top-level entities
 
 export async function deleteGame(id: Number) {
   await authorizedFetch(`/api/games/${id}`, { method: 'DELETE' })
-}
-
-export async function deleteGameGroup(id: Number) {
-  await authorizedFetch(`/api/gameGroups/${id}`, { method: 'DELETE' })
 }
 
 // Add top-level entities
@@ -69,60 +57,6 @@ export async function addGame(game: Game): Promise<Game> {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(game)
-  })
-  return await response.json()
-}
-
-// Gamegroups
-export async function loadGameGroup(gameGroupId: number): Promise<GameGroup> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}`)
-  return (await response.json()) as GameGroup
-}
-
-export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/players`)
-  return (await response.json()) as Player[]
-}
-
-export async function fetchGamesInGroup(gameGroupId: Number): Promise<Game[]> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`)
-  return (await response.json()) as Game[]
-}
-
-export async function removePlayerFromGroup(gameGroupId: Number, playerId: Number) {
-  await authorizedFetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
-    method: 'DELETE'
-  })
-}
-
-export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
-  await authorizedFetch(`/api/gameGroups/${gameGroupId}/players`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id: playerId })
-  })
-}
-
-export async function addGameToGroup(gameGroupId: number, gameId: number): Promise<boolean> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id: gameId })
-  })
-  return response.status < 300
-}
-
-export async function addGameGroup(gameGroup: GameGroup): Promise<GameGroup> {
-  const response = await authorizedFetch('/api/gameGroups', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ name: gameGroup.name })
   })
   return await response.json()
 }

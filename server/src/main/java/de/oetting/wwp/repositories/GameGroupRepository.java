@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Optional;
 
-@RepositoryRestResource(collectionResourceRel = "gameGroups", path = "gameGroups")
 public interface GameGroupRepository extends PagingAndSortingRepository<GameGroup, Long>, CrudRepository<GameGroup,Long> {
 
     @Query("select p from Player p " +
@@ -19,8 +18,5 @@ public interface GameGroupRepository extends PagingAndSortingRepository<GameGrou
             "where gg.id = :gameGroupId and p.id = :playerId")
     Optional<Player> playerAssignedToGameGroup(long playerId, long gameGroupId);
 
-    @Override
-    @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    void delete(GameGroup entity);
-
+    boolean existsByName(String name);
 }

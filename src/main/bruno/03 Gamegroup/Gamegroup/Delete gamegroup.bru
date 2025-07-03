@@ -21,9 +21,5 @@ body:json {
 }
 
 assert {
-  res.status: eq 201
-}
-
-script:post-response {
-  bru.setVar("gameGroupId", res.body.id)
+  res.status: in 403, 200
 }

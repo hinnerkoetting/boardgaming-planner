@@ -16,7 +16,7 @@ headers {
 
 body:json {
   {
-    "name": "test"
+    "name": "{{groupName}}"
   }
 }
 
@@ -24,6 +24,12 @@ assert {
   res.status: eq 201
 }
 
+script:pre-request {
+  bru.setVar("groupName", "Group_" + Date.now())
+}
+
 script:post-response {
-  bru.setVar("gameGroupId", res.body.id)
+  if (res.status < 300) {
+    bru.setVar("gameGroupId", res.body.id)
+  }
 }
