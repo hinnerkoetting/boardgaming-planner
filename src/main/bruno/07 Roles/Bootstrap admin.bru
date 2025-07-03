@@ -1,13 +1,17 @@
 meta {
   name: Bootstrap admin
   type: http
-  seq: 3
+  seq: 1
 }
 
 post {
-  url: http://localhost:8080/api/auth/bootstrapAdmin/{{player_id}}
+  url: http://localhost:8080/api/roles/{{player_id}}/bootstrapOwner
   body: none
   auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
 }
 
 body:json {

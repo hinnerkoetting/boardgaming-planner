@@ -1,13 +1,9 @@
 package de.oetting.wwp.controller;
 
-import com.github.marcioos.bggclient.BGG;
-import com.github.marcioos.bggclient.common.ThingType;
 import com.github.marcioos.bggclient.search.SearchException;
-import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.wwp.entities.Game;
-import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
-import de.oetting.wwp.security.Roles;
+import de.oetting.wwp.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +20,7 @@ public class GameController {
 
     @DeleteMapping(path = "/{gameId}")
     @ResponseStatus(value = HttpStatus.OK)
-    @PreAuthorize(Roles.HAS_ROLE_ADMIN)
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void deleteGameById(@PathVariable("gameId") long gameId) {
         Game game = gameRepository.findById(gameId).orElseThrow();
         game.getGameGroups().forEach(gameGroup -> gameGroup.deleteGame(game));

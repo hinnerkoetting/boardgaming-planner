@@ -48,8 +48,6 @@ public class AuthController {
     @Autowired
     private PlayerRepository playerRepository;
 
-    @Autowired
-    private GroupManager groupManager;
 
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginReq)  {
@@ -104,29 +102,6 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(registrationRequest.getLogin(), token, savedPlayer.getId());
 
         return ResponseEntity.ok(loginResponse);
-    }
-
-    @PostMapping(value = "/bootstrapAdmin/{playerId}")
-    @Transactional
-    public ResponseEntity<?> bootstrapAdmin(@PathVariable("playerId") long playerId)  {
-        List<String> admins = groupManager.findUsersInGroup("admin");
-        Player player =  playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("Player not found"));
-        if (!admins.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        LOG.warn("No admin exists!");
-        if (groupManager.findAllGroups().isEmpty()) {
-            LOG.warn("No group exists at all. Creating admin group");
-            groupManager.createGroup("admin", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
-        }
-        LOG.warn("Promoting {} to admin", playerId);
-
-        groupManager.addUserToGroup(player.getName(), "admin");
-        UserDetails userDetails = userDetailsManager.loadUserByUsername(player.getName());
-        Collection<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        userDetailsManager.updateUser(new User(userDetails.getUsername(), userDetails.getPassword(), authorities));
-        return ResponseEntity.ok("ok");
     }
 
     private boolean doesUserAlreadyExist(String name) {

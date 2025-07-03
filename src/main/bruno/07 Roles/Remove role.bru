@@ -1,0 +1,30 @@
+meta {
+  name: Remove role
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:8080/api/roles/{{player_id}}/{{role}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "login": "user",
+    "password": "user"
+  }
+}
+
+vars:pre-request {
+  role: ROLE_ADMIN
+}
+
+assert {
+  res.status: eq 200
+}
