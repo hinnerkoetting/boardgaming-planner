@@ -11,7 +11,7 @@ import Toast from 'primevue/toast'
     </div>
   </header>
 
-  <RouterView />
+  <RouterView/>
   <Toast />
 </template>
 
@@ -36,4 +36,6 @@ header {
     padding-right: calc(var(--section-gap) / 2);    
   }
 }
+
+
 </style>

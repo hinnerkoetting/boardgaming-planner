@@ -20,7 +20,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
         registry.addResourceHandler("/index.html")
                 .addResourceLocations("classpath:/static/index.html")
-                .setCacheControl(CacheControl.noCache());
+                .setCacheControl(CacheControl.noCache().mustRevalidate());
         registry.addResourceHandler("/favicon.ico")
                 .addResourceLocations("classpath:/favicon.ico")
                 .setCacheControl(CacheControl.noCache());

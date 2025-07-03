@@ -66,7 +66,4 @@ async function onClickAdd(game: Game) {
   justify-content: space-between;
 }
 
-.gameDescription {
-
-}
 </style>

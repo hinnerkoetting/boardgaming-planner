@@ -1,20 +1,22 @@
 <template>
-  <div class="full-width">
-    <h1>Groups</h1>
-    <DataView :value="gameGroups">
-      <template #list="slotProps">
-       
-          <div v-for="(item, index) in slotProps.items" :key="index">
-            <div class="row" @click="onRowClick(item)">
-              {{  item.name }}              
-              <Button @click="onClickJoinGroup(item)"> Join </Button>                    
+  <div class="wrapper">    
+    <div class="pageContent">
+      <h1>Groups</h1>
+      <DataView :value="gameGroups" class="collection">
+        <template #list="slotProps">
+        
+            <div v-for="(item, index) in slotProps.items" :key="index">
+              <div class="row" @click="onRowClick(item)">
+                {{  item.name }}              
+                <Button @click="onClickJoinGroup(item)"> Join </Button>                    
+              </div>
             </div>
-          </div>
-       
-      </template>
-    </DataView>
+        
+        </template>
+      </DataView>
 
-    <AddGameGroup @game-group-added="onGameGroupAdded" class="addGameGroup"/>
+      <AddGameGroup @game-group-added="onGameGroupAdded" class="addGameGroup"/>
+    </div>
   </div>
 </template>
 
@@ -83,7 +85,8 @@ function openGroup(gameGroup: GameGroup) {
   display: flex;
   column-gap: 32px;
   vertical-align: middle;
-  align-items: center;  
+  align-items: center;
+  justify-content: space-between;
 }
 
 .row:hover {
@@ -98,15 +101,21 @@ button {
   margin-top: 32px
 }
 
-.full-width {
+.wrapper {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
 }
 
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+.pageContent { 
+  width: 100%;
+  max-width: 600px;
 }
+
+.collection {
+  margin-top: 8px;
+}
+
 </style>>
