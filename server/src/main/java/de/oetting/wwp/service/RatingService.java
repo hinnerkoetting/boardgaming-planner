@@ -25,6 +25,7 @@ public class RatingService {
                 .collect(Collectors.averagingDouble(Rating::getRating));
         ratingModel.setAverageRating(gameRatings.isEmpty() ? null: new BigDecimal(average));
         ratingModel.setExistsVeto(gameRatings.stream().anyMatch(rating -> rating.getRating() == 0));
+        ratingModel.setNumberOfVotes(gameRatings.size());
         return ratingModel;
     }
 }

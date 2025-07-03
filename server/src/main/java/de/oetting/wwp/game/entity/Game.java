@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
@@ -27,9 +29,16 @@ public class Game {
     private String imageUrl;
     private String thumbnailUrl;
 
+    @Min(0)
+    @Max(9999)
     private Integer minPlayers;
+
+    @Max(9999)
     private Integer maxPlayers;
+
+    @Min(0)
     private Integer playingTimeMinutes;
+
     @Column(length = 1000)
     private String url;
 

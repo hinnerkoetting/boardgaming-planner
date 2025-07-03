@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class RatingModel {
 
     private Integer myRating;
+    private int numberOfVotes;
     private BigDecimal averageRating;
     private boolean existsVeto;
 
@@ -30,5 +31,13 @@ public class RatingModel {
 
     public void setExistsVeto(boolean existsVeto) {
         this.existsVeto = existsVeto;
+    }
+
+    public int getNumberOfVotes() {
+        return numberOfVotes;
+    }
+
+    public void setNumberOfVotes(int numberOfVotes) {
+        this.numberOfVotes = numberOfVotes;
     }
 }

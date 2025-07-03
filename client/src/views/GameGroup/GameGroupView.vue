@@ -2,8 +2,15 @@
   <div>
     <h1>Group {{ gameGroup.name }}</h1>
 
-    <h2>Games</h2>
-    <FilterGamesDialog :allTags="tags" :allGames="allGames" @updatedFilter="onUpdatedFilters" />
+    <h2>
+      Games
+      <FilterGamesDialog
+        :allTags="tags"
+        :allGames="allGames"
+        @updatedFilter="onUpdatedFilters"
+        :numberOfPlayersInGroup="players.length"
+      />
+    </h2>
 
     <GamesCollection
       v-if="displayedGames.length > 0"
@@ -104,8 +111,9 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     },
     tags: []
   }
+  console.log('Games before add ' + displayedGames.value.length)
   allGames.value.push(gameGroupGame)
-  displayedGames.value.push(gameGroupGame)
+  console.log('Games after add ' + displayedGames.value.length)
   callback(new EventMessage('Game added', true))
 }
 
@@ -123,13 +131,16 @@ async function onClickLeaveButton() {
 }
 
 function onUpdatedFilters(filteredGames: GameGroupGame[]) {
+  console.log('Games before filter ' + displayedGames.value.length)
   displayedGames.value = filteredGames
+  console.log('Games after filter ' + displayedGames.value.length)
 }
 </script>
 
 <style lang="css" scoped>
 h2 {
   margin-top: 16px;
+  margin-bottom: 8px;
 }
 
 .filter {

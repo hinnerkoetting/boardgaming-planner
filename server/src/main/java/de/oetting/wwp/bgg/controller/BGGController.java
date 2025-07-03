@@ -9,6 +9,7 @@ import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.wwp.bgg.service.BggUpdateService;
 import de.oetting.wwp.exceptions.BadRequestException;
+import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/bgg")
@@ -39,9 +37,9 @@ public class BGGController {
         return output.getItems();
     }
 
-    @GetMapping(path = "/fetch/{ids}")
-    public Collection<FetchItem> searchBgg(@PathVariable("ids") Integer[] ids) throws FetchException {
-         return BGG.fetch(Arrays.asList(ids), ThingType.BOARDGAME);
+    @PostMapping(path = "/import/{id}")
+    public Game importFromBgg(@PathVariable("id") int id) throws FetchException {
+        return bggUpdateService.importFromBgg(id).orElseThrow();
     }
 
     @PostMapping(path = "/sync")

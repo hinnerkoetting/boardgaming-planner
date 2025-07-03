@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { ref, watch, type PropType, type Ref } from 'vue'
-import { fetchFromBgg } from '@/services/api/ApiService'
+import { importFromBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
-import type { BggFetchItem } from '@/model/BggFetchItem'
 import DataView from 'primevue/dataview'
 import type { Game } from '@/model/Game'
 import type { EventMessage } from '@/model/internal/EventMessage'
 import Message from 'primevue/message'
-import { addGame } from '@/services/api/GameApiService'
-
 const emit = defineEmits<{
   (e: 'game-added', game: Game, callback: (message: EventMessage) => void): void
 }>()
@@ -35,36 +32,20 @@ watch(
 )
 
 async function onClickAdd(game: GameInTable) {
-  const fetchedGame = await fetchFromBgg(game.id)
-  switch (fetchedGame) {
-    case null:
-      game.message = 'Game not found on BGG???'
-      game.severity = 'error'
-      break
-    default: {
-      const fetchGameFound = fetchedGame as BggFetchItem
-      const addedGameResponse = await addGame({
-        name: fetchGameFound.name,
-        description: fetchGameFound.description,
-        thumbnailUrl: fetchGameFound.thumbnailUrl,
-        imageUrl: fetchGameFound.imageUrl,
-        id: undefined
-      })
-      if (addedGameResponse.success) {
-        emit('game-added', addedGameResponse.success, (message) => {
-          if (message.success) {
-            game.message = message.message
-            game.severity = 'info'
-          } else {
-            game.message = message.message
-            game.severity = 'error'
-          }
-        })
+  const fetchedGameResponse = await importFromBgg(game.id)
+  if (fetchedGameResponse.success) {
+    emit('game-added', fetchedGameResponse.success, (message) => {
+      if (message.success) {
+        game.message = message.message
+        game.severity = 'info'
       } else {
-        game.message = addedGameResponse.error?.detail || 'Import failed'
+        game.message = message.message
         game.severity = 'error'
       }
-    }
+    })
+  } else {
+    game.message = fetchedGameResponse.error?.detail || 'Error'
+    game.severity = 'error'
   }
 }
 </script>

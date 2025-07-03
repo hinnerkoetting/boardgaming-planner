@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div class="wrapper">
     <Button @click="onClickShowFilter">Filter</Button>
-    <Dialog v-model:visible="showDialog" modal header="Filter games">
+    <Dialog v-model:visible="showDialog" modal :header="`Filter games (${numberOfVisibleGames})`">
       <FilterGamesComponent
         :allGames="allGames"
         :allTags="allTags"
-        @updated-filter="$emit('updated-filter', $event)"
+        :numberOfPlayersInGroup="numberOfPlayersInGroup"
+        @updated-filter="onFilterUpdated"
       />
     </Dialog>
   </div>
@@ -15,11 +16,11 @@
 import type { GameGroupGame } from '@/model/Game'
 import type { TagModel } from '@/model/TagModel'
 import FilterGamesComponent from './FilterGamesComponent.vue'
-import { ref, type PropType } from 'vue'
+import { ref, watch, type PropType } from 'vue'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 
-defineProps({
+const props = defineProps({
   allTags: {
     type: Array as PropType<TagModel[]>,
     required: true
@@ -27,16 +28,41 @@ defineProps({
   allGames: {
     type: Array as PropType<GameGroupGame[]>,
     required: true
+  },
+  numberOfPlayersInGroup: {
+    type: Number
   }
 })
 
-defineEmits<{
+const numberOfVisibleGames = ref()
+
+const emit = defineEmits<{
   (e: 'updated-filter', visibleGames: GameGroupGame[]): void
 }>()
+
+watch(
+  () => props.allGames,
+  (games: GameGroupGame[]) => {
+    if (!numberOfVisibleGames.value) {
+      numberOfVisibleGames.value = games.length
+    }
+  }
+)
 
 const showDialog = ref(false)
 
 function onClickShowFilter() {
   showDialog.value = true
 }
+
+function onFilterUpdated(games: GameGroupGame[]) {
+  numberOfVisibleGames.value = games.length
+  emit('updated-filter', games)
+}
 </script>
+
+<style lang="css" scoped>
+.wrapper {
+  display: inline;
+}
+</style>

@@ -48,6 +48,20 @@ public class BggUpdateService {
         gameRepository.findAll().forEach(game -> updateGame(game));
     }
 
+    public Optional<Game> importFromBgg(int bggId) throws FetchException {
+        Collection<FetchItem> fetchItems = BGG.fetch(List.of(bggId), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
+        if (fetchItems.size() == 0) {
+            LOG.error("Fetch from BGG did not find anything for {}", bggId);
+            return Optional.empty();
+        }
+
+        FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
+        Game game = new Game();
+        game.setName(firstItem.getName());
+        Game writtenGame = updateGameFromBgg(game, firstItem);
+        return Optional.of(writtenGame);
+    }
+
     private void updateGame(Game game) {
         new TransactionTemplate(transactionManager).executeWithoutResult((__) -> {
             try {
@@ -72,7 +86,11 @@ public class BggUpdateService {
                 return;
             }
             FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
-            updateGameFromBgg(game, firstItem);
+            try {
+                updateGameFromBgg(game, firstItem);
+            } catch (Exception e){
+                LOG.error("Could not update item", e);
+            }
         } catch (FetchException e) {
             LOG.warn("Could not update game during fetch {}: {}", game.getName(), e.getMessage());
         }
@@ -90,18 +108,15 @@ public class BggUpdateService {
         return searchOutput.getItems().stream().filter(item -> item.getName().getValue().equals(game.getName())).findAny();
     }
 
-    private void updateGameFromBgg(Game game, FetchItem fetchItem) {
-        try {
-            game.setUrl(String.format("https://boardgamegeek.com/boardgame/%s", fetchItem.getId()));
-            game.setMaxPlayers(Integer.parseInt(fetchItem.getMaxPlayers().getValue()));
-            game.setMinPlayers(Integer.parseInt(fetchItem.getMinPlayers().getValue()));
-            game.setDescription(fetchItem.getDescription());
-            game.setImageUrl(fetchItem.getImageUrl());
-            game.setPlayingTimeMinutes(Integer.parseInt(fetchItem.getPlayingTime().getValue()));
-            gameRepository.save(game);
-        } catch (Exception e){
-            LOG.error("Could not update item", e);
-        }
+    private Game updateGameFromBgg(Game game, FetchItem fetchItem) {
+        game.setUrl(String.format("https://boardgamegeek.com/boardgame/%s", fetchItem.getId()));
+        game.setMaxPlayers(Integer.parseInt(fetchItem.getMaxPlayers().getValue()));
+        game.setMinPlayers(Integer.parseInt(fetchItem.getMinPlayers().getValue()));
+        game.setDescription(fetchItem.getDescription());
+        game.setImageUrl(fetchItem.getImageUrl());
+        game.setThumbnailUrl(fetchItem.getThumbnailUrl());
+        game.setPlayingTimeMinutes(Integer.parseInt(fetchItem.getPlayingTime().getValue()));
+        return gameRepository.save(game);
     }
 
     private void sleepRandom(int maxMillis) {

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.NoSuchElementException;
 
@@ -81,6 +82,17 @@ public class GlobalExceptionHandler {
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
         problem.setType(CLIENT_ERROR);
+        problem.setDetail("Some entity unknown");
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public HttpErrorResponse controllerNotFound(NoHandlerFoundException e) {
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
+        problem.setType(CLIENT_ERROR);
+        problem.setDetail("Endpoint unknown");
         return problem;
     }
 

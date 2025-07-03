@@ -1,4 +1,3 @@
-import { BggFetchItem } from '@/model/BggFetchItem'
 import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import { LoginResponse } from '@/model/LoginResponse'
@@ -52,20 +51,9 @@ export async function searchBgg(searchTerm: String): Promise<ResponseWrapper<Bgg
   }
 }
 
-export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> {
-  const response = await authorizedFetch(`/api/bgg/fetch/${bggId}`)
-  const json = (await response.json()) as any[]
-  if (json.length > 0) {
-    const firstItem = json[0]
-    return new BggFetchItem(
-      firstItem.id,
-      firstItem.name,
-      firstItem.description,
-      firstItem.thumbnailUrl,
-      firstItem.imageUrl
-    )
-  }
-  return null
+export async function importFromBgg(bggId: Number): Promise<ResponseWrapper<Game>> {
+  const response = await authorizedFetch(`/api/bgg/import/${bggId}`, { method: 'POST' })
+  return wrapResponse(response)
 }
 
 export async function registerRequest(

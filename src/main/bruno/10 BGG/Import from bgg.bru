@@ -1,11 +1,11 @@
 meta {
-  name: Fetch from bgg
+  name: Import from bgg
   type: http
   seq: 2
 }
 
-get {
-  url: http://localhost:8080/api/bgg/fetch/{{bggIds}}
+post {
+  url: http://localhost:8080/api/bgg/import/{{bggIds}}
   body: none
   auth: none
 }

@@ -1,5 +1,45 @@
 <template>
   <div>
+    <div>
+      <div class="numberOfPlayers">
+        Number of players
+        <InputNumber
+          v-model="numberOfPlayers"
+          showButtons
+          class="numberOfPlayersInput"
+          :min="0"
+          :max="99"
+          @update:model-value="filter"
+        />
+        <Button v-if="numberOfPlayersInGroup" @click="copyNumberOfPlayers"
+          >&#x2190; From group ({{ numberOfPlayersInGroup }})</Button
+        >
+      </div>
+    </div>
+    <div class="duration">
+      Duration (minutes)
+      <InputNumber
+        v-model="duration[0]"
+        showButtons
+        class="durationInput"
+        :min="0"
+        :max="600"
+        :step="10"
+        @update:model-value="filter"
+      />
+      to
+      <InputNumber
+        v-model="duration[1]"
+        showButtons
+        class="durationInput"
+        :min="0"
+        :max="600"
+        :step="10"
+        @update:model-value="filter"
+      />
+
+      <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" />
+    </div>
     <div v-for="tag in tags" :key="tag.id" class="one-filter">
       <Button
         :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
@@ -22,6 +62,8 @@ import type { GameGroupGame } from '@/model/Game'
 import { TagModel } from '@/model/TagModel'
 import { FilterService, TagSelection } from '@/services/FilterService'
 import Button from 'primevue/button'
+import InputNumber from 'primevue/inputnumber'
+import Slider from 'primevue/slider'
 import { ref, watch, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
@@ -32,6 +74,9 @@ const props = defineProps({
   allGames: {
     type: Array as PropType<GameGroupGame[]>,
     required: true
+  },
+  numberOfPlayersInGroup: {
+    type: Number
   }
 })
 
@@ -40,6 +85,9 @@ const emit = defineEmits<{
 }>()
 
 const tags: Ref<TagSelection[]> = ref(createTagSelection(props.allTags))
+const numberOfPlayers: Ref<number | undefined> = ref(undefined)
+const duration: Ref<number[]> = ref([10, 300])
+
 const filterService = new FilterService()
 
 watch(
@@ -59,7 +107,7 @@ async function onClickFilterWith(tag: TagSelection) {
   } else {
     tag.selected = 'FILTER_WITH'
   }
-  emitFilterUpdate()
+  filter()
 }
 
 async function onClickFilterWithout(tag: TagSelection) {
@@ -68,12 +116,23 @@ async function onClickFilterWithout(tag: TagSelection) {
   } else {
     tag.selected = 'FILTER_WITHOUT'
   }
-  emitFilterUpdate()
+  filter()
 }
 
-function emitFilterUpdate() {
-  const filteredGames = filterService.filterGames(props.allGames, tags.value)
+function filter() {
+  const filterSettings = {
+    tags: tags.value,
+    numberOfPlayers: numberOfPlayers.value,
+    minPlayingTime: 0,
+    maxPlayingTime: Number.MAX_VALUE
+  }
+  const filteredGames = filterService.filterGames(props.allGames, filterSettings)
   emit('updated-filter', filteredGames)
+}
+
+function copyNumberOfPlayers() {
+  numberOfPlayers.value = props.numberOfPlayersInGroup
+  filter()
 }
 </script>
 
@@ -90,5 +149,34 @@ function emitFilterUpdate() {
 .filterButton {
   flex: 1;
   width: 150px;
+}
+
+.numberOfPlayersInput {
+  width: 75px;
+}
+
+.numberOfPlayers {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.duration {
+  margin-top: 16px;
+  margin-bottom: 32px;
+}
+
+.durationInput {
+  width: 100px;
+}
+
+.slider {
+  margin-top: 16px;
+}
+</style>
+
+<style lang="css">
+.p-inputnumber input {
+  width: 100%;
 }
 </style>

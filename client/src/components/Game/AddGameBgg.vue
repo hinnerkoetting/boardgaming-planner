@@ -2,11 +2,9 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { fetchFromBgg, searchBgg } from '@/services/api/ApiService'
+import { importFromBgg, searchBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
-import type { BggFetchItem } from '@/model/BggFetchItem'
 import DataView from 'primevue/dataview'
-import { addGame } from '@/services/api/GameApiService'
 
 const emit = defineEmits(['game-added'])
 
@@ -23,23 +21,11 @@ async function onClickSearch() {
 }
 
 async function onClickAdd(bggId: number) {
-  const fetchedGame = await fetchFromBgg(bggId)
-  switch (fetchedGame) {
-    case null:
-      console.log('Game not found ' + bggId)
-      break
-    default: {
-      const fetchGameFound = fetchedGame as BggFetchItem
-      const addedGame = await addGame({
-        name: fetchGameFound.name,
-        description: fetchGameFound.description,
-        thumbnailUrl: fetchGameFound.thumbnailUrl,
-        imageUrl: fetchGameFound.imageUrl,
-        id: undefined
-      })
-      emit('game-added', addedGame)
-      break
-    }
+  const importedGame = await importFromBgg(bggId)
+  if (importedGame.success) {
+    emit('game-added', importedGame.success)
+  } else {
+    console.error('Error when importing ' + importedGame.error)
   }
 }
 </script>
