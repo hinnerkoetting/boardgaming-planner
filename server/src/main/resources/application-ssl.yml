@@ -4,10 +4,10 @@ spring:
       jks:
         web-server:
           key:
-            alias: "server"
+            alias: "${SSL_KEY_ALIAS}"
           keystore:
             location: "file:${SSL_KEYSTORE_FILE}"
-            password: "${SSL_KEYSTORE_PASSWORD]"
+            password: "${SSL_KEYSTORE_PASSWORD}"
 server:
   port: 8443
   ssl:
