@@ -1,4 +1,4 @@
-class EventBusEvent extends Event {
+export class EventBusEvent extends Event {
   public data: any
 
   constructor({ type, data }: { type: string; data: any }) {

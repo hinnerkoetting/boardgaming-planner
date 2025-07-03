@@ -1,41 +1,12 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { doesCurrentPlayerHaveRole, isLoggedIn, logout } from './services/LoginService'
-import EventBus from './services/EventBus'
-import { ref } from 'vue'
-import router from './router'
-import { Role } from './model/api/JwtPayload'
-
-const isLoggedInRef = ref(isLoggedIn())
-
-EventBus.addEventListener('login-status', () => {
-  isLoggedInRef.value = isLoggedIn()
-})
-
-function onClickLogout() {
-  logout()
-  router.push('home')
-}
+import { RouterView } from 'vue-router'
+import NavigationComponent from './components/other/NavigationComponent.vue'
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-      <div v-if="isLoggedInRef">
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/gameGroups">Groups</RouterLink>
-          <a id="logout" @click="onClickLogout">Logout</a>
-        </nav>
-        <div v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
-          <h1>Admin</h1>
-          <nav>
-            <RouterLink to="/admin/players">Players</RouterLink>
-            <RouterLink to="/admin/games">Games</RouterLink>
-            <RouterLink to="/admin/gameGroups">Groups</RouterLink>
-          </nav>
-        </div>
-      </div>
+      <NavigationComponent />
     </div>
   </header>
 
@@ -48,39 +19,6 @@ header {
   max-height: 100vh;
 }
 
-h1 {
-  margin-top: 100px;
-}
-
-nav {
-  width: 100%;
-  font-size: 20px;
-  text-align: center;
-  margin-top: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
 @media (min-width: 1024px) {
   header {
     display: flex;
@@ -88,29 +26,5 @@ nav a:first-of-type {
     padding-right: calc(var(--section-gap) / 2);
     width: 100%;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1.5rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-
-#logout {
-  cursor: pointer;
-  margin-top: 20px;
 }
 </style>

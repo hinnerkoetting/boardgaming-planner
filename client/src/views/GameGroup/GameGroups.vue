@@ -39,6 +39,7 @@ import type { GameGroup } from '@/model/GameGroup'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import AddGameGroup from '@/components/GameGroup/AddGameGroup.vue'
 import router from '@/router'
+import EventBus from '@/services/EventBus'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
@@ -52,7 +53,7 @@ function onClickJoinGroup(gameGroup: GameGroup) {
     return
   }
   addPlayerToGroup(gameGroup.id, getCurrentPlayerId())
-  openGroup(gameGroup.id)
+  openGroup(gameGroup)
 }
 
 function onGameGroupAdded(gameGroup: GameGroup) {
@@ -66,14 +67,15 @@ function onRowClick(event: any) {
     console.error('Gamegroup has no id')
     return
   }
-  openGroup(gameGroupId)
+  openGroup(gameGroup)
 }
 
-function openGroup(gameGroupId: number) {
+function openGroup(gameGroup: GameGroup) {
+  EventBus.emit('gaming-group-opened', gameGroup)
   router.push({
     name: 'gameGroup',
     params: {
-      gameGroupId: gameGroupId
+      gameGroupId: gameGroup.id
     }
   })
 }
