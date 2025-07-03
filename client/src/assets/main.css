@@ -1,6 +1,7 @@
 @import './base.css';
+@import './variables.css';
 
-#app {  
+#app {
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
@@ -27,7 +28,7 @@ a,
   }
 
   #app {
-    display: flex;    
+    display: flex;
     padding: 0 2rem;
     width: 100%;
   }

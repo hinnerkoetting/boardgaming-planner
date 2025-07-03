@@ -2,6 +2,7 @@
 import LoginComponent from '@/components/LoginComponent.vue'
 import EventBus from '@/services/EventBus'
 import { isLoggedIn } from '@/services/LoginService'
+import Button from 'primevue/button'
 import { ref } from 'vue'
 
 const isLoggedInRef = ref(isLoggedIn())
@@ -22,8 +23,14 @@ EventBus.addEventListener('login-status', () => {
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
       <div>
-        <RouterLink v-if="isLoggedInRef" to="gameGroups">Show groups</RouterLink> <br/>
-        <RouterLink v-if="isLoggedInRef" to="account">Account settings</RouterLink>
+        <Button severity="primary">
+          <RouterLink v-if="isLoggedInRef" to="gameGroups" class="light-text"
+            >Show groups</RouterLink
+          ></Button
+        ><br />
+        <Button severity="secondary" class="margintop">
+          <RouterLink v-if="isLoggedInRef" to="account">Account settings</RouterLink>
+        </Button>
       </div>
     </div>
   </div>
@@ -32,6 +39,7 @@ EventBus.addEventListener('login-status', () => {
 <style lang="css" scoped>
 .logo {
   max-width: 100%;
+  margin-bottom: 16px;
 }
 
 .wrapper {
@@ -56,5 +64,17 @@ EventBus.addEventListener('login-status', () => {
 
 .full-width {
   width: 100%;
+}
+
+.light-text {
+  color: var(--text-color);
+}
+
+button {
+  width: 150px;
+}
+
+.margintop {
+  margin-top: 8px;
 }
 </style>

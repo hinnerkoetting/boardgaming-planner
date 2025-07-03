@@ -1,13 +1,13 @@
 <template>
   <div>
-    <DataView :value="games">
+    <DataView :value="games" class="gamesGrid" dataKey="id">
       <template #list="slotProps">
         <div class="grid">
           <template v-for="(item, index) in slotProps.items" :key="index">
             <div class="grid-card">
               <GameComponent
                 :game="item"
-                @game-rating-selected="onClickRate"                
+                @game-rating-selected="onClickRate"
                 :withRateButton="withRateButton"
               />
             </div>
@@ -84,6 +84,10 @@ function onGameRated(rating: Rating) {
 </script>
 
 <style lang="css" scoped>
+.gamesGrid {
+  --p-dataview-content-background: var(--color-background);
+}
+
 .grid {
   display: flex;
   justify-content: space-between;

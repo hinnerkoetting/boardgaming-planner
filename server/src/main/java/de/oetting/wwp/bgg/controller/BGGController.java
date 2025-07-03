@@ -55,7 +55,7 @@ public class BGGController {
         }
     }
 
-    @PutMapping(path = "/import/{id}")
+    @PostMapping(path = "/import/{id}")
     public Game importGameFromBgg(@PathVariable("id") int id) throws FetchException {
         return bggUpdateService.importFromBgg(id).orElseThrow();
     }

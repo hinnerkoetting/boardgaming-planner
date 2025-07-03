@@ -2,7 +2,7 @@
 <svg width="340" height="250" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.0">
  <g class="layer">
   <title>Layer 1</title>
-  <rect class="background" fill="#fff" height="100%" id="svg_17" transform="matrix(1, 0, 0, 1, 0, 0)" width="100%"/>
+  <rect class="background" fill="none" height="100%" id="svg_17" transform="matrix(1, 0, 0, 1, 0, 0)" width="100%"/>
   <g class="icon-text-wrapper icon-svg-group iconsvg" fill="#0088fa" id="svg_18" transform="translate(6.245, 24.97) scale(1.26385, 1.32437) translate(-6.245, -24.97) translate(266.757, 175.03) matrix(1.34106, 0, 0, 1.48971, -357.738, -260.743)">
    <g class="iconsvg-imagesvg" id="svg_19" transform="translate(73.245 94.618)">
     <path class="image-rect" d="m0,0l60,0l0,60.76l-60,0l0,-60.76z" fill="none" id="svg_20"/>

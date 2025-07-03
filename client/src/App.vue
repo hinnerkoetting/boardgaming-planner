@@ -11,21 +11,15 @@ import Toast from 'primevue/toast'
     </div>
   </header>
 
-  <RouterView/>
+  <RouterView />
   <Toast />
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
-  max-height: 100vh;  
+  max-height: 100vh;
   width: 100%;
-}
-
-@media (max-width: 1023px) {
-  header {
-    background: #f1f1f1;    
-  }
 }
 
 @media (min-width: 1024px) {
@@ -33,9 +27,7 @@ header {
     max-width: 250px;
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);    
+    padding-right: calc(var(--section-gap) / 2);
   }
 }
-
-
 </style>

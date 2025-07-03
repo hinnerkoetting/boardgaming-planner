@@ -43,7 +43,7 @@ async function onClickAdd(game: GameInTable) {
 
 <template>
   <div>
-    <DataView :value="gamesInTable">
+    <DataView :value="gamesInTable" data-key="id">
       <template #empty> <div></div></template>
       <template #list="slotProps">
         <div v-for="(item, index) in slotProps.items" :key="index">

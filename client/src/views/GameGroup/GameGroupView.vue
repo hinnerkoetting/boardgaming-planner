@@ -28,7 +28,7 @@
     </template>
 
     <h2>Players</h2>
-    <DataTable :value="players" tableStyle="min-width: 20rem">
+    <DataTable :value="players" tableStyle="min-width: 20rem" class="players">
       <Column field="name" header="Name"></Column>
     </DataTable>
 
@@ -151,5 +151,10 @@ h2 {
 
 .filter {
   margin: 16x 0 16px 0;
+}
+
+.players::v-deep tr {
+  --p-datatable-header-cell-background: var(--color-background);
+  --p-datatable-row-background: var(--color-background);
 }
 </style>

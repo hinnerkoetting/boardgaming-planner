@@ -8,6 +8,7 @@
         action-button-text="Open"
         @onRowClick="onClickOpenGroup"
         empty-text="Try joining a group or create one below."
+        class="gameGroupCollection"
       />
 
       <h1>Groups <Button @click="onClickLoadButton" severity="secondary">Find others</Button></h1>
@@ -18,6 +19,7 @@
         @onRowClick="onClickOpenGroup"
         @onClickActionButton="onClickJoinGroup"
         empty-text=""
+        class="gameGroupCollection"
       />
 
       <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
@@ -90,6 +92,9 @@ function openGroup(gameGroup: GameGroup) {
 </script>
 
 <style scoped lang="css">
+.gameGroupCollection {
+  --p-dataview-content-background: var(--color-background);
+}
 .wrapper {
   width: 100%;
   display: flex;

@@ -83,9 +83,8 @@ function onClickCard() {
 }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .p-card {
-  background-color: #fafafa;
   height: 100%;
 }
 .full-height {
@@ -116,5 +115,11 @@ function onClickCard() {
 
 .fullWidth {
   width: 100%;
+}
+</style>
+
+<style>
+.p-dialog {
+  --p-dialog-background: var(--color-background);
 }
 </style>

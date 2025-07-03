@@ -1,5 +1,5 @@
 <template>
-  <DataView :value="gameGroups" class="collection">
+  <DataView :value="gameGroups" class="collection" dataKey="id">
     <template #empty> {{ emptyText }} </template>
     <template #list="slotProps">
       <div v-for="(item, index) in slotProps.items" :key="index">
@@ -55,7 +55,7 @@ defineEmits<{
 }
 
 .row:hover {
-  background: #f1f5f9;
+  background: var(--highlight-bg);
 }
 
 button {
