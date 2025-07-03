@@ -105,6 +105,7 @@ public class BggUpdateService {
     }
 
     private void sleepRandom(int maxMillis) {
+        // Sleeping for some time during requests to not overload BGG servers
         long random = threadLocalRandom.nextInt(maxMillis);
         try {
             Thread.sleep(random);

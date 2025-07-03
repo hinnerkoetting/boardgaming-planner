@@ -22,6 +22,11 @@ const name: Ref<string> = ref(props.game?.name || '')
 const description: Ref<string> = ref(props.game?.description || '')
 const imageUrl: Ref<string> = ref(props.game?.imageUrl || '')
 const thumbnailUrl: Ref<string> = ref(props.game?.thumbnailUrl || '')
+const url: Ref<string | undefined> = ref(props.game?.url || '')
+const minPlayers: Ref<number | undefined> = ref(props.game?.minPlayers)
+const maxPlayers: Ref<number | undefined> = ref(props.game?.maxPlayers)
+const playingTimeMinutes: Ref<number | undefined> = ref(props.game?.playingTimeMinutes)
+
 const errorMessage = ref('')
 
 async function onClickAddGame() {
@@ -39,7 +44,11 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     description: description.value,
     imageUrl: imageUrl.value,
     thumbnailUrl: thumbnailUrl.value,
-    id: props.game?.id || undefined
+    id: props.game?.id || undefined,
+    minPlayers: minPlayers.value,
+    maxPlayers: maxPlayers.value,
+    url: url.value,
+    playingTimeMinutes: playingTimeMinutes.value
   }
   if (props.mode === 'CREATE') {
     return await addGame(game)
@@ -63,10 +72,39 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
 <template>
   <div class="wrapper">
     <Message severity="error" v-if="errorMessage"> {{ errorMessage }} </Message>
-    <InputText name="name" v-model="name" placeholder="Name"></InputText><br />
-    <InputText name="description" v-model="description" placeholder="Description"></InputText><br />
-    <InputText name="imageUrl" v-model="imageUrl" placeholder="imageUrl"></InputText><br />
-    <InputText name="thumbnailUrl" v-model="thumbnailUrl" placeholder="Thumbnail"></InputText><br />
+    <div class="item">
+      Name
+      <InputText name="name" v-model="name" placeholder="Name"></InputText>
+    </div>
+    <div class="item">
+      Description
+      <InputText name="description" v-model="description" placeholder="Description"></InputText>
+    </div>
+    <div class="item">
+      URL
+      <InputText v-model="url" placeholder="URL"></InputText>
+    </div>
+    <div class="item">
+      Min. players
+      <InputText v-model="minPlayers" placeholder="Min. players"></InputText>
+    </div>
+    <div class="item">
+      Max. players
+      <InputText v-model="maxPlayers" placeholder="Max. players"></InputText>
+    </div>
+    <div class="item">
+      Playing time (minutes)
+      <InputText v-model="playingTimeMinutes" placeholder="Playing time (minutes"></InputText>
+    </div>
+    <div class="item">
+      Image
+      <InputText name="imageUrl" v-model="imageUrl" placeholder="imageUrl"></InputText>
+    </div>
+    <div class="item">
+      Thumbnail
+      <InputText name="thumbnailUrl" v-model="thumbnailUrl" placeholder="Thumbnail"></InputText>
+    </div>
+
     <Button @click="onClickAddGame">Save</Button>
   </div>
 </template>
@@ -76,5 +114,13 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 100%;
+  width: 400px;
 }
 </style>
