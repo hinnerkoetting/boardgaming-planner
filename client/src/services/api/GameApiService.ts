@@ -32,3 +32,30 @@ export async function updateGame(game: Game): Promise<ResponseWrapper<boolean>> 
   })
   return await wrapEmptySuccessResponse(response)
 }
+
+export async function addTagToGame(game: Game, tagId: number): Promise<ResponseWrapper<boolean>> {
+  const body = {
+    id: tagId
+  }
+  const response = await authorizedFetch(`/api/games/${game.id}/globalTag`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  })
+  return await wrapEmptySuccessResponse(response)
+}
+
+export async function removeTagFromGame(
+  game: Game,
+  tagId: number
+): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/games/${game.id}/globalTag/${tagId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  return await wrapEmptySuccessResponse(response)
+}

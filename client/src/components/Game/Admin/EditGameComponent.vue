@@ -39,7 +39,8 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     description: description.value,
     imageUrl: imageUrl.value,
     thumbnailUrl: thumbnailUrl.value,
-    id: props.game?.id || undefined
+    id: props.game?.id || undefined,
+    globalTags: props.game?.globalTags || []
   }
   if (props.mode === 'CREATE') {
     return await addGame(game)
