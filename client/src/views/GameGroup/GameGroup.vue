@@ -82,6 +82,7 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import RatingComponent from '@/components/RatingComponent.vue'
 import Tag from 'primevue/tag'
+import type { Rating } from '@/model/Rating'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -130,13 +131,13 @@ async function onClickRate(game: RatedGame) {
   ratingWindowVisible.value = true
 }
 
-async function onGameRatingDeleted() {
-  selectedGame.value!.rating.myRating = undefined
+async function onGameRatingDeleted(rating: Rating) {
+  selectedGame.value!.rating = rating
   ratingWindowVisible.value = false
 }
 
-function onGameRated(rating: number) {
-  selectedGame.value!.rating.myRating = rating
+function onGameRated(rating: Rating) {
+  selectedGame.value!.rating = rating
   ratingWindowVisible.value = false
 }
 </script>

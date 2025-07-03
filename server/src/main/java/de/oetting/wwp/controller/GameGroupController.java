@@ -12,6 +12,7 @@ import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
+import de.oetting.wwp.service.RatingService;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class GameGroupController {
 
     @Autowired
     private RatingRepository ratingRepository;
+
+    @Autowired
+    private RatingService ratingService;
 
     @Transactional
     @PostMapping(path = "players")
@@ -78,24 +82,10 @@ public class GameGroupController {
             ratedGame.setThumbnailUrl(game.getThumbnailUrl());
             ratedGame.setId(game.getId());
             ratedGame.setName(game.getName());
-            ratedGame.setRating(computeRating(game, ratings));
+            ratedGame.setRating(ratingService.computeRating(game, ratings));
             return ratedGame;
         }).toList();
 
-    }
-
-    private RatingModel computeRating(Game game, List<Rating> ratings) {
-        List<Rating> gameRatings = ratings.stream().filter(rating -> rating.getGame().equals(game)).toList();
-        var ratingModel  =new RatingModel();
-        Optional<Rating> myRating = gameRatings.stream()
-                .filter(rating -> rating.getPlayer().getName().equals(CurrentUser.getCurrentUsername()))
-                .findAny();
-        ratingModel.setMyRating(myRating.map(Rating::getRating).orElse(null));
-        double average = gameRatings.stream()
-                .collect(Collectors.averagingDouble(Rating::getRating));
-        ratingModel.setAverageRating(gameRatings.isEmpty() ? null: new BigDecimal(average));
-        ratingModel.setExistsVeto(gameRatings.stream().anyMatch(rating -> rating.getRating() == 0));
-        return ratingModel;
     }
 
 }

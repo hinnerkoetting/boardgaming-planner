@@ -13,6 +13,7 @@ public interface RatingRepository extends PagingAndSortingRepository<Rating, Lon
 
     List<Rating> findByGameGroupIdAndPlayerId(long gameGroupId, long playerId);
     List<Rating> findByGameGroupId(long gameGroupId);
+    List<Rating> findByGameGroupIdAndGameId(long gameGroupId, long gameId);
 
     Optional<Rating> findByGameGroupIdAndPlayerIdAndGameId(long gameGroupId, long playerId, long gameId);
 

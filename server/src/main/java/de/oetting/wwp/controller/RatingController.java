@@ -1,5 +1,6 @@
 package de.oetting.wwp.controller;
 
+import de.oetting.wwp.controller.model.RatingModel;
 import de.oetting.wwp.controller.model.RatingRequest;
 import de.oetting.wwp.controller.model.RatingResponse;
 import de.oetting.wwp.entities.Game;
@@ -10,6 +11,7 @@ import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.repositories.PlayerRepository;
+import de.oetting.wwp.service.RatingService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,33 +32,32 @@ public class RatingController {
     private GameRepository gameRepository;
     @Autowired
     private GameGroupRepository gameGroupRepository;
+    @Autowired
+    private RatingService ratingService;
 
     @PutMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     @Transactional
-    public void updateInterest(@RequestBody RatingRequest request) {
+    public RatingModel updateRating(@RequestBody RatingRequest request) {
         var optionalRating = ratingRepository.findByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
 
         if (optionalRating.isPresent()) {
              optionalRating.get().setRating(request.getRating());
-            return;
+        } else {
+            createNewRating(request);
         }
-        Player player = playerRepository.findById(request.getPlayerId()).orElseThrow(() -> new NoSuchElementException("Player not found"));
-        Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
-        GameGroup gameGroup = gameGroupRepository.findById(request.getGameGroupId()).orElseThrow(() -> new NoSuchElementException("GameGroup not found"));
-        Rating rating =new Rating();
-        rating.setGame(game);
-        rating.setGameGroup(gameGroup);
-        rating.setPlayer(player);
-        rating.setRating(request.getRating());
-        ratingRepository.save(rating);
+
+        return computeRating(request);
     }
+
+
 
     @DeleteMapping
     @ResponseStatus(value = HttpStatus.OK)
     @Transactional
-    public void deleteRating(@RequestBody RatingRequest request) {
+    public RatingModel deleteRating(@RequestBody RatingRequest request) {
         ratingRepository.deleteByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
+        return computeRating(request);
     }
 
     @GetMapping("/gameGroup/{gameGroupId}/player/{playerId}")
@@ -70,5 +71,23 @@ public class RatingController {
             response.setRating(rating.getRating());
             return response;
         }).toList();
+    }
+
+    private void createNewRating(RatingRequest request) {
+        Player player = playerRepository.findById(request.getPlayerId()).orElseThrow(() -> new NoSuchElementException("Player not found"));
+        Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
+        GameGroup gameGroup = gameGroupRepository.findById(request.getGameGroupId()).orElseThrow(() -> new NoSuchElementException("GameGroup not found"));
+        Rating rating =new Rating();
+        rating.setGame(game);
+        rating.setGameGroup(gameGroup);
+        rating.setPlayer(player);
+        rating.setRating(request.getRating());
+        ratingRepository.save(rating);
+    }
+
+    private RatingModel computeRating(RatingRequest request) {
+        Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
+        List<Rating> ratings = ratingRepository.findByGameGroupIdAndGameId(request.getGameGroupId(), request.getGameId());
+        return ratingService.computeRating(game, ratings);
     }
 }

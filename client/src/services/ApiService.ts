@@ -8,6 +8,7 @@ import type { Player } from '@/model/Player'
 import { getCurrentUserId, isLoggedIn } from './LoginService'
 import type { Interest } from '@/model/Interest'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
+import type { Rating } from '@/model/Rating'
 
 // Auth
 
@@ -140,24 +141,26 @@ export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
   return await response.json()
 }
 
-export async function updateInterest(rating: Interest) {
-  await authorizedFetch('/api/ratings', {
+export async function updateRating(rating: Interest): Promise<ResponseWrapper<Rating>> {
+  const response = await authorizedFetch('/api/ratings', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(rating)
   })
+  return wrapResponse(response)
 }
 
-export async function deleteInterest(rating: Interest) {
-  await authorizedFetch('/api/ratings', {
+export async function deleteInterest(rating: Interest): Promise<ResponseWrapper<Rating>> {
+  const response = await authorizedFetch('/api/ratings', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(rating)
   })
+  return wrapResponse(response)
 }
 
 // BGG

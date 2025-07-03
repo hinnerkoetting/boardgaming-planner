@@ -15,7 +15,8 @@
 
 <script setup lang="ts">
 import { Game } from '@/model/Game'
-import { deleteInterest, updateInterest } from '@/services/ApiService'
+import type { Rating } from '@/model/Rating'
+import { deleteInterest, updateRating } from '@/services/ApiService'
 import { getCurrentUserId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import { ref } from 'vue'
@@ -31,28 +32,39 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['game-rated', 'game-rating-deleted'])
+const emit = defineEmits<{
+  (e: 'gameRated', rating: Rating): void
+  (e: 'gameRatingDeleted', rating: Rating): void
+}>()
 
 const game = ref(props.game)
 
 async function onClickRating(rating: number) {
-  await updateInterest({
+  const response = await updateRating({
     gameId: game.value.id!,
     playerId: getCurrentUserId(),
     gameGroupId: props.gameGroupId,
     rating: rating
   })
-  emit('game-rated', rating)
+  if (response.success) {
+    emit('gameRated', response.success)
+  } else {
+    console.info(` Error when rating a game ${response.error}`)
+  }
 }
 
 async function oncClickDeleteRating() {
-  await deleteInterest({
+  const response = await deleteInterest({
     gameId: game.value.id!,
     playerId: getCurrentUserId(),
     gameGroupId: props.gameGroupId,
     rating: undefined
   })
-  emit('game-rating-deleted')
+  if (response.success) {
+    emit('gameRatingDeleted', response.success)
+  } else {
+    console.info(` Error when deleting rating for a game ${response.error}`)
+  }
 }
 </script>
 

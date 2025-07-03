@@ -1,9 +1,6 @@
 import type { Game } from './Game'
+import type { Rating } from './Rating'
 
 export type RatedGame = Game & {
-  rating: {
-    myRating: number | undefined
-    averageRating: number
-    existsVeto: boolean
-  }
+  rating: Rating
 }
