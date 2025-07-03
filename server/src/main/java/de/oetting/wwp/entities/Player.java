@@ -1,21 +1,19 @@
 package de.oetting.wwp.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Game {
+public class Player {
 
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "playedGames")
+    @ManyToMany(mappedBy = "players")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
 

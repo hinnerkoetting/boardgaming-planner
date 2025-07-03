@@ -1,6 +1,5 @@
 package de.oetting.wwp.repositories;
 
-import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.Player;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
