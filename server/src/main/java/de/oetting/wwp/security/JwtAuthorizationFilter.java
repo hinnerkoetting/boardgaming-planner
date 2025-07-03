@@ -48,7 +48,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(email,"",new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
+            filterChain.doFilter(request, response);
         }catch (Exception e){
             errorDetails.put("message", "Authentication Error");
             errorDetails.put("details",e.getMessage());
@@ -58,6 +58,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             mapper.writeValue(response.getWriter(), errorDetails);
 
         }
-        filterChain.doFilter(request, response);
     }
 }

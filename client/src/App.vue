@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { logout } from './services/LoginService'
+import router from './router'
+
+function onClickLogout() {
+  logout()
+  location.reload()
+}
 </script>
 
 <template>
@@ -10,6 +17,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/players">Players</RouterLink>
         <RouterLink to="/games">Games</RouterLink>
         <RouterLink to="/gameGroups">Groups</RouterLink>
+        <a id="logout" @click="onClickLogout">Logout</a>
       </nav>
     </div>
   </header>
@@ -78,5 +86,10 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
+}
+
+#logout {
+  cursor: pointer;
+  margin-top: 20px;
 }
 </style>

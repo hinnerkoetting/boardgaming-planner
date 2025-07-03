@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { isLoggedIn } from '@/services/LoginService'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +8,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: {
+        publicArea: true
+      }
     },
     {
       path: '/players',
@@ -30,6 +34,19 @@ const router = createRouter({
       component: () => import('../views/PlayersInGameGroupAdmin.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.publicArea)) {
+    next()
+  } else {
+    if (!isLoggedIn()) {
+      console.log('User is not logged in, redirecting to home')
+      next({ name: 'home' })
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

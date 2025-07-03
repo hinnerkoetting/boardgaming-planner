@@ -44,17 +44,11 @@ public class DefaultSecurityConfig {
     @DependsOn("dataSourceInitializer")
     UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager usersManager = new JdbcUserDetailsManager(dataSource);
-        UserDetails user = User.builder()
-                .username("user")
-                .password("$2a$10$CGxrfnGO5YGItpKvomedu.DMEy.DEXHNMgqcb5dt8KOWLtbfNVsda") // user
-                .roles("USER")
-                .build();
         UserDetails admin = User.builder()
                 .username("admin")
                 .password("$2a$10$xA7.YiEEHOxP9wa.fFARD.eH7JdrD2755HJnJL76MUQXl3TOy9JzW") // admin
                 .roles("USER", "ADMIN")
                 .build();
-        usersManager.createUser(user);
         usersManager.createUser(admin);
         return usersManager;
     }
