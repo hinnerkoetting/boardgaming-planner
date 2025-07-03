@@ -1,6 +1,6 @@
 export class Game {
   constructor(
-    readonly id: Number | undefined,
+    readonly id: number | undefined,
     readonly name: String,
     readonly description: String,
     readonly imageUrl: String,

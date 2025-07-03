@@ -22,8 +22,8 @@ import { deleteGame, fetchGames } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
-import AddGame from '@/components/AddGame.vue'
-import GamesTable from '@/components/GamesTable.vue'
+import AddGame from '@/components/Game/AddGame.vue'
+import GamesTable from '@/components/Game/GamesTable.vue'
 
 const games: Ref<Game[]> = ref([] as Game[])
 

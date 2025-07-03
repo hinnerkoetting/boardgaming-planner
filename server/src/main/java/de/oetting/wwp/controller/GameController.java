@@ -1,11 +1,17 @@
 package de.oetting.wwp.controller;
 
+import com.github.marcioos.bggclient.BGG;
+import com.github.marcioos.bggclient.common.ThingType;
+import com.github.marcioos.bggclient.search.SearchException;
+import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/games")
@@ -21,5 +27,10 @@ public class GameController {
         game.getGameGroups().forEach(gameGroup -> gameGroup.deleteGame(game));
 
         gameRepository.delete(game);
+    }
+
+    @GetMapping("/search/{searchTerm}")
+    public List<Game> searchGames(@PathVariable("searchTerm") String searchTerm) throws SearchException {
+        return gameRepository.findByNameContaining(searchTerm);
     }
 }

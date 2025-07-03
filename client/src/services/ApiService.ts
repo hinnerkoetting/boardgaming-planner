@@ -7,6 +7,29 @@ import { Me } from '@/model/Me'
 import type { Player } from '@/model/Player'
 import { isLoggedIn } from './LoginService'
 
+// Auth
+
+export async function loginRequest(
+  name: String,
+  password: String
+): Promise<LoginResponse | undefined> {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        login: name,
+        password
+      })
+    })
+    return (await response.json()) as LoginResponse
+  } catch (error) {
+    console.log('There was an error', error)
+  }
+}
+
 function defaultFetchOptions() {
   return {
     headers: {
@@ -48,14 +71,15 @@ export async function deleteGameGroup(id: Number) {
 }
 
 // Add top-level entities
-export async function addGame(game: Game) {
-  await authorizedFetch(`/api/games`, {
+export async function addGame(game: Game): Promise<Game> {
+  const response = await authorizedFetch(`/api/games`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(game)
   })
+  return await response.json()
 }
 
 // Gamegroups
@@ -90,6 +114,17 @@ export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
   })
 }
 
+export async function addGameToGroup(gameGroupId: number, gameId: number): Promise<boolean> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/playedGames`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: gameId })
+  })
+  return response.status < 300
+}
+
 export async function addGameGroup(gameGroup: GameGroup): Promise<GameGroup> {
   const response = await authorizedFetch('/api/gameGroups', {
     method: 'POST',
@@ -122,29 +157,6 @@ export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> 
     )
   }
   return null
-}
-
-// Auth
-
-export async function loginRequest(
-  name: String,
-  password: String
-): Promise<LoginResponse | undefined> {
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        login: name,
-        password
-      })
-    })
-    return (await response.json()) as LoginResponse
-  } catch (error) {
-    console.log('There was an error', error)
-  }
 }
 
 export async function registerRequest(
@@ -183,6 +195,12 @@ async function authorizedFetch(url: string | URL | globalThis.Request, init?: Re
     return fetch(url, { ...init, ...defaultFetchOptions() })
   }
   return fetch(url, defaultFetchOptions())
+}
+
+// Search games
+export async function searchExistingGames(searchTerm: string): Promise<Game[]> {
+  const response = await authorizedFetch(`/api/games/search/${searchTerm}`)
+  return (await response.json()) as Game[]
 }
 
 // Me

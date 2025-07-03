@@ -7,6 +7,7 @@ import { ref, type Ref } from 'vue'
 import { addGame, fetchFromBgg, searchBgg } from '@/services/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
 import type { BggFetchItem } from '@/model/BggFetchItem'
+import Image from 'primevue/image'
 
 const emit = defineEmits(['game-added'])
 
@@ -25,8 +26,14 @@ async function onClickAdd(bggId: number) {
       break
     default: {
       const fetchGameFound = fetchedGame as BggFetchItem
-      addGame(fetchGameFound)
-      emit('game-added', fetchGameFound)
+      const addedGame = await addGame({
+        name: fetchGameFound.name,
+        description: fetchGameFound.description,
+        thumbnailUrl: fetchGameFound.thumbnailUrl,
+        imageUrl: fetchGameFound.imageUrl,
+        id: undefined
+      })
+      emit('game-added', addedGame)
       break
     }
   }

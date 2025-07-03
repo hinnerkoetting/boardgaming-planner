@@ -19,4 +19,6 @@ public interface GameRepository extends PagingAndSortingRepository<Game, Long>, 
     @RestResource(exported = false)
     void delete(Game entity);
 
+    List<Game> findByNameContaining(String name);
+
 }

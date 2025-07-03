@@ -1,6 +1,6 @@
 export class BggFetchItem {
   constructor(
-    readonly id: Number,
+    readonly id: number,
     readonly name: String,
     readonly description: String,
     readonly thumbnailUrl: String,

@@ -1,11 +1,11 @@
 meta {
-  name: Setup - Create player
+  name: Setup - Create game
   type: http
   seq: 3
 }
 
 post {
-  url: http://localhost:8080/api/players
+  url: http://localhost:8080/api/games
   body: json
   auth: none
 }
@@ -16,14 +16,15 @@ headers {
 
 body:json {
   {
-    "name": "Hinnerk3"
+    "name": "Gloomhaven"
   }
 }
 
 assert {
-  res.status: in 201, 409
+  res.status: eq 201
 }
 
 script:post-response {
-  bru.setVar("playerId", res.body.id)
+  bru.setVar("gameId", res.body.id)
+  
 }
