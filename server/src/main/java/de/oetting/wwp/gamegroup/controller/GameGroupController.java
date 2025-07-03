@@ -10,6 +10,7 @@ import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.model.TagModel;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
+import de.oetting.wwp.gamegroup.service.GameGroupService;
 import de.oetting.wwp.infrastructure.CurrentUser;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.game.repository.GameRepository;
@@ -56,16 +57,14 @@ public class GameGroupController {
     @Autowired
     private SseEmitterService sseEmitterService;
 
+    @Autowired
+    private GameGroupService gameGroupService;
+
     @Transactional
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request){
-        if (gameGroupRepository.existsByName(request.getName())) {
-            throw new ConflictException("Group already exists");
-        }
-        GameGroup groupEntity = new GameGroup();
-        groupEntity.setName(request.getName());
-        GameGroup savedEntity = gameGroupRepository.save(groupEntity);
+        GameGroup savedEntity = gameGroupService.createGameGroup(request);
 
         return map(savedEntity);
     }
@@ -95,14 +94,7 @@ public class GameGroupController {
     @PostMapping(path = "/{gameGroupId}/players")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayerById(@RequestBody IdWrapper playerId, @PathVariable("gameGroupId") long gameGroupId) {
-        if (gameGroupRepository.playerAssignedToGameGroup(playerId.getId(), gameGroupId).isPresent()) {
-            throw new ConflictException("Player already exists");
-        }
-        Player player = playerRepository.findById(playerId.getId()).orElseThrow();
-        GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
-        gameGroup.addPlayer(player);
-
-        sseEmitterService.onEventInGameGroup(new GameGroupEvent(CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.PLAYER_ADDED));
+       gameGroupService.addPlayerById(playerId.getId(), gameGroupId);
     }
 
     @GetMapping(path = "/{gameGroupId}/players")
@@ -114,11 +106,7 @@ public class GameGroupController {
     @PostMapping(path = "/{gameGroupId}/games")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayedGameById(@RequestBody IdWrapper gameId, @PathVariable("gameGroupId") long gameGroupId) {
-        var game = gameRepository.findById(gameId.getId()).orElseThrow();
-        var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
-        gameGroup.addGame(game);
-
-        sseEmitterService.onEventInGameGroup(new GameGroupEvent(CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.GAME_ADDED));
+        gameGroupService.addPlayedGameById(gameId.getId(), gameGroupId);
     }
 
     @GetMapping(path = "/{gameGroupId}/games")

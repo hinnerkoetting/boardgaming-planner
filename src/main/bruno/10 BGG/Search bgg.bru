@@ -24,7 +24,7 @@ assert {
 
 script:post-response {
   if (res.status == 200) {
-    const bggIds = res.body.map(game => game.id).join(',')
-    bru.setVar("bggIds", bggIds)
+    const bggIds = res.body.map(game => game.id)
+    bru.setVar("bggIds", bggIds[0])
   }
 }

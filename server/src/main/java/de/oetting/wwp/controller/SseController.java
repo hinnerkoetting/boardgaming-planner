@@ -15,6 +15,7 @@ public class SseController {
 
     @GetMapping("api/sse/gameGroup/{gameGroupId}")
     public SseEmitter subscribeToPing(@PathVariable("gameGroupId") int gameGroupId) {
+
         return sseEmitterService.createGameGroupEmitter(gameGroupId);
     }
 

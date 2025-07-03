@@ -63,6 +63,10 @@ import type { TagModel } from '@/model/TagModel'
 import { fetchTags } from '@/services/api/TagApiService'
 import FilterGamesDialog from '@/components/Game/FilterGamesDialog.vue'
 import { FilterService } from '@/services/FilterService'
+import { subscribeToEventsOnGameGroup } from '@/services/ServerSentEvents'
+import { useToast } from 'primevue/usetoast'
+import type { ToastMessageOptions } from 'primevue'
+import type { GameGroupEvent } from '@/services/GameGroupEvent'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -74,6 +78,7 @@ const isPartOfGroup = ref(false)
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
 const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined)
+const toast = useToast()
 
 onMounted(async () => {
   loadGameGroup(gameGroupId).then((result) => {
@@ -91,7 +96,31 @@ onMounted(async () => {
   fetchTags().then((response) => {
     tags.value = response
   })
+  subscribeToEventsOnGameGroup(gameGroupId, (data) =>{    
+    const newToast = createToast(data)
+    if (newToast) {
+      toast.add(newToast)
+    }    
+  })
 })
+
+function createToast(data: GameGroupEvent): ToastMessageOptions | undefined {  
+  if (data.eventType === 'GAME_ADDED') {
+    return {
+      severity: 'info',
+      summary: `Game added by ${data.source}`,
+      detail: data.description,
+      life: 3000
+    }
+  } else if (data.eventType === 'PLAYER_ADDED') {
+    return {
+      severity: 'info',
+      summary: `Player added by ${data.source}`,
+      detail: data.description,
+      life: 3000
+    }
+  }
+}
 
 async function onGameAdded(game: Game, callback: (message: EventMessage) => void) {
   if (!game.id) {

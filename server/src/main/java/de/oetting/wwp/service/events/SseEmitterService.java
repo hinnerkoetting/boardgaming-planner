@@ -16,6 +16,7 @@ public class SseEmitterService {
     private final Map<UUID, EventListener> listeners = new ConcurrentHashMap<>();
 
     public SseEmitter createGameGroupEmitter(int gameGroupId) {
+        LOG.debug("Subscribing to events on gameGroup {}", gameGroupId);
         UUID uuid = UUID.randomUUID();
         SseEmitter emitter = createEmitter(uuid);
         var listener = new GameGroupEventListener(gameGroupId, emitter);

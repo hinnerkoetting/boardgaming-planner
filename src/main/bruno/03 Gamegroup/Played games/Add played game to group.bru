@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{server}}/api/gameGroups/{{gameGroupId}}/playedGames
+  url: {{server}}/api/gameGroups/{{gameGroupId}}/games
   body: json
   auth: none
 }
@@ -18,6 +18,10 @@ body:json {
   {
     "id": {{gameId}}
   }
+}
+
+vars:pre-request {
+  gameId: 2
 }
 
 assert {
