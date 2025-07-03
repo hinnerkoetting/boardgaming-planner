@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AddGameBgg from '../AddGameBgg.vue'
-import AddGameManual from './AddGameManual.vue'
+import CreateGameDialogComponent from './CreateGameDialogComponent.vue'
 
 const emit = defineEmits(['game-added'])
 
@@ -17,7 +17,7 @@ function onGameAdded(params: any) {
     <AddGameBgg @game-added="onGameAdded" />
 
     <h2 class="green">Add game manually</h2>
-    <AddGameManual @game-added="onGameAdded" />
+    <CreateGameDialogComponent @game-added="onGameAdded" mode="CREATE" />
   </div>
 </template>
 

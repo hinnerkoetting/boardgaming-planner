@@ -2,18 +2,18 @@
   <div>
     <h1>All games</h1>
 
-    <GamesTable @delete="onClickDelete" :games="games" />
+    <GamesTableAdmin @clickDelete="onClickDelete" @game-edited="onGameEdited" :games="games" />
     <AddGame @game-added="onGameAdded" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { deleteGame, fetchGames } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
 import AddGame from '@/components/Game/Admin/AddGame.vue'
-import GamesTable from '@/components/Game/Admin/GamesTableAdmin.vue'
+import GamesTableAdmin from '@/components/Game/Admin/GamesTableAdmin.vue'
+import { deleteGame, fetchGames } from '@/services/api/GameApiService'
 
 const games: Ref<Game[]> = ref([] as Game[])
 
@@ -21,9 +21,14 @@ onMounted(async () => {
   games.value = await fetchGames()
 })
 
-function onClickDelete(id: Number) {
-  deleteGame(id)
-  games.value = games.value.filter((item) => !(item.id === id))
+function onClickDelete(game: Game) {
+  deleteGame(game.id!)
+  games.value = games.value.filter((item) => !(item.id === game.id!))
+}
+
+function onGameEdited(game: Game) {
+  games.value = games.value.filter((item) => !(item.id === game.id!))
+  games.value.push(game)
 }
 
 function onGameAdded(game: Game) {

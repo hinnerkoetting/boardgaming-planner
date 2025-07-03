@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import { ref, watch, type PropType, type Ref } from 'vue'
-import { addGame, fetchFromBgg } from '@/services/api/ApiService'
+import { fetchFromBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
 import type { BggFetchItem } from '@/model/BggFetchItem'
 import DataView from 'primevue/dataview'
 import type { Game } from '@/model/Game'
 import type { EventMessage } from '@/model/internal/EventMessage'
 import Message from 'primevue/message'
+import { addGame } from '@/services/api/GameApiService'
 
 const emit = defineEmits<{
   (e: 'game-added', game: Game, callback: (message: EventMessage) => void): void

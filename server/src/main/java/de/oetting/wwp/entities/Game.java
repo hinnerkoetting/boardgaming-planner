@@ -3,6 +3,7 @@ package de.oetting.wwp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 
@@ -13,7 +14,9 @@ public class Game {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+
     @Column(unique = true)
+    @Length(min = 2, max = 255)
     private String name;
 
     @Column(length = 4096)

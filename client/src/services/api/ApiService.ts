@@ -35,30 +35,6 @@ function defaultFetchOptions() {
 
 // Fetch top level groups
 
-export async function fetchGames(): Promise<Game[]> {
-  const response = await authorizedFetch('/api/games')
-  const json = await response.json()
-  return json._embedded.games as Game[]
-}
-
-// Delete top-level entities
-
-export async function deleteGame(id: Number) {
-  await authorizedFetch(`/api/games/${id}`, { method: 'DELETE' })
-}
-
-// Add top-level entities
-export async function addGame(game: Game): Promise<ResponseWrapper<Game>> {
-  const response = await authorizedFetch(`/api/games`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(game)
-  })
-  return await wrapResponse<Game>(response)
-}
-
 // BGG
 export async function searchBgg(searchTerm: String): Promise<ResponseWrapper<BggSearchItem[]>> {
   const response = await authorizedFetch(`/api/bgg/search/${searchTerm}`)

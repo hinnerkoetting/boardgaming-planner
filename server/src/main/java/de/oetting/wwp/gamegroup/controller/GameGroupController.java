@@ -10,7 +10,7 @@ import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
 import de.oetting.wwp.repositories.GameGroupRepository;
-import de.oetting.wwp.repositories.GameRepository;
+import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;

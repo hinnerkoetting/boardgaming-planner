@@ -2,10 +2,11 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { addGame, fetchFromBgg, searchBgg } from '@/services/api/ApiService'
+import { fetchFromBgg, searchBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
 import type { BggFetchItem } from '@/model/BggFetchItem'
 import DataView from 'primevue/dataview'
+import { addGame } from '@/services/api/GameApiService'
 
 const emit = defineEmits(['game-added'])
 

@@ -1,22 +1,16 @@
-package de.oetting.wwp.repositories;
+package de.oetting.wwp.game.repository;
 
 import de.oetting.wwp.entities.Game;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "games", path = "games")
+@Repository
 public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game,Long> {
-
-    @Override
-    List<Game> findAll();
-
-    @Override
-    @RestResource(exported = false)
-    void delete(Game entity);
 
     List<Game> findByNameContaining(String name);
 

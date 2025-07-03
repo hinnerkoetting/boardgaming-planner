@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button @click="onClickCreateTag"> Create Tag</Button>
+    <Button @click="onClickCreateTag"> Create tag</Button>
     <Dialog v-model:visible="showDialog" modal header="Create Tag"
       ><div>
         <EditTagComponent v-on:tag-added="onTagAdded" mode="CREATE" />
