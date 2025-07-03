@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { logout } from './services/LoginService'
+import { isLoggedIn, logout } from './services/LoginService'
+import EventBus from './services/EventBus'
+import { ref } from 'vue'
+
+const isLoggedInRef = ref(isLoggedIn())
+
+EventBus.addEventListener('login-status', () => {
+  isLoggedInRef.value = isLoggedIn()
+})
 
 function onClickLogout() {
   logout()
-  location.reload()
 }
 </script>
 
@@ -12,11 +19,11 @@ function onClickLogout() {
   <header>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/players">Players</RouterLink>
-        <RouterLink to="/games">Games</RouterLink>
-        <RouterLink to="/gameGroups">Groups</RouterLink>
-        <a id="logout" @click="onClickLogout">Logout</a>
+        <RouterLink to="/" v-if="isLoggedInRef">Home</RouterLink>
+        <RouterLink to="/players" v-if="isLoggedInRef">Players</RouterLink>
+        <RouterLink to="/games" v-if="isLoggedInRef">Games</RouterLink>
+        <RouterLink to="/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
+        <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
       </nav>
     </div>
   </header>

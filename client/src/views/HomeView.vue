@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import Login from '@/components/LoginComponent.vue'
+import EventBus from '@/services/EventBus'
 import { isLoggedIn } from '@/services/LoginService'
-import { watch } from 'vue'
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 
 const isLoggedInRef = ref(isLoggedIn())
+
 function onLoggedIn() {
   isLoggedInRef.value = true
 }
+
+EventBus.addEventListener('login-status', () => {
+  isLoggedInRef.value = isLoggedIn()
+})
 </script>
 
 <template>
