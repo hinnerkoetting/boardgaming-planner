@@ -38,6 +38,11 @@ public class GameController {
         return gameRepository.findAll();
     }
 
+    @GetMapping(path="/{gameId}")
+    public Game loadGame(@PathVariable("gameId") long gameId) {
+        return gameRepository.findById(gameId).orElseThrow();
+    }
+
     @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -76,7 +81,7 @@ public class GameController {
     }
 
     @GetMapping("/search/{searchTerm}")
-    public List<Game> searchGames(@PathVariable("searchTerm") String searchTerm) throws SearchException {
+    public List<Game> searchGames(@PathVariable("searchTerm") String searchTerm) {
         return gameRepository.findByNameContaining(searchTerm);
     }
 

@@ -7,8 +7,7 @@
             <div class="grid-card">
               <GameComponent
                 :game="item"
-                @game-rating-selected="onClickRate"
-                v-on:game="onClickRate"
+                @game-rating-selected="onClickRate"                
                 :withRateButton="withRateButton"
               />
             </div>

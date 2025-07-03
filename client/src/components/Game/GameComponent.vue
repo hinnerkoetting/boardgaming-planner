@@ -30,7 +30,7 @@
             <Button
               v-if="withRateButton"
               severity="secondary"
-              @click="$emit('game', game)"
+              @click="$emit('game-rating-selected', game)"
               class="center-horizontally"
               >Rate</Button
             >
@@ -61,7 +61,7 @@ const props = defineProps({
 })
 
 defineEmits<{
-  (e: 'game', game: GameGroupGame): void
+  (e: 'game-rating-selected', game: GameGroupGame): void
 }>()
 
 const game = ref(props.game)

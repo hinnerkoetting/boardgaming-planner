@@ -2,6 +2,7 @@ package de.oetting.wwp.controller;
 
 import de.oetting.wwp.exceptions.HTTPException;
 import de.oetting.wwp.infrastructure.HttpErrorResponse;
+import org.simpleframework.xml.transform.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -91,6 +92,16 @@ public class GlobalExceptionHandler {
     public HttpErrorResponse controllerNotFound(NoHandlerFoundException e) {
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.NOT_FOUND.getReasonPhrase());
+        problem.setType(CLIENT_ERROR);
+        problem.setDetail("Endpoint unknown");
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidFormatException.class)
+    public HttpErrorResponse controllerNotFound(InvalidFormatException e) {
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
         problem.setType(CLIENT_ERROR);
         problem.setDetail("Endpoint unknown");
         return problem;

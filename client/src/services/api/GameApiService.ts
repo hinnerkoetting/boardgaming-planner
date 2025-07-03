@@ -7,6 +7,13 @@ export async function fetchGames(): Promise<AdminGame[]> {
   return await response.json()
 }
 
+
+export async function loadGame(gameId: number): Promise<Game> {
+  const response = await authorizedFetch(`/api/games/${gameId}`)
+  return await response.json()
+}
+
+
 export async function deleteGame(id: Number) {
   await authorizedFetch(`/api/games/${id}`, { method: 'DELETE' })
 }
