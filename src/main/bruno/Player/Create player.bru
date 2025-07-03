@@ -17,5 +17,5 @@ body:json {
 }
 
 assert {
-  res.status: eq 201
+  res.status: in 201, 409
 }

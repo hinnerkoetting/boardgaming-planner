@@ -3,6 +3,7 @@ package de.oetting.wwp.controller;
 import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.PlayerRepository;
@@ -31,6 +32,9 @@ public class GameGroupController {
     @PostMapping(path = "players")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayerById(@RequestBody long playerId, @PathVariable("gameGroupId") long gameGroupId) {
+        if (gameGroupRepository.playerAssignedToGameGroup(playerId, gameGroupId).isPresent()) {
+            throw new ConflictException("Player already exists");
+        }
         Player player = playerRepository.findById(playerId).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         gameGroup.addPlayer(player);

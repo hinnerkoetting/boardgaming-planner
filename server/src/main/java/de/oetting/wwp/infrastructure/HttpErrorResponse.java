@@ -1,6 +1,6 @@
 package de.oetting.wwp.infrastructure;
 
-public class RestProblem {
+public class HttpErrorResponse {
     private String type;
     private String title;
     private String detail;

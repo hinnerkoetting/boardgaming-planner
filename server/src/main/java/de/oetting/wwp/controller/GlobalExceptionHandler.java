@@ -1,23 +1,50 @@
 package de.oetting.wwp.controller;
 
-import de.oetting.wwp.infrastructure.RestProblem;
+import de.oetting.wwp.exceptions.HTTPException;
+import de.oetting.wwp.infrastructure.HttpErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ResponseStatus(value= HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
-    public RestProblem noSuchElementException(NoSuchElementException e) {
-
-        RestProblem problem = new RestProblem();
+    public HttpErrorResponse noSuchElementException(NoSuchElementException e) {
+        LOG.info("No such element: {}", e.getMessage());
+        HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle("Not found");
         problem.setType("NOT_FOUND");
+        return problem;
+    }
+
+    @ExceptionHandler(HTTPException.class)
+    public ResponseEntity<HttpErrorResponse> httpException(HTTPException e) {
+        LOG.info("HTTP Status {}: {}", e.getHttpStatus(), e.getMessage());
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(e.getHttpStatus().getReasonPhrase());
+        problem.setType(e.getHttpStatus().getReasonPhrase());
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.status(e.getHttpStatus())
+                .body(problem);
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public HttpErrorResponse conflict(DataIntegrityViolationException e) {
+        LOG.info("DataIntegrityViolationException: {}", e.getMessage());
+
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.CONFLICT.getReasonPhrase());
+        problem.setType(HttpStatus.CONFLICT.getReasonPhrase());
         return problem;
     }
 }

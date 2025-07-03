@@ -3,6 +3,11 @@
     <h1>Manage games</h1>
     <DataTable :value="games" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
+      <Column header="Delete">
+        <template #body="slotProps">
+          {{ slotProps.data.id }}
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>

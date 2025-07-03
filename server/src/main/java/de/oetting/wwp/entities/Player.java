@@ -18,6 +18,10 @@ public class Player {
     @JsonBackReference
     private Set<GameGroup> gameGroups;
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
