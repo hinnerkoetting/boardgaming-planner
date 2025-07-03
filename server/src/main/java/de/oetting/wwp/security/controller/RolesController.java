@@ -2,6 +2,7 @@ package de.oetting.wwp.security.controller;
 
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ConflictException;
+import de.oetting.wwp.exceptions.ForbiddenException;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.security.Role;
 import jakarta.transaction.Transactional;
@@ -85,9 +86,13 @@ public class RolesController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteRole(@PathVariable("playerId") long playerId, @PathVariable("role") String roleName) {
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("Player not found"));
+        UserDetails userDetails = userDetailsManager.loadUserByUsername(player.getName());
         checkNotEditingYourself(player);
         Role role = Role.from(roleName);
         checkNotRoleOwner(role);
+        if (isOwner(userDetails)) {
+            throw new ForbiddenException("Cannot delete role from owner");
+        }
 
         deleteRoles(playerId, Collections.singleton(role));
     }
@@ -134,4 +139,9 @@ public class RolesController {
         User updatedUser = new User(userDetails.getUsername(), userDetails.getPassword(), authorities);
         userDetailsManager.updateUser(updatedUser);
     }
+
+    private static boolean isOwner(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream().anyMatch(authority -> Role.OWNER.getName().equals(authority.getAuthority()));
+    }
+
 }

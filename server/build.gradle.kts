@@ -24,6 +24,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 
     runtimeOnly("javax.xml.bind:jaxb-api:2.3.1") // JWT

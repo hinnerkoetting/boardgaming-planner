@@ -67,12 +67,12 @@ import {
   fetchGamesInGroup,
   fetchPlayersInGroup,
   loadGameGroup
-} from '@/services/ApiService'
+} from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
-import type { Player } from '@/model/Player'
+import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
 import Image from 'primevue/image'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'

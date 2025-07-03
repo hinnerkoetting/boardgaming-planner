@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { Game } from '@/model/Game'
 import type { Rating } from '@/model/Rating'
-import { deleteInterest, updateRating } from '@/services/ApiService'
+import { deleteInterest, updateRating } from '@/services/api/ApiService'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import { ref } from 'vue'

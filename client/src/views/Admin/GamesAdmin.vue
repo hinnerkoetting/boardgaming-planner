@@ -18,7 +18,7 @@
 </style>
 
 <script setup lang="ts">
-import { deleteGame, fetchGames } from '@/services/ApiService'
+import { deleteGame, fetchGames } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'

@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { addGame } from '@/services/ApiService'
+import { addGame } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 
 const emit = defineEmits(['game-added'])

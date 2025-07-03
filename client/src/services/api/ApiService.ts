@@ -4,8 +4,8 @@ import type { Game } from '@/model/Game'
 import type { GameGroup } from '@/model/GameGroup'
 import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
-import type { Player } from '@/model/Player'
-import { getCurrentPlayerId, isLoggedIn } from './LoginService'
+import type { Player } from '@/model/Player/Player'
+import { getCurrentPlayerId, isLoggedIn } from '../LoginService'
 import type { Interest } from '@/model/Interest'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 import type { Rating } from '@/model/Rating'
@@ -38,10 +38,6 @@ function defaultFetchOptions() {
 }
 
 // Fetch top level groups
-export async function fetchPlayers(): Promise<Player[]> {
-  const response = await authorizedFetch('/api/players')
-  return await response.json()
-}
 
 export async function fetchGames(): Promise<Game[]> {
   const response = await authorizedFetch('/api/games')
@@ -56,9 +52,6 @@ export async function fetchGameGroups(): Promise<GameGroup[]> {
 }
 
 // Delete top-level entities
-export async function deletePlayer(id: Number) {
-  await authorizedFetch(`/api/players/${id}`, { method: 'DELETE' })
-}
 
 export async function deleteGame(id: Number) {
   await authorizedFetch(`/api/games/${id}`, { method: 'DELETE' })
@@ -202,7 +195,7 @@ export async function registerRequest(
   return await wrapResponse<LoginResponse>(response)
 }
 
-async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {
+export async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {
   if (!isLoggedIn()) {
     throw new Error('User currently not logged in')
   }

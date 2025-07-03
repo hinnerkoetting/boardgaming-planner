@@ -36,7 +36,7 @@ const router = createRouter({
     {
       path: '/admin/players',
       name: 'adminPlayers',
-      component: () => import('../views/Admin/PlayerAdmin.vue')
+      component: () => import('../views/Admin/PlayersListAdmin.vue')
     },
     {
       path: '/admin/games',

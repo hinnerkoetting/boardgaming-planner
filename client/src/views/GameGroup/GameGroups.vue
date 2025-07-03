@@ -32,7 +32,7 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { addPlayerToGroup, fetchGameGroups } from '@/services/ApiService'
+import { addPlayerToGroup, fetchGameGroups } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'

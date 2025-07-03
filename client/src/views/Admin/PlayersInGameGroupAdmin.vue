@@ -28,12 +28,16 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { fetchPlayersInGroup, loadGameGroup, removePlayerFromGroup } from '@/services/ApiService'
+import {
+  fetchPlayersInGroup,
+  loadGameGroup,
+  removePlayerFromGroup
+} from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
-import type { Player } from '@/model/Player'
+import type { Player } from '@/model/Player/Player'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])

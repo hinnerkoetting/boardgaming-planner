@@ -2,6 +2,8 @@ package de.oetting.wwp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public class Player {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     @Column(unique = true)
+    @Length(min = 3, max = 35)
     private String name;
     @ManyToMany(mappedBy = "players")
     @JsonBackReference

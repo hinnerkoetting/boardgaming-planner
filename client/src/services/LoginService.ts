@@ -1,5 +1,5 @@
 import type { LoginResponse } from '@/model/LoginResponse'
-import { loginRequest, registerRequest } from './ApiService'
+import { loginRequest, registerRequest } from './api/ApiService'
 import EventBus from './EventBus'
 import type { ResponseWrapper } from '@/model/api/Response'
 import type { JwtPayload, Role } from '@/model/api/JwtPayload'

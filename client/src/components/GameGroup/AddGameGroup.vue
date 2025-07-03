@@ -3,7 +3,7 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
-import { addGameGroup } from '@/services/ApiService'
+import { addGameGroup } from '@/services/api/ApiService'
 
 const emit = defineEmits(['game-group-added'])
 
@@ -21,7 +21,13 @@ async function onClickAddGameGroup() {
 
 <template>
   <div>
-    <InputText name="name" v-model="name" placeholder="Name" v-on:keyup.enter="onClickAddGameGroup"></InputText><br />
+    <InputText
+      name="name"
+      v-model="name"
+      placeholder="Name"
+      v-on:keyup.enter="onClickAddGameGroup"
+    ></InputText
+    ><br />
     <Button @click="onClickAddGameGroup">Create</Button>
   </div>
 </template>

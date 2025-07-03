@@ -4,7 +4,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { addGame, searchExistingGames } from '@/services/ApiService'
+import { addGame, searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 import Image from 'primevue/image'
 
