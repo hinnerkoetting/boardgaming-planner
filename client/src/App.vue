@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { isLoggedIn, logout } from './services/LoginService'
+import { doesCurrentPlayerHaveRole, isLoggedIn, logout } from './services/LoginService'
 import EventBus from './services/EventBus'
 import { ref } from 'vue'
 import router from './router'
+import { Role } from './model/api/JwtPayload'
 
 const isLoggedInRef = ref(isLoggedIn())
 
@@ -20,18 +21,21 @@ function onClickLogout() {
 <template>
   <header>
     <div class="wrapper">
-      <nav>
-        <RouterLink to="/" v-if="isLoggedInRef">Home</RouterLink>
-        <RouterLink to="/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
-        <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
-      </nav>
-
-      <h1 v-if="isLoggedInRef">Admin</h1>
-      <nav>
-        <RouterLink to="/admin/players" v-if="isLoggedInRef">Players</RouterLink>
-        <RouterLink to="/admin/games" v-if="isLoggedInRef">Games</RouterLink>
-        <RouterLink to="/admin/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
-      </nav>
+      <div v-if="isLoggedInRef">
+        <nav>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/gameGroups">Groups</RouterLink>
+          <a id="logout" @click="onClickLogout">Logout</a>
+        </nav>
+        <div v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
+          <h1>Admin</h1>
+          <nav>
+            <RouterLink to="/admin/players">Players</RouterLink>
+            <RouterLink to="/admin/games">Games</RouterLink>
+            <RouterLink to="/admin/gameGroups">Groups</RouterLink>
+          </nav>
+        </div>
+      </div>
     </div>
   </header>
 

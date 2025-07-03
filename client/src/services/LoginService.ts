@@ -2,7 +2,7 @@ import type { LoginResponse } from '@/model/LoginResponse'
 import { loginRequest, registerRequest } from './ApiService'
 import EventBus from './EventBus'
 import type { ResponseWrapper } from '@/model/api/Response'
-import type { JwtPayload } from '@/model/api/JwtPayload'
+import type { JwtPayload, Role } from '@/model/api/JwtPayload'
 
 export function isLoggedIn() {
   return !!localStorage.getItem('access-token') && !isJwtExpired()
@@ -63,4 +63,12 @@ export function getCurrentPlayerId(): number {
     throw 'User is not logged in'
   }
   return payload!.player_id
+}
+
+export function doesCurrentPlayerHaveRole(role: Role): boolean {
+  const payload = getJwtPayload()
+  if (!payload) {
+    throw 'User is not logged in'
+  }
+  return payload!.roles.includes(role)
 }
