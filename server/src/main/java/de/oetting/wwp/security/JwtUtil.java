@@ -33,7 +33,7 @@ public class JwtUtil {
     public String createToken(Player player, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(player.getName());
         Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toSeconds(Duration.ofDays(1).toSeconds()));
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + Duration.ofDays(1).toMillis());
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
