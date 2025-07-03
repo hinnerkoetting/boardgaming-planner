@@ -12,7 +12,7 @@ post {
 
 body:json {
   {
-    "login": "user",
+    "login": "{{username}}",
     "password": "user"
   }
 }
@@ -20,5 +20,7 @@ body:json {
 script:post-response {
   if (res.body.token) {
     bru.setVar("access_token", res.body.token)
+  
+    bru.setEnvVar('playerId',res.body.id)
   }
 }

@@ -44,7 +44,7 @@ public class InterestsController {
         interestRepository.save(interest);
     }
 
-    @GetMapping("/gameGroup/{gameGroupId}/players/{playerId}")
+    @GetMapping("/gameGroup/{gameGroupId}/player/{playerId}")
     public List<InterestResponse> listMyInterests(@PathVariable("gameGroupId") long gameGroupId,@PathVariable("playerId") long playerId) {
         List<Interest> interests = interestRepository.findByGameGroupIdAndPlayerId(gameGroupId, playerId);
         return interests.stream().map(interest -> {

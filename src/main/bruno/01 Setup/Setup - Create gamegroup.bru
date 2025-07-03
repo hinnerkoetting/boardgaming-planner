@@ -25,5 +25,7 @@ assert {
 }
 
 script:post-response {
-  bru.setVar("gameGroupId", res.body.id)
+  if (res.status === 201) {
+    bru.setVar("gameGroupId", res.body.id)
+  }
 }

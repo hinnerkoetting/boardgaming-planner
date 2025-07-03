@@ -5,6 +5,7 @@
     <h2>Already played games</h2>
     <DataTable :value="games" tableStyle="min-width: 20rem">
       <Column field="name" header="Name"></Column>
+      <Column field="rating" header="Rating"></Column>
       <Column field="thumbnailUrl" header="Thumbnail">
         <template #body="slotProps">
           <Image :src="slotProps.data.thumbnailUrl" />
@@ -41,6 +42,7 @@ import Column from 'primevue/column'
 import {
   addGameToGroup,
   fetchGamesInGroup,
+  fetchInterests,
   fetchPlayersInGroup,
   loadGameGroup
 } from '@/services/ApiService'
@@ -53,18 +55,36 @@ import type { Game } from '@/model/Game'
 import Image from 'primevue/image'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
+import type { Interest } from '@/model/Interest'
+import type { RatedGame } from '@/model/RatedGame'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
-const games: Ref<Game[]> = ref([])
+const games: Ref<RatedGame[]> = ref([])
+const myInterests: Ref<Interest[]> = ref([])
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
 
 onMounted(async () => {
-  gameGroup.value = await loadGameGroup(gameGroupId)
-  players.value = await fetchPlayersInGroup(gameGroupId)
-  games.value = await fetchGamesInGroup(gameGroupId)
+  loadGameGroup(gameGroupId).then((result) => {
+    gameGroup.value = result
+  })
+  fetchPlayersInGroup(gameGroupId).then((result) => {
+    players.value = result
+  })
+  fetchGamesInGroup(gameGroupId).then((result) => {
+    games.value = result as RatedGame[]
+  })
+  fetchInterests(gameGroupId).then((result) => {
+    myInterests.value = result
+    games.value.forEach((game) => {
+      const interest = myInterests.value.find((interest) => interest.gameId == game.id)
+      if (interest) {
+        game.rating = interest.rating
+      }
+    })
+  })
 })
 
 async function onGameAdded(game: Game) {

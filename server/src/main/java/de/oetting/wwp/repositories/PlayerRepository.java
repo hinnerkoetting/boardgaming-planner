@@ -20,5 +20,9 @@ public interface PlayerRepository extends PagingAndSortingRepository<Player, Lon
 
     @Override
     @RestResource(exported = false)
+    <S extends Player> S save(S entity);
+
+    @Override
+    @RestResource(exported = false)
     void delete(Player entity);
 }
