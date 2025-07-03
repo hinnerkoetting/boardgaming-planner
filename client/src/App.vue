@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { isLoggedIn, loadMe, logout } from './services/LoginService'
+import { isLoggedIn, logout } from './services/LoginService'
 import EventBus from './services/EventBus'
 import { ref } from 'vue'
 import router from './router'
@@ -14,10 +14,6 @@ EventBus.addEventListener('login-status', () => {
 function onClickLogout() {
   logout()
   router.push('home')
-}
-
-if (isLoggedIn()) {
-  loadMe()
 }
 </script>
 

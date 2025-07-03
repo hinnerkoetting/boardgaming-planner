@@ -53,10 +53,11 @@ public class AuthController {
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginReq.getLogin(), loginReq.getPassword()));
             String username = authentication.getName();
             UserDetails userDetails = userDetailsManager.loadUserByUsername(username);
-            User user = new User(loginReq.getLogin(), "", userDetails.getAuthorities());
-            String token = jwtUtil.createToken(user);
-            long playerId = playerRepository.findByName(loginReq.getLogin()).orElseThrow(() -> new NoSuchElementException("Player not found")).getId();
-            LoginResponse loginRes = new LoginResponse(username, token, playerId);
+
+            Player player = playerRepository.findByName(loginReq.getLogin()).orElseThrow(() -> new NoSuchElementException("Player not found"));
+            String token = jwtUtil.createToken(player, userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+
+            LoginResponse loginRes = new LoginResponse(username, token, player.getId());
 
             return ResponseEntity.ok(loginRes);
 
@@ -89,8 +90,7 @@ public class AuthController {
         player.setName(registrationRequest.getLogin());
         Player savedPlayer = playerRepository.save(player);
 
-        User user = new User(registrationRequest.getLogin(), "", authorities);
-        String token = jwtUtil.createToken(user);
+        String token = jwtUtil.createToken(savedPlayer, authorities.stream().map(GrantedAuthority::getAuthority).toList());
 
         LoginResponse loginResponse = new LoginResponse(registrationRequest.getLogin(), token, savedPlayer.getId());
 

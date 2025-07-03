@@ -36,7 +36,7 @@ import { addPlayerToGroup, fetchGameGroups } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
-import { getCurrentUserId } from '@/services/LoginService'
+import { getCurrentPlayerId } from '@/services/LoginService'
 import AddGameGroup from '@/components/GameGroup/AddGameGroup.vue'
 import router from '@/router'
 
@@ -51,7 +51,7 @@ function onClickJoinGroup(gameGroup: GameGroup) {
     console.error('Gamegroup has no id')
     return
   }
-  addPlayerToGroup(gameGroup.id, getCurrentUserId())
+  addPlayerToGroup(gameGroup.id, getCurrentPlayerId())
   openGroup(gameGroup.id)
 }
 

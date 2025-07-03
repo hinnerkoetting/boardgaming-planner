@@ -5,7 +5,7 @@ import type { GameGroup } from '@/model/GameGroup'
 import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
 import type { Player } from '@/model/Player'
-import { getCurrentUserId, isLoggedIn } from './LoginService'
+import { getCurrentPlayerId, isLoggedIn } from './LoginService'
 import type { Interest } from '@/model/Interest'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 import type { Rating } from '@/model/Rating'
@@ -136,7 +136,7 @@ export async function addGameGroup(gameGroup: GameGroup): Promise<GameGroup> {
 }
 
 export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
-  const playerId = getCurrentUserId()
+  const playerId = getCurrentPlayerId()
   const response = await authorizedFetch(`/api/ratings/gameGroup/${gameGroupId}/player/${playerId}`)
   return await response.json()
 }

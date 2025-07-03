@@ -17,7 +17,7 @@
 import { Game } from '@/model/Game'
 import type { Rating } from '@/model/Rating'
 import { deleteInterest, updateRating } from '@/services/ApiService'
-import { getCurrentUserId } from '@/services/LoginService'
+import { getCurrentPlayerId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 
@@ -42,7 +42,7 @@ const game = ref(props.game)
 async function onClickRating(rating: number) {
   const response = await updateRating({
     gameId: game.value.id!,
-    playerId: getCurrentUserId(),
+    playerId: getCurrentPlayerId(),
     gameGroupId: props.gameGroupId,
     rating: rating
   })
@@ -56,7 +56,7 @@ async function onClickRating(rating: number) {
 async function oncClickDeleteRating() {
   const response = await deleteInterest({
     gameId: game.value.id!,
-    playerId: getCurrentUserId(),
+    playerId: getCurrentPlayerId(),
     gameGroupId: props.gameGroupId,
     rating: undefined
   })

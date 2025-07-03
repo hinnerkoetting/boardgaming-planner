@@ -1,13 +1,31 @@
 import type { LoginResponse } from '@/model/LoginResponse'
-import { getInformationAboutMe, loginRequest, registerRequest } from './ApiService'
+import { loginRequest, registerRequest } from './ApiService'
 import EventBus from './EventBus'
-import type { Me } from '@/model/Me'
 import type { ResponseWrapper } from '@/model/api/Response'
-
-let userInfo: Me
+import type { JwtPayload } from '@/model/api/JwtPayload'
 
 export function isLoggedIn() {
-  return !!localStorage.getItem('access-token')
+  return !!localStorage.getItem('access-token') && !isJwtExpired()
+}
+
+function getJwtPayload(): JwtPayload | undefined {
+  if (localStorage.getItem('access-token')) {
+    try {
+      const splittedJwt = localStorage.getItem('access-token')!.split('.')
+      return JSON.parse(atob(splittedJwt[1]))
+    } catch (e) {
+      console.log('Could not parse JWT ' + e)
+    }
+  }
+}
+
+function isJwtExpired(): boolean {
+  const expiry = getJwtPayload()?.exp
+  if (!expiry) {
+    return true
+  }
+  const buffer = 30_000
+  return expiry! * 1000 + buffer < new Date().getTime()
 }
 
 export async function login(name: string, password: string): Promise<undefined | string> {
@@ -15,7 +33,6 @@ export async function login(name: string, password: string): Promise<undefined |
   if (response.success) {
     localStorage.setItem('access-token', response?.success.token || '')
     EventBus.emit('login-status')
-    loadMe()
     return undefined
   } else if (response.error) {
     console.info(`Login failed ${response}`)
@@ -28,7 +45,6 @@ export async function register(name: string, password: string): Promise<string |
   if (response.success) {
     localStorage.setItem('access-token', response.success.token || '')
     EventBus.emit('login-status')
-    loadMe()
     return undefined
   } else if (response.error) {
     console.info(`Login failed ${response}`)
@@ -39,13 +55,12 @@ export async function register(name: string, password: string): Promise<string |
 export function logout() {
   localStorage.removeItem('access-token')
   EventBus.emit('login-status')
-  userInfo = null!
 }
 
-export async function loadMe() {
-  userInfo = await getInformationAboutMe()
-}
-
-export function getCurrentUserId(): number {
-  return userInfo.playerId
+export function getCurrentPlayerId(): number {
+  const payload = getJwtPayload()
+  if (!payload) {
+    throw 'User is not logged in'
+  }
+  return payload!.player_id
 }

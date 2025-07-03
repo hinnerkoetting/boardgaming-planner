@@ -1,6 +1,7 @@
 package de.oetting.wwp.security;
 
 
+import de.oetting.wwp.entities.Player;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.AuthenticationException;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -29,13 +31,16 @@ public class JwtUtil {
         this.jwtParser = Jwts.parser().setSigningKey(secret_key);
     }
 
-    public String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
+    public String createToken(Player player, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(player.getName());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
+                .addClaims(Map.of())
+                .claim("player_id", player.getId())
+                .claim("roles", roles)
                 .signWith(SignatureAlgorithm.HS256, secret_key)
                 .compact();
     }
