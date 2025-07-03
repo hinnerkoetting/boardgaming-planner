@@ -23,7 +23,7 @@ import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
 import AddGame from '@/components/Game/AddGame.vue'
-import GamesTable from '@/components/Game/GamesTable.vue'
+import GamesTable from '@/components/Game/Admin/GamesTableAdmin.vue'
 
 const games: Ref<Game[]> = ref([] as Game[])
 
