@@ -1,0 +1,14 @@
+spring:
+  ssl:
+    bundle:
+      jks:
+        web-server:
+          key:
+            alias: "server"
+          keystore:
+            location: "file:${SSL_KEYSTORE_FILE}"
+            password: "${SSL_KEYSTORE_PASSWORD]"
+server:
+  port: 8443
+  ssl:
+    bundle: "web-server"

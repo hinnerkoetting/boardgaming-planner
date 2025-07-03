@@ -6,6 +6,7 @@
       autocomplete="username"
       v-on:keyup.enter="onStartLogin"
       v-model="loginModel"
+      class="full-width"
     />
     <InputText
       name="password"
@@ -14,10 +15,11 @@
       autocomplete="password"
       v-on:keyup.enter="onStartLogin"
       v-model="passwordModel"
+      class="full-width"
     />
 
-    <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
-    <Button @click="onStartLogin">Login</Button>
+    <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
+    <Button @click="onStartLogin" class="full-width">Login</Button>
   </div>
 </template>
 
@@ -47,15 +49,15 @@ async function onStartLogin() {
 </script>
 
 <style scoped lang="css">
-
 .wrapper {
-  display: flex;  
+  display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   gap: 4px;
+  width: 250px;
 }
 
-Button {
+.full-width {
   width: 100%;
 }
 </style>

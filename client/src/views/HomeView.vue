@@ -18,7 +18,7 @@ EventBus.addEventListener('login-status', () => {
 <template>
   <div class="wrapper full-width">
     <img alt="logo" class="logo" src="@/assets/logo.svg" />
-    <div class="wrapper2 full-width">
+    <div class="wrapper2">
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
     </div>
@@ -26,7 +26,6 @@ EventBus.addEventListener('login-status', () => {
 </template>
 
 <style lang="css" scoped>
-
 .logo {
   max-width: 100%;
 }
@@ -42,6 +41,8 @@ EventBus.addEventListener('login-status', () => {
 .wrapper2 {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #register {
@@ -49,9 +50,7 @@ EventBus.addEventListener('login-status', () => {
   margin-top: 12px;
 }
 
-.full-width { 
+.full-width {
   width: 100%;
 }
-
-
 </style>

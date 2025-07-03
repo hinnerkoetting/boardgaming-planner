@@ -1,7 +1,8 @@
 <template>
   <div>
+    <RouterLink to="/">back</RouterLink>
     <h1>Sign up</h1>
-    <div>
+    <div class="wrapper">
       <InputText
         name="username"
         placeholder="Name"
@@ -37,3 +38,11 @@ async function onStartRegister() {
   router.push('/gameGroups')
 }
 </script>
+
+<style lang="css" scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+</style>
