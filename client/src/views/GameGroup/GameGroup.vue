@@ -54,6 +54,7 @@ onMounted(async () => {
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     games.value = result as RatedGame[]
+    sortGames()
   })
 })
 
@@ -76,5 +77,9 @@ async function onGameAdded(game: Game) {
     }
   }
   games.value.push(ratedGame)
+}
+
+function sortGames() {
+  games.value.sort((game1, game2) => game2.rating.averageRating - game1.rating.averageRating)
 }
 </script>
