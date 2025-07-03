@@ -9,10 +9,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -66,7 +63,7 @@ public class Game {
             @JoinColumn(name="GAME_ID", referencedColumnName="ID"),
             inverseJoinColumns=
             @JoinColumn(name="TAG_ID", referencedColumnName="ID"))
-    private Set<TagEntity> globalTags;
+    private Set<TagEntity> globalTags = new HashSet<>();
 
     public Long getId() {
         return id;

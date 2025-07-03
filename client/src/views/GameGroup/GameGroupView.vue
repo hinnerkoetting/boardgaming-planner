@@ -117,7 +117,9 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     },
     tags: []
   }
+  displayedGames.value.push(gameGroupGame)
   allGames.value.push(gameGroupGame)
+
   callback(new EventMessage('Game added', true))
 }
 

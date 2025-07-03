@@ -87,6 +87,7 @@ function onClickCard() {
 .p-card {
   height: 100%;
 }
+
 .full-height {
   height: 100%;
 }

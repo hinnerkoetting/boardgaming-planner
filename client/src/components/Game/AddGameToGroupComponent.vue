@@ -40,6 +40,9 @@ async function searchFromBgg() {
 
 async function onClickSearch() {
   reset()
+  if (!searchTerm.value) {
+    return
+  }
   searchItems.value = await searchExistingGames(searchTerm.value)
   someGamesFound.value = searchItems.value.length > 0
   if (searchItems.value.length === 0) {

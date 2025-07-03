@@ -210,7 +210,8 @@ function onClickReset() {
   })
   duration.value[0] = 10
   duration.value[1] = 300
-  numberOfPlayers.value = undefined
+  numberOfPlayers.value = props.numberOfPlayersInGroup
+  playerFilterType.value = 'PLAYABLE'
   filter()
 }
 
