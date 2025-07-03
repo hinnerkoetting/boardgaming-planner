@@ -9,12 +9,13 @@ import de.oetting.wwp.repositories.PlayerRepository;
 import jakarta.transaction.Transactional;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
 @RestController
-@RequestMapping(path = "gameGroup/{gameGroupId}/")
+@RequestMapping(path = "api/gameGroup/{gameGroupId}/")
 public class GameGroupController {
 
     @Autowired
@@ -28,6 +29,7 @@ public class GameGroupController {
 
     @Transactional
     @PostMapping(path = "players")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayerById(@RequestBody long playerId, @PathVariable("gameGroupId") long gameGroupId) {
         Player player = playerRepository.findById(playerId).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
@@ -43,6 +45,7 @@ public class GameGroupController {
 
     @Transactional
     @PostMapping(path = "playedGames")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayedGameById(@RequestBody long gameId, @PathVariable("gameGroupId") long gameGroupId) {
         var game = gameRepository.findById(gameId).orElseThrow();
         var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();

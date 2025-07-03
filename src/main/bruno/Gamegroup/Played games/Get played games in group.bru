@@ -5,11 +5,15 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/gameGroup/{{gameGroupId}}/playedGames
+  url: http://localhost:8080/api/gameGroup/{{gameGroupId}}/playedGames
   body: none
   auth: none
 }
 
 vars:pre-request {
   gameGroupId: 1
+}
+
+assert {
+  res.status: eq 200
 }
