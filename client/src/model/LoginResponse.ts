@@ -1,5 +1,3 @@
-import type { s } from 'vitest/dist/reporters-yx5ZTtEV.js'
-
 export class LoginResponse {
   constructor(
     readonly responseType: 'login',

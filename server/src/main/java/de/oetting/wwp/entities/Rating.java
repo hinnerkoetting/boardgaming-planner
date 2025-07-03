@@ -3,7 +3,7 @@ package de.oetting.wwp.entities;
 import jakarta.persistence.*;
 
 @Entity
-public class Interest {
+public class Rating {
 
 
     @Id

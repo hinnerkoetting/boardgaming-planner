@@ -1,6 +1,6 @@
 package de.oetting.wwp.controller.model;
 
-public class InterestRequest {
+public class RatingRequest {
 
     private long playerId;
     private long gameGroupId;

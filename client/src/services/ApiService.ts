@@ -2,19 +2,19 @@ import { BggFetchItem } from '@/model/BggFetchItem'
 import { BggSearchItem } from '@/model/BggSearchItem'
 import type { Game } from '@/model/Game'
 import type { GameGroup } from '@/model/GameGroup'
-import type { LoginResponse } from '@/model/LoginResponse'
+import { LoginResponse } from '@/model/LoginResponse'
 import { Me } from '@/model/Me'
 import type { Player } from '@/model/Player'
 import { getCurrentUserId, isLoggedIn } from './LoginService'
 import type { Interest } from '@/model/Interest'
-import type { ErrorResponse } from '@/model/ErrorResponse'
+import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 
 // Auth
 
 export async function loginRequest(
   name: String,
   password: String
-): Promise<LoginResponse | ErrorResponse> {
+): Promise<ResponseWrapper<LoginResponse>> {
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: {
@@ -25,11 +25,7 @@ export async function loginRequest(
       password
     })
   })
-  if (response.status < 300) {
-    return { ...((await response.json()) as LoginResponse), responseType: 'login' }
-  } else {
-    return { ...((await response.json()) as ErrorResponse), responseType: 'error' }
-  }
+  return wrapResponse<LoginResponse>(response)
 }
 
 function defaultFetchOptions() {
@@ -140,29 +136,27 @@ export async function addGameGroup(gameGroup: GameGroup): Promise<GameGroup> {
 
 export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
   const playerId = getCurrentUserId()
-  const response = await authorizedFetch(
-    `/api/interests/gameGroup/${gameGroupId}/player/${playerId}`
-  )
+  const response = await authorizedFetch(`/api/ratings/gameGroup/${gameGroupId}/player/${playerId}`)
   return await response.json()
 }
 
-export async function updateInterest(interest: Interest) {
-  await authorizedFetch('/api/interests', {
+export async function updateInterest(rating: Interest) {
+  await authorizedFetch('/api/ratings', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(interest)
+    body: JSON.stringify(rating)
   })
 }
 
-export async function deleteInterest(interest: Interest) {
-  await authorizedFetch('/api/interests', {
+export async function deleteInterest(rating: Interest) {
+  await authorizedFetch('/api/ratings', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(interest)
+    body: JSON.stringify(rating)
   })
 }
 
@@ -192,7 +186,7 @@ export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> 
 export async function registerRequest(
   name: String,
   password: String
-): Promise<LoginResponse | ErrorResponse> {
+): Promise<ResponseWrapper<LoginResponse>> {
   const response = await fetch('/api/auth/register', {
     method: 'POST',
     headers: {
@@ -203,10 +197,7 @@ export async function registerRequest(
       password
     })
   })
-  if (response.status < 300) {
-    return (await response.json()) as LoginResponse
-  }
-  return (await response.json()) as ErrorResponse
+  return await wrapResponse<LoginResponse>(response)
 }
 
 async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {

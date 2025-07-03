@@ -5,7 +5,17 @@
     <h2>Already played games</h2>
     <DataTable :value="games" tableStyle="min-width: 20rem">
       <Column field="name" header="Name"></Column>
-      <Column field="rating" header="Rating"></Column>
+      <Column header="Rating (Average / Mine)">
+        <template #body="slotProps">
+          <div v-if="slotProps.data.rating?.existsVeto">
+            <Tag severity="danger">Vetoed</Tag>
+            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
+          </div>
+          <div v-if="!slotProps.data.rating?.existsVeto">
+            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
+          </div>
+        </template>
+      </Column>
       <Column field="thumbnailUrl" header="Thumbnail">
         <template #body="slotProps">
           <Image :src="slotProps.data.thumbnailUrl" />
@@ -54,9 +64,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import {
   addGameToGroup,
-  deleteInterest,
   fetchGamesInGroup,
-  fetchInterests,
   fetchPlayersInGroup,
   loadGameGroup
 } from '@/services/ApiService'
@@ -69,17 +77,15 @@ import type { Game } from '@/model/Game'
 import Image from 'primevue/image'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
-import type { Interest } from '@/model/Interest'
 import type { RatedGame } from '@/model/RatedGame'
 import Button from 'primevue/button'
-import { getCurrentUserId } from '@/services/LoginService'
 import Dialog from 'primevue/dialog'
 import RatingComponent from '@/components/RatingComponent.vue'
+import Tag from 'primevue/tag'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
 const games: Ref<RatedGame[]> = ref([])
-const myInterests: Ref<Interest[]> = ref([])
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
@@ -93,21 +99,9 @@ onMounted(async () => {
   fetchPlayersInGroup(gameGroupId).then((result) => {
     players.value = result
   })
-  fetchGamesInGroup(gameGroupId)
-    .then((result) => {
-      games.value = result as RatedGame[]
-    })
-    .then(() => {
-      fetchInterests(gameGroupId).then((result) => {
-        myInterests.value = result
-        games.value.forEach((game) => {
-          const interest = myInterests.value.find((interest) => interest.gameId == game.id)
-          if (interest) {
-            game.rating = interest.rating
-          }
-        })
-      })
-    })
+  fetchGamesInGroup(gameGroupId).then((result) => {
+    games.value = result as RatedGame[]
+  })
 })
 
 async function onGameAdded(game: Game) {
@@ -129,15 +123,13 @@ async function onClickRate(game: RatedGame) {
   ratingWindowVisible.value = true
 }
 
-async function onGameRatingDeleted(game: RatedGame) {
-  selectedGame.value!.rating = undefined
+async function onGameRatingDeleted() {
+  selectedGame.value!.rating.myRating = undefined
   ratingWindowVisible.value = false
 }
 
 function onGameRated(rating: number) {
-  selectedGame.value!.rating = rating
+  selectedGame.value!.rating.myRating = rating
   ratingWindowVisible.value = false
 }
 </script>
-
-<script lang="ts"></script>

@@ -1,6 +1,6 @@
 package de.oetting.wwp.controller.model;
 
-public class InterestResponse {
+public class RatingResponse {
     private long playerId;
     private long gameGroupId;
     private long gameId;

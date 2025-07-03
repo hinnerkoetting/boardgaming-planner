@@ -2,7 +2,7 @@ import type { LoginResponse } from '@/model/LoginResponse'
 import { getInformationAboutMe, loginRequest, registerRequest } from './ApiService'
 import EventBus from './EventBus'
 import type { Me } from '@/model/Me'
-import type { ErrorResponse } from '@/model/ErrorResponse'
+import type { ResponseWrapper } from '@/model/api/Response'
 
 let userInfo: Me
 
@@ -11,34 +11,28 @@ export function isLoggedIn() {
 }
 
 export async function login(name: string, password: string): Promise<undefined | string> {
-  const response = await loginRequest(name, password)
-  switch (response.responseType) {
-    case 'login': {
-      localStorage.setItem('access-token', response?.token || '')
-      EventBus.emit('login-status')
-      loadMe()
-      return undefined
-    }
-    case 'error': {
-      console.info(`Login failed ${response}`)
-      return response.detail
-    }
+  const response: ResponseWrapper<LoginResponse> = await loginRequest(name, password)
+  if (response.success) {
+    localStorage.setItem('access-token', response?.success.token || '')
+    EventBus.emit('login-status')
+    loadMe()
+    return undefined
+  } else if (response.error) {
+    console.info(`Login failed ${response}`)
+    return response.error.detail
   }
 }
 
 export async function register(name: string, password: string): Promise<string | undefined> {
   const response = await registerRequest(name, password)
-  switch (response) {
-    case response as LoginResponse: {
-      localStorage.setItem('access-token', response?.token || '')
-      EventBus.emit('login-status')
-      loadMe()
-      return undefined
-    }
-    case response as ErrorResponse: {
-      console.info(`Login failed ${response}`)
-      return response.message
-    }
+  if (response.success) {
+    localStorage.setItem('access-token', response.success.token || '')
+    EventBus.emit('login-status')
+    loadMe()
+    return undefined
+  } else if (response.error) {
+    console.info(`Login failed ${response}`)
+    return response.error.detail
   }
 }
 

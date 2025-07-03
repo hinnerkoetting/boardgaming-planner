@@ -47,14 +47,7 @@ public class DefaultSecurityConfig {
     @Bean
     @DependsOn("dataSourceInitializer")
     UserDetailsManager userDetailsManager(DataSource dataSource) {
-        JdbcUserDetailsManager usersManager = new JdbcUserDetailsManager(dataSource);
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("$2a$10$xA7.YiEEHOxP9wa.fFARD.eH7JdrD2755HJnJL76MUQXl3TOy9JzW") // admin
-                .roles("USER", "ADMIN")
-                .build();
-        usersManager.createUser(admin);
-        return usersManager;
+       return new JdbcUserDetailsManager(dataSource);
     }
 
     @Bean
