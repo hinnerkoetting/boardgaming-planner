@@ -20,10 +20,14 @@ function onClickLogout() {
     <div class="wrapper">
       <nav>
         <RouterLink to="/" v-if="isLoggedInRef">Home</RouterLink>
+        <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
+      </nav>
+
+      <h1>Admin</h1>
+      <nav>
         <RouterLink to="/players" v-if="isLoggedInRef">Players</RouterLink>
         <RouterLink to="/games" v-if="isLoggedInRef">Games</RouterLink>
         <RouterLink to="/gameGroups" v-if="isLoggedInRef">Groups</RouterLink>
-        <a id="logout" @click="onClickLogout" v-if="isLoggedInRef">Logout</a>
       </nav>
     </div>
   </header>
@@ -35,6 +39,10 @@ function onClickLogout() {
 header {
   line-height: 1.5;
   max-height: 100vh;
+}
+
+h1 {
+  margin-top: 100px;
 }
 
 nav {
