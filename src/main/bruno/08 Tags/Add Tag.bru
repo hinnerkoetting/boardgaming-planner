@@ -16,9 +16,7 @@ headers {
 
 body:json {
   {
-    "id": "TAG_ID2",
     "description": "DESCRIPTION",
-    "order": 1,
     "type": "GLOBAL"
   }
 }
@@ -29,4 +27,10 @@ vars:pre-request {
 
 assert {
   res.status: eq 200
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("tag_id", res.body.id)
+  }
 }

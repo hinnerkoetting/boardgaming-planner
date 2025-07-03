@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: http://localhost:8080/api/tags/TAG_ID
+  url: http://localhost:8080/api/tags/{{tag_id}}
   body: json
   auth: none
 }
@@ -16,9 +16,8 @@ headers {
 
 body:json {
   {
-    "id": "TAG_ID",
     "description": "DESCRIPTION",
-    "order": 1,
+    "ranking": 1,
     "type": "GLOBAL"
   }
 }

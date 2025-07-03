@@ -1,6 +1,6 @@
-import type { TagModel } from '@/model/TagModel'
+import type { CreateTagModel, TagModel } from '@/model/TagModel'
 import { authorizedFetch } from './ApiService'
-import { wrapEmptySuccessResponse, type ResponseWrapper } from '@/model/api/Response'
+import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 
 export async function fetchTags(): Promise<TagModel[]> {
   const response = await authorizedFetch('/api/tags')
@@ -13,7 +13,7 @@ export async function deleteTag(tag: TagModel): Promise<void> {
   })
 }
 
-export async function createTag(tag: TagModel): Promise<ResponseWrapper<boolean>> {
+export async function createTag(tag: CreateTagModel): Promise<ResponseWrapper<TagModel>> {
   const response = await authorizedFetch('/api/tags', {
     method: 'POST',
     body: JSON.stringify(tag),
@@ -21,10 +21,10 @@ export async function createTag(tag: TagModel): Promise<ResponseWrapper<boolean>
       'Content-Type': 'application/json'
     }
   })
-  return wrapEmptySuccessResponse(response)
+  return wrapResponse(response)
 }
 
-export async function updateTag(tag: TagModel): Promise<ResponseWrapper<boolean>> {
+export async function updateTag(tag: CreateTagModel): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch('/api/tags/${tag.id}', {
     method: 'PUT',
     body: JSON.stringify(tag)

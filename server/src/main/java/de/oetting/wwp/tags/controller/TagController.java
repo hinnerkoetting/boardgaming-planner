@@ -3,6 +3,7 @@ package de.oetting.wwp.tags.controller;
 import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.security.Role;
 import de.oetting.wwp.tags.entity.TagEntity;
+import de.oetting.wwp.tags.model.CreateTagRequest;
 import de.oetting.wwp.tags.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -25,38 +23,38 @@ public class TagController {
     @GetMapping
     public Iterable<TagEntity> listAll() {
         return StreamSupport.stream(tagRepository.findAll().spliterator(), false)
-                .sorted(Comparator.comparing(TagEntity::getOrder))
+                .sorted(Comparator.comparing(TagEntity::getRanking))
                 .toList();
     }
 
     @PostMapping
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    public void create(@RequestBody TagEntity tag ) {
-        if (tagRepository.findById(tag.getId()).isEmpty()) {
-            tagRepository.save(tag);
-        } else{
-            throw new ConflictException("Tag already existss");
+    public TagEntity create(@RequestBody CreateTagRequest tag) {
+        TagEntity entity= new TagEntity();
+        entity.setDescription(tag.getDescription());
+        entity.setType(tag.getType());
+        if (tag.getRanking() == null) {
+            Integer maxRanking = tagRepository.findMaxRanking();
+            entity.setRanking(maxRanking == null ? 0 : maxRanking + 1);
         }
+        return tagRepository.save(entity);
     }
 
     @DeleteMapping(path = "/{id}")
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    public void delete(@PathVariable("id") String id) {
+    public void delete(@PathVariable("id") long id) {
         tagRepository.deleteById(id);
     }
 
     @PutMapping(path = "/{id}")
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    public void update(@RequestBody TagEntity tag, @PathVariable("id") String id) {
-        if (!id.equals(tag.getId())) {
-            throw new ConflictException("Incorrect id passed");
-        }
+    public void update(@RequestBody CreateTagRequest tag, @PathVariable("id") Long id) {
         TagEntity storedTag = tagRepository.findById(id).orElseThrow();
         storedTag.setDescription(tag.getDescription());
-        storedTag.setOrder(tag.getOrder());
+        storedTag.setRanking(tag.getRanking());
         storedTag.setType(tag.getType());
     }
 }

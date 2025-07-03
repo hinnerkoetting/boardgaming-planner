@@ -1,9 +1,6 @@
 package de.oetting.wwp.tags.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
@@ -12,25 +9,24 @@ import org.hibernate.validator.constraints.Length;
 public class TagEntity {
 
     @Id
-    @NotNull
-    @Length(max = 35)
-    private String id;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long id;
 
     @NotNull
     @Length(max = 80)
     private String description;
 
-    @Column(name = "SORT_ORDER")
-    private int order;
+    @Column(name = "RANKING")
+    private int ranking;
 
     @NotNull
     private TagType type;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -42,12 +38,12 @@ public class TagEntity {
         this.description = description;
     }
 
-    public int getOrder() {
-        return order;
+    public int getRanking() {
+        return ranking;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
     }
 
     public TagType getType() {

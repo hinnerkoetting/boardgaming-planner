@@ -3,7 +3,7 @@
     <Button @click="onClickCreateTag"> Create Tag</Button>
     <Dialog v-model:visible="showDialog" modal header="Create Tag"
       ><div>
-        <EditTagComponent v-on:tag-added="onTagAdded" />
+        <EditTagComponent v-on:tag-added="onTagAdded" mode="CREATE" />
       </div>
     </Dialog>
   </div>

@@ -1,38 +1,74 @@
 <template>
   <div class="content">
-    <Message severity="error"> {{ errorMessage }}</Message>
-    <InputText name="id" v-model="id" placeholder="ID" /><br />
-    <InputText name="description" v-model="description" placeholder="Description" />
-    <InputNumber name="order" v-model="order" placeholder="Order" />
-    <InputText name="type" v-model="type" placeholder="Type" />
+    <Message severity="error" v-if="errorMessage"> {{ errorMessage }}</Message>
+    <InputText
+      name="description"
+      v-model="description"
+      placeholder="Description"
+      @keyup.enter="onClickSubmit"
+    />
+    <Select v-model="type" :options="options" />
     <Button @click="onClickSubmit">Submit</Button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TagModel } from '@/model/TagModel'
-import { createTag } from '@/services/api/TagApiService'
+import type { ResponseWrapper } from '@/model/api/Response'
+import { CreateTagModel, TagModel } from '@/model/TagModel'
+import { createTag, updateTag } from '@/services/api/TagApiService'
 import Button from 'primevue/button'
-import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import { ref } from 'vue'
+import Select from 'primevue/select'
+import { ref, type PropType } from 'vue'
 
-const emit = defineEmits(['tag-added'])
+const props = defineProps({
+  mode: {
+    type: String as PropType<'CREATE' | 'EDIT'>,
+    required: true
+  },
+  propDescription: {
+    type: String
+  },
+  propId: {
+    type: Number
+  },
+  propRanking: {
+    type: Number
+  },
+  propType: {
+    type: String
+  }
+})
+const emit = defineEmits<{
+  (e: 'tag-added', tag: TagModel): void
+}>()
 
 const errorMessage = ref('')
-const id = ref('')
-const description = ref('')
-const order = ref(0)
-const type = ref('')
+const description = ref(props.propDescription || '')
+const type = ref(props.propType || 'GLOBAL')
+const options = ['GLOBAL', 'GAME_GROUP']
 
 async function onClickSubmit() {
-  const tag = new TagModel(id.value, description.value, order.value, type.value)
-  const response = await createTag(tag)
+  const response = await createOrUpdate()
   if (response.success) {
-    emit('tag-added', tag)
+    emit('tag-added', response.success)
   } else {
     errorMessage.value = response.error?.detail || 'Error'
+  }
+}
+
+async function createOrUpdate(): Promise<ResponseWrapper<TagModel>> {
+  const tag = new CreateTagModel(description.value, null, type.value)
+
+  if (props.mode === 'CREATE') {
+    return await createTag(tag)
+  } else {
+    await updateTag(tag)
+    return {
+      success: new TagModel(props.propId!, description.value, props.propRanking!, type.value),
+      error: undefined
+    }
   }
 }
 </script>
