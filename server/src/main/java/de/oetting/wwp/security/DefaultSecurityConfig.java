@@ -71,7 +71,8 @@ public class DefaultSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers("/api/auth/**").permitAll();
-                    requests.anyRequest().authenticated();
+                    requests.requestMatchers("/api/**").authenticated();
+                    requests.anyRequest().permitAll();
                 })
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);

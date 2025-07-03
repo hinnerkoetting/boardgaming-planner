@@ -31,8 +31,26 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.getByName("bootJar") {
+    dependsOn("copy_client_resources")
+}
+
+tasks.register<Copy>("copy_client_resources") {
+    dependsOn(":client:npm_run_build")
+
+    from("../client/dist")
+    into("build/client/static")
+}
+
+
+
+java.sourceSets["main"].resources {
+    srcDir("build/client")
 }
