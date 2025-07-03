@@ -73,7 +73,7 @@ function onClickDescription() {
 }
 
 .image {
-  max-width: 100%;
+  max-width: 600px;
 }
 
 .content {
