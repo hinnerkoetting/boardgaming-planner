@@ -37,6 +37,6 @@ export async function loadMe() {
   userInfo = await getInformationAboutMe()
 }
 
-export function getCurrentUserId(): Number {
+export function getCurrentUserId(): number {
   return userInfo.playerId
 }

@@ -24,7 +24,12 @@ const router = createRouter({
     {
       path: '/gameGroups',
       name: 'gameGroups',
-      component: () => import('../views/GameGroup.vue')
+      component: () => import('../views/GameGroup/GameGroups.vue')
+    },
+    {
+      path: '/gameGroup/:gameGroupId',
+      name: 'gameGroup',
+      component: () => import('../views/GameGroup/GameGroup.vue')
     },
 
     // Admin

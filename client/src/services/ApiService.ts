@@ -75,7 +75,7 @@ export async function removePlayerFromGroup(gameGroupId: Number, playerId: Numbe
   })
 }
 
-export async function addPlayerToGroup(gameGroupId: Number, playerId: Number) {
+export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
   await authorizedFetch(`/api/gameGroups/${gameGroupId}/players`, {
     method: 'POST',
     headers: {
@@ -85,14 +85,15 @@ export async function addPlayerToGroup(gameGroupId: Number, playerId: Number) {
   })
 }
 
-export async function addGameGroup(gameGroup: GameGroup) {
-  await authorizedFetch('/api/gameGroups', {
+export async function addGameGroup(gameGroup: GameGroup): Promise<GameGroup> {
+  const response = await authorizedFetch('/api/gameGroups', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ name: gameGroup.name })
   })
+  return await response.json()
 }
 
 // BGG

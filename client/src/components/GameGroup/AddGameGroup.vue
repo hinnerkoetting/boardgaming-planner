@@ -7,22 +7,22 @@ import { addGameGroup } from '@/services/ApiService'
 
 const emit = defineEmits(['game-group-added'])
 
-const name: Ref<String> = ref('')
+const name: Ref<string> = ref('')
 
 function onClickAddGameGroup() {
   const gameGroup: GameGroup = {
     name: name.value,
     id: undefined
   }
-  addGameGroup(gameGroup)
-  emit('game-group-added', gameGroup)
+  const savedGameGroup = addGameGroup(gameGroup)
+  emit('game-group-added', savedGameGroup)
 }
 </script>
 
 <template>
   <div>
     <InputText name="name" v-model="name" placeholder="Name"></InputText><br />
-    <Button @click="onClickAddGameGroup">Add</Button>
+    <Button @click="onClickAddGameGroup">Create</Button>
   </div>
 </template>
 
