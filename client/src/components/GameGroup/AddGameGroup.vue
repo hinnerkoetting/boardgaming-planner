@@ -21,6 +21,7 @@ async function onClickAddGameGroup() {
 
 <template>
   <div>
+    <h1>Add group</h1>
     <InputText
       name="name"
       v-model="name"

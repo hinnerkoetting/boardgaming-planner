@@ -20,7 +20,6 @@ public class JwtUtil {
 
 
     private final String secret_key = Objects.requireNonNull(System.getenv("JWT_SIGNING_KEY"), "env JWT_SIGNING_KEY not defined");
-    private long accessTokenValidity = Duration.ofDays(1).toSeconds();
 
     private final JwtParser jwtParser;
 
@@ -34,7 +33,7 @@ public class JwtUtil {
     public String createToken(Player player, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(player.getName());
         Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toSeconds(Duration.ofDays(1).toSeconds()));
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
