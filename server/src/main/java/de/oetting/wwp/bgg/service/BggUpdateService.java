@@ -126,7 +126,7 @@ public class BggUpdateService {
 
     private Optional<SearchItem> findMatchingSearchItem(Game game) throws SearchException {
         SearchOutput searchOutput = BGG.search(game.getName(), ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
-        if (searchOutput.getItems() ==null) {
+        if (searchOutput == null || searchOutput.getItems() == null) {
             LOG.info("Did not find matching game game {}", game.getName());
             return Optional.empty();
         }
