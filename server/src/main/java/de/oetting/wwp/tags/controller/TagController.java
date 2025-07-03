@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "api/tags")
@@ -21,7 +24,9 @@ public class TagController {
 
     @GetMapping
     public Iterable<TagEntity> listAll() {
-        return tagRepository.findAll();
+        return StreamSupport.stream(tagRepository.findAll().spliterator(), false)
+                .sorted(Comparator.comparing(TagEntity::getOrder))
+                .toList();
     }
 
     @PostMapping
