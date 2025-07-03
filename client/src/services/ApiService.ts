@@ -145,6 +145,26 @@ export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
   return await response.json()
 }
 
+export async function updateInterest(interest: Interest) {
+  await authorizedFetch('/api/interests', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(interest)
+  })
+}
+
+export async function deleteInterest(interest: Interest) {
+  await authorizedFetch('/api/interests', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(interest)
+  })
+}
+
 // BGG
 export async function searchBgg(searchTerm: String): Promise<BggSearchItem[]> {
   const response = await authorizedFetch(`/api/bgg/search/${searchTerm}`)

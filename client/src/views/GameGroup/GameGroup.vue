@@ -11,6 +11,14 @@
           <Image :src="slotProps.data.thumbnailUrl" />
         </template>
       </Column>
+      <Column header="Actions">
+        <template #body="slotProps">
+          <Button severity="secondary" @click="onClickRate(slotProps.data)"> Rate (random)</Button>
+          <Button severity="danger" @click="oncClickDeleteRating(slotProps.data)">
+            Delete rating
+          </Button>
+        </template>
+      </Column>
     </DataTable>
 
     <h2 class="green">Add game</h2>
@@ -41,10 +49,12 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import {
   addGameToGroup,
+  deleteInterest,
   fetchGamesInGroup,
   fetchInterests,
   fetchPlayersInGroup,
-  loadGameGroup
+  loadGameGroup,
+  updateInterest
 } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
@@ -57,6 +67,8 @@ import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { Interest } from '@/model/Interest'
 import type { RatedGame } from '@/model/RatedGame'
+import Button from 'primevue/button'
+import { getCurrentUserId } from '@/services/LoginService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -97,7 +109,31 @@ async function onGameAdded(game: Game) {
     return
   }
   await addGameToGroup(gameGroupId, game.id)
-  games.value.push(game)
+  const ratedGame = game as RatedGame
+  games.value.push(ratedGame)
+}
+
+async function onClickRate(game: RatedGame) {
+  const randomRating = Math.floor(Math.random() * 5) as number
+  await updateInterest({
+    gameId: game.id!,
+    playerId: getCurrentUserId(),
+    gameGroupId: gameGroupId,
+    rating: randomRating
+  })
+  game.rating = randomRating
+}
+
+async function oncClickDeleteRating(game: RatedGame) {
+  await deleteInterest({
+    gameId: game.id!,
+    playerId: getCurrentUserId(),
+    gameGroupId: gameGroupId,
+    rating: undefined
+  })
+  games.value
+    .filter((existingGame) => existingGame.id === game.id)
+    .forEach((game) => (game.rating = undefined))
 }
 </script>
 

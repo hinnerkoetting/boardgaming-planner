@@ -3,6 +3,6 @@ export class Interest {
     readonly playerId: number,
     readonly gameId: number,
     readonly gameGroupId: number,
-    readonly rating: number
+    readonly rating: number | undefined
   ) {}
 }

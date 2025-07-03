@@ -10,6 +10,7 @@ import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.GameRepository;
 import de.oetting.wwp.repositories.InterestRepository;
 import de.oetting.wwp.repositories.PlayerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,17 @@ public class InterestsController {
     @Autowired
     private GameGroupRepository gameGroupRepository;
 
-    @PostMapping
+    @PutMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void addInterest(@RequestBody InterestRequest request) {
+    @Transactional
+    public void updateInterest(@RequestBody InterestRequest request) {
+        var optionalInterest = interestRepository.findByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
+
+        if (optionalInterest.isPresent()) {
+            var interest = optionalInterest.get();
+            interest.setRating(request.getRating());
+            return;
+        }
         Player player = playerRepository.findById(request.getPlayerId()).orElseThrow(() -> new NoSuchElementException("Player not found"));
         Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
         GameGroup gameGroup = gameGroupRepository.findById(request.getGameGroupId()).orElseThrow(() -> new NoSuchElementException("GameGroup not found"));
@@ -42,6 +51,13 @@ public class InterestsController {
         interest.setPlayer(player);
         interest.setRating(request.getRating());
         interestRepository.save(interest);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    @Transactional
+    public void deleteInterest(@RequestBody InterestRequest request) {
+        interestRepository.deleteByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
     }
 
     @GetMapping("/gameGroup/{gameGroupId}/player/{playerId}")
