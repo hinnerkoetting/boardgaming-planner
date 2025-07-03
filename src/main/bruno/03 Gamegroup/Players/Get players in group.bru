@@ -1,11 +1,11 @@
 meta {
-  name: Get played games in group
+  name: Get players in group
   type: http
   seq: 2
 }
 
 get {
-  url: http://localhost:8080/api/gameGroup/{{gameGroupId}}/playedGames
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/players
   body: none
   auth: none
 }

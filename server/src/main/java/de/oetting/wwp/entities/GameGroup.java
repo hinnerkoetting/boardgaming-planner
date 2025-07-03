@@ -55,9 +55,21 @@ public class GameGroup {
 
     public void addPlayer(Player player) {
         this.players.add(player);
+        player.addGameGroup(this);
     }
 
     public void addGame(Game game) {
         this.playedGames.add(game);
+        game.addGameGroup(this);
+    }
+
+    public void deleteGame(Game g) {
+        this.playedGames.remove(g);
+        g.deleteGameGroup(this);
+    }
+
+    public void deletePlayer(Player player) {
+        this.players.remove(player);
+        player.deleteGameGroup(this);
     }
 }

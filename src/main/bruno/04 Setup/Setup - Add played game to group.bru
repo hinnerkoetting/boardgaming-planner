@@ -1,0 +1,21 @@
+meta {
+  name: Setup - Add played game to group
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/playedGames
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": {{gameId}}
+  }
+}
+
+assert {
+  res.status: eq 201
+}

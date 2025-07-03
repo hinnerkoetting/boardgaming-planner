@@ -5,17 +5,15 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/gameGroup/{{gameGroupId}}/playedGames
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/playedGames
   body: json
   auth: none
 }
 
 body:json {
-  1
-}
-
-vars:pre-request {
-  gameGroupId: 1
+  {
+    "id": {{gameId}}
+  }
 }
 
 assert {

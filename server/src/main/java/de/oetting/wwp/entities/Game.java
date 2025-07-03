@@ -38,7 +38,11 @@ public class Game {
         this.gameGroups = gameGroups;
     }
 
-    public void addGameGroup(GameGroup gameGroup) {
+    void addGameGroup(GameGroup gameGroup) {
         this.gameGroups.add(gameGroup);
+    }
+
+    void deleteGameGroup(GameGroup gameGroup) {
+        this.gameGroups.remove(gameGroup);
     }
 }

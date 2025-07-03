@@ -3,9 +3,9 @@
     <h1>Manage games</h1>
     <DataTable :value="games" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
-      <Column header="Delete">
+      <Column header="Actions">
         <template #body="slotProps">
-          {{ slotProps.data.id }}
+          <Button @click="onClickDelete(slotProps.data.id)" severity="danger"> Delete </Button>
         </template>
       </Column>
     </DataTable>
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import Button from 'primevue/button'
 import { fetchGames } from '@/services/ApiService'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
@@ -35,4 +36,10 @@ const games = ref([] as Game[])
 onMounted(async () => {
   games.value = await fetchGames()
 })
+
+function onClickDelete(id: Number) {
+  console.log('delete ' + id)
+}
 </script>
+
+<script lang="ts"></script>

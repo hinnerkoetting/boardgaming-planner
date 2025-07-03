@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "game", path = "game")
+@RepositoryRestResource(collectionResourceRel = "games", path = "games")
 public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game,Long> {
 
     @Override

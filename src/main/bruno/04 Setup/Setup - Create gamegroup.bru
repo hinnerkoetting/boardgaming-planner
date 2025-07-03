@@ -1,0 +1,25 @@
+meta {
+  name: Setup - Create gamegroup
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/gameGroups
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "test"
+  }
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:post-response {
+  bru.setVar("gameGroupId", res.body.id)
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Setup - Create player
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/players
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Hinnerk"
+  }
+}
+
+assert {
+  res.status: in 201, 409
+}
+
+script:post-response {
+  bru.setVar("playerId", res.body.id)
+}

@@ -1,6 +1,7 @@
 package de.oetting.wwp.infrastructure;
 
 import de.oetting.wwp.entities.Game;
+import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -15,5 +16,6 @@ public class RestConfiguration implements RepositoryRestConfigurer {
             RepositoryRestConfiguration config, CorsRegistry cors) {
         config.exposeIdsFor(Player.class);
         config.exposeIdsFor(Game.class);
+        config.exposeIdsFor(GameGroup.class);
     }
 }

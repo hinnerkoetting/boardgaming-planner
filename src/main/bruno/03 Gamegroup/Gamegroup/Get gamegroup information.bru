@@ -1,17 +1,13 @@
 meta {
   name: Get gamegroup information
   type: http
-  seq: 4
+  seq: 3
 }
 
 get {
-  url: http://localhost:8080/api/gameGroup/{{gameGroupId}}
+  url: http://localhost:8080/api/gameGroups/{{gameGroupId}}
   body: none
   auth: none
-}
-
-vars:pre-request {
-  gameGroupId: 1
 }
 
 assert {

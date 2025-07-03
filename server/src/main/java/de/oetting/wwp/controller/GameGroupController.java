@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(path = "api/gameGroup/{gameGroupId}/")
+@RequestMapping(path = "api/gameGroups/{gameGroupId}/")
 public class GameGroupController {
 
     @Autowired
@@ -31,15 +31,13 @@ public class GameGroupController {
     @Transactional
     @PostMapping(path = "players")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void addPlayerById(@RequestBody long playerId, @PathVariable("gameGroupId") long gameGroupId) {
-        if (gameGroupRepository.playerAssignedToGameGroup(playerId, gameGroupId).isPresent()) {
+    public void addPlayerById(@RequestBody IdWrapper playerId, @PathVariable("gameGroupId") long gameGroupId) {
+        if (gameGroupRepository.playerAssignedToGameGroup(playerId.getId(), gameGroupId).isPresent()) {
             throw new ConflictException("Player already exists");
         }
-        Player player = playerRepository.findById(playerId).orElseThrow();
+        Player player = playerRepository.findById(playerId.getId()).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         gameGroup.addPlayer(player);
-        player.addGameGroup(gameGroup);
-
     }
 
     @GetMapping(path = "players")
@@ -50,16 +48,15 @@ public class GameGroupController {
     @Transactional
     @PostMapping(path = "playedGames")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void addPlayedGameById(@RequestBody long gameId, @PathVariable("gameGroupId") long gameGroupId) {
-        var game = gameRepository.findById(gameId).orElseThrow();
+    public void addPlayedGameById(@RequestBody IdWrapper gameId, @PathVariable("gameGroupId") long gameGroupId) {
+        var game = gameRepository.findById(gameId.getId()).orElseThrow();
         var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         gameGroup.addGame(game);
-        game.addGameGroup(gameGroup);
-
     }
 
     @GetMapping(path = "playedGames")
     public Collection<Game> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayedGames();
     }
+
 }
