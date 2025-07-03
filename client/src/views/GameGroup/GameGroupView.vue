@@ -6,7 +6,7 @@
       Games
       <FilterGamesDialog
         :allTags="tags"
-        :allGames="allGames"        
+        :allGames="allGames"
         :visibleGames="displayedGames"
         :numberOfPlayersInGroup="players.length"
         @updatedFilter="onUpdatedFilters"
@@ -24,7 +24,7 @@
 
     <template v-if="isPartOfGroup">
       <h2 class="green">Add game</h2>
-      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent"/>
+      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" />
     </template>
 
     <h2>Players</h2>
@@ -62,6 +62,7 @@ import { EventMessage } from '@/model/internal/EventMessage'
 import type { TagModel } from '@/model/TagModel'
 import { fetchTags } from '@/services/api/TagApiService'
 import FilterGamesDialog from '@/components/Game/FilterGamesDialog.vue'
+import { FilterService } from '@/services/FilterService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -72,7 +73,7 @@ const isPartOfGroup = ref(false)
 
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
-const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined);
+const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined)
 
 onMounted(async () => {
   loadGameGroup(gameGroupId).then((result) => {
@@ -84,7 +85,7 @@ onMounted(async () => {
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
-    displayedGames.value = result
+    displayedGames.value = new FilterService().filterWithStoredSettings(result)
     sortGames()
   })
   fetchTags().then((response) => {
@@ -139,8 +140,7 @@ function onUpdatedFilters(filteredGames: GameGroupGame[]) {
 
 function onDialogOpened() {
   addGameComponent.value?.reset()
-
-} 
+}
 </script>
 
 <style lang="css" scoped>

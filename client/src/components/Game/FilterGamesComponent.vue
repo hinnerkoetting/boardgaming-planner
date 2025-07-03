@@ -2,10 +2,8 @@
   <div>
     <div>
       <div class="numberOfPlayers filterOption">
-        <div class="filterHeader">
-          Players
-        </div>
-        <div class="filterContent ">
+        <div class="filterHeader">Player count</div>
+        <div class="filterContent">
           <InputNumber
             v-model="numberOfPlayers"
             showButtons
@@ -14,43 +12,70 @@
             :max="99"
             @update:model-value="filter"
           />
-          <Button v-if="numberOfPlayersInGroup" @click="copyNumberOfPlayers"
-            >&#x2190; From group ({{ numberOfPlayersInGroup }})</Button
-          >
+          <br />
+        </div>
+        <div class="playerFilterChoice">
+          <RadioButton v-model="playerFilterType" inputId="BEST" value="BEST" @change="filter" />
+          <label for="BEST" class="playerFilterLabel">Best</label>
+
+          <RadioButton
+            v-model="playerFilterType"
+            inputId="RECOMMENDED"
+            value="RECOMMENDED"
+            @change="filter"
+          />
+          <label for="RECOMMENDED" class="playerFilterLabel">Recommended</label>
+
+          <RadioButton
+            v-model="playerFilterType"
+            inputId="PLAYABLE"
+            value="PLAYABLE"
+            @change="filter"
+          />
+          <label for="PLAYABLE" class="playerFilterLabel">Playable</label>
+
+          <RadioButton v-model="playerFilterType" inputId="OFF" value="OFF" @change="filter" />
+          <label for="OFF" class="playerFilterLabel">Any</label>
         </div>
       </div>
     </div>
-    <div class="duration filterOption">
-      <div class="filterHeader">
-          Duration <br/>(minutes)
-        </div>
-        <div class="filterContent durationContent">
-          <InputNumber
-            v-model="duration[0]"
-            showButtons
-            class="durationInput"
-            :min="0"
-            :max="600"
-            :step="10"
-            @update:model-value="filter"
-          />
-          to
-          <InputNumber
-            v-model="duration[1]"
-            showButtons
-            class="durationInput"
-            :min="0"
-            :max="600"
-            :step="10"
-            @update:model-value="filter"
-          />          
+    <div class="filterOption duration">
+      <div class="filterHeader">Duration <br />(minutes)</div>
+      <div class="filterContent durationContent">
+        <InputNumber
+          v-model="duration[0]"
+          showButtons
+          class="durationInput"
+          :min="0"
+          :max="600"
+          :step="10"
+          @update:model-value="filter"
+        />
+        to
+        <InputNumber
+          v-model="duration[1]"
+          showButtons
+          class="durationInput"
+          :min="0"
+          :max="600"
+          :step="10"
+          @update:model-value="filter"
+        />
       </div>
       <div class="newLine">
-        <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" @update:model-value="filter"/>
-      </div>      
+        <Slider
+          v-model="duration"
+          :step="10"
+          range
+          :max="600"
+          :min="0"
+          class="slider"
+          @update:model-value="filter"
+        />
+      </div>
     </div>
     <div class="filterOption">
-      <div class="filterContent">        
+      <div class="filterContent">
         <div v-for="tag in tags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
@@ -67,7 +92,7 @@
         </div>
       </div>
     </div>
-   
+
     <div class="buttonWrapper">
       <Button severity="primary" class="confirmButton" @click="onClickConfirm">Confirm</Button>
       <Button severity="danger" class="resetButton" @click="onClickReset">Reset</Button>
@@ -78,9 +103,10 @@
 <script setup lang="ts">
 import type { GameGroupGame } from '@/model/Game'
 import { TagModel } from '@/model/TagModel'
-import { FilterService, TagSelection } from '@/services/FilterService'
+import { FilterService, TagSelection, type PlayerFilterType } from '@/services/FilterService'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
+import RadioButton from 'primevue/radiobutton'
 import Slider from 'primevue/slider'
 import { onMounted, ref, watch, type PropType, type Ref } from 'vue'
 
@@ -104,8 +130,9 @@ const emit = defineEmits<{
 }>()
 
 const tags: Ref<TagSelection[]> = ref([])
-const numberOfPlayers: Ref<number | undefined> = ref(undefined)
+const numberOfPlayers: Ref<number | undefined> = ref(props.numberOfPlayersInGroup)
 const duration: Ref<number[]> = ref([10, 300])
+const playerFilterType: Ref<PlayerFilterType> = ref('OFF')
 
 const filterService = new FilterService()
 
@@ -122,6 +149,7 @@ onMounted(async () => {
     tags.value = updateTagsFromSettings(props.allTags)
     numberOfPlayers.value = settings.numberOfPlayers
     duration.value = [settings.minPlayingTime, settings.maxPlayingTime]
+    playerFilterType.value = settings.playerFilterType || 'OFF'
   } else {
     tags.value = createTagSelection(props.allTags)
   }
@@ -130,8 +158,8 @@ onMounted(async () => {
 function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
   const tagSettings = filterService.loadFilterSettings()?.tags
   if (tagSettings) {
-    return allTags.map(tag => {
-      const currentSelection = tagSettings.find(tagSetting => tagSetting.id === tag.id)
+    return allTags.map((tag) => {
+      const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
       if (currentSelection) {
         return new TagSelection(tag.description, tag.id, currentSelection.selected)
       } else {
@@ -169,15 +197,11 @@ function filter() {
     tags: tags.value,
     numberOfPlayers: numberOfPlayers.value,
     minPlayingTime: duration.value[0],
-    maxPlayingTime: duration.value[1]
+    maxPlayingTime: duration.value[1],
+    playerFilterType: playerFilterType.value
   }
   const filteredGames = filterService.filterGames(props.allGames, filterSettings)
   emit('updated-filter', filteredGames)
-}
-
-function copyNumberOfPlayers() {
-  numberOfPlayers.value = props.numberOfPlayersInGroup
-  filter()
 }
 
 function onClickReset() {
@@ -196,8 +220,7 @@ function onClickConfirm() {
 </script>
 
 <style lang="css" scoped>
-
-.one-filter { 
+.one-filter {
   display: flex;
   gap: 4px;
   flex-grow: 1;
@@ -222,11 +245,6 @@ function onClickConfirm() {
   align-items: center;
 }
 
-.duration {
-  margin-top: 16px;
-  margin-bottom: 32px;
-}
-
 .durationInput {
   width: 75px;
 }
@@ -247,12 +265,13 @@ function onClickConfirm() {
   border-top: 1px dashed #ccc;
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap
+  flex-wrap: wrap;
+  padding-top: 16px;
+  margin-bottom: 8px;
 }
 
 .filterHeader {
-  align-self: start;
-  color: var(--p-slate-500);  
+  color: var(--p-slate-500);
   margin-top: 2px;
 }
 
@@ -276,6 +295,20 @@ function onClickConfirm() {
 .newLine {
   flex-basis: 100%;
   height: 0;
+}
+
+.playerFilterChoice {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.playerFilterLabel {
+  line-height: 1.1;
+}
+
+.duration {
+  margin-bottom: 16px;
 }
 </style>
 

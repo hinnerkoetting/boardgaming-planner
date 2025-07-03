@@ -1,5 +1,7 @@
 import type { GameGroupGame } from '@/model/Game'
 
+export type PlayerFilterType = 'OFF' | 'PLAYABLE' | 'RECOMMENDED' | 'BEST'
+
 export class FilterService {
   loadFilterSettings(): FilterGamesSettings | undefined {
     const item = localStorage.getItem('filter-settings')
@@ -18,6 +20,16 @@ export class FilterService {
     localStorage.setItem('filter-settings', JSON.stringify(settings))
   }
 
+  filterWithStoredSettings(allGames: GameGroupGame[]): GameGroupGame[] {
+    const filter = this.loadFilterSettings()
+    if (!filter) {
+      return allGames
+    }
+    return allGames.filter((game) => {
+      return !this.excludesGame(game, filter)
+    })
+  }
+
   filterGames(allGames: GameGroupGame[], filter: FilterGamesSettings): GameGroupGame[] {
     this.saveFilterSettings(filter)
     return allGames.filter((game) => {
@@ -27,7 +39,7 @@ export class FilterService {
 
   private excludesGame(game: GameGroupGame, filter: FilterGamesSettings): boolean {
     return (
-      this.doesNumberOfPlayersExcludeGame(game, filter) ||
+      this.doesPlayerfilterTypeExcludeGame(game, filter) ||
       this.doesPlayingTimeExludeGame(game, filter) ||
       this.doTagsExcludeGame(game, filter)
     )
@@ -46,6 +58,43 @@ export class FilterService {
       filter.minPlayingTime > (game.playingTimeMinutes || 0) ||
       filter.maxPlayingTime < (game.playingTimeMinutes || Number.MAX_VALUE)
     )
+  }
+
+  private doesPlayerfilterTypeExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+    switch (filter.playerFilterType) {
+      case 'OFF':
+        return false
+      case 'PLAYABLE':
+        return this.doesNumberOfPlayersExcludeGame(game, filter)
+      case 'RECOMMENDED':
+        return (
+          this.doesNumberOfRecommendedPlayersExcludeGame(game, filter) &&
+          this.doesNumberOfBestPlayersExcludeGame(game, filter)
+        )
+      case 'BEST':
+        return this.doesNumberOfBestPlayersExcludeGame(game, filter)
+    }
+  }
+
+  private doesNumberOfRecommendedPlayersExcludeGame(
+    game: GameGroupGame,
+    filter: FilterGamesSettings
+  ) {
+    if (!filter.numberOfPlayers) {
+      return false
+    }
+    const numberOfPlayers = filter.numberOfPlayers
+    const recommendedNumberOfPlayers = game.recommendedNumberOfPlayers
+    return !recommendedNumberOfPlayers.includes(numberOfPlayers)
+  }
+
+  private doesNumberOfBestPlayersExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+    if (!filter.numberOfPlayers) {
+      return false
+    }
+    const numberOfPlayers = filter.numberOfPlayers
+    const recommendedNumberOfPlayers = game.bestNumberOfPlayers
+    return !recommendedNumberOfPlayers.includes(numberOfPlayers)
   }
 
   private doesNumberOfPlayersExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
@@ -93,6 +142,7 @@ export class FilterGamesSettings {
     readonly tags: TagSelection[],
     readonly numberOfPlayers: number | undefined,
     readonly minPlayingTime: number,
-    readonly maxPlayingTime: number
+    readonly maxPlayingTime: number,
+    readonly playerFilterType: PlayerFilterType
   ) {}
 }
