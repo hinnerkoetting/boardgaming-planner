@@ -1,9 +1,9 @@
 export class Game {
-  id: Number
-  name: String
-
-  constructor(id: Number, name: String) {
-    this.id = id
-    this.name = name
-  }
+  constructor(
+    readonly id: Number | undefined,
+    readonly name: String,
+    readonly description: String,
+    readonly imageUrl: String,
+    readonly thumbnailUrl: String
+  ) {}
 }

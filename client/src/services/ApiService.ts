@@ -37,13 +37,13 @@ export async function deleteGameGroup(id: Number) {
 }
 
 // Add top-level entities
-export async function addGame(name: String) {
+export async function addGame(game: Game) {
   await fetch(`/api/games`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ name })
+    body: JSON.stringify(game)
   })
 }
 
@@ -68,7 +68,7 @@ export async function removePlayerFromGroup(gameGroupId: Number, playerId: Numbe
 export async function searchBgg(searchTerm: String): Promise<BggSearchItem[]> {
   const response = await fetch(`/api/bgg/search/${searchTerm}`)
   const json = (await response.json()) as any[]
-  return json.map((item) => new BggSearchItem(item.id, item.name.value, item.year.value))
+  return json.map((item) => new BggSearchItem(item.id, item.name?.value, item.year?.value))
 }
 
 export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> {

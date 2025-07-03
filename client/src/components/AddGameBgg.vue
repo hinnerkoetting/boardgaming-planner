@@ -25,8 +25,8 @@ async function onClickAdd(bggId: number) {
       break
     default: {
       const fetchGameFound = fetchedGame as BggFetchItem
-      addGame(fetchGameFound.name)
-      emit('game-added', { name: fetchGameFound.name })
+      addGame(fetchGameFound)
+      emit('game-added', fetchGameFound)
       break
     }
   }
@@ -39,7 +39,7 @@ async function onClickAdd(bggId: number) {
       id="searchTerm"
       name="searchTerm"
       v-model="searchTerm"
-      placeholder="searchTerm"
+      placeholder="Searchterm..."
       v-on:keyup.enter="onClickSearch"
     ></InputText>
     <Button @click="onClickSearch">Search</Button>

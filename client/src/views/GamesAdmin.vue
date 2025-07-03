@@ -1,16 +1,9 @@
 <template>
   <div>
-    <h1>Manage games</h1>
-    <DataTable :value="games" tableStyle="min-width: 50rem">
-      <Column field="name" header="Name"></Column>
-      <Column header="Actions">
-        <template #body="slotProps">
-          <Button @click="onClickDelete(slotProps.data.id)" severity="danger"> Delete </Button>
-        </template>
-      </Column>
-    </DataTable>
+    <h1>All games</h1>
 
-    <AddGame v-on:game-added="onGameAdded" />
+    <GamesTable @delete="onClickDelete" :games="games" />
+    <AddGame @game-added="onGameAdded" />
   </div>
 </template>
 
@@ -25,14 +18,12 @@
 </style>
 
 <script setup lang="ts">
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Button from 'primevue/button'
 import { deleteGame, fetchGames } from '@/services/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
 import AddGame from '@/components/AddGame.vue'
+import GamesTable from '@/components/GamesTable.vue'
 
 const games: Ref<Game[]> = ref([] as Game[])
 

@@ -14,6 +14,13 @@ public class Game {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String name;
+
+    @Column(length = 4096)
+    private String description;
+
+    private String imageUrl;
+    private String thumbnailUrl;
+
     @ManyToMany(mappedBy = "playedGames")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
@@ -36,6 +43,30 @@ public class Game {
 
     public void setGameGroups(Set<GameGroup> gameGroups) {
         this.gameGroups = gameGroups;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     void addGameGroup(GameGroup gameGroup) {
