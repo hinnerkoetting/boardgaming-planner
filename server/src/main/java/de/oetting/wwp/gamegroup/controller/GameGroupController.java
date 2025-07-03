@@ -1,5 +1,6 @@
-package de.oetting.wwp.controller;
+package de.oetting.wwp.gamegroup.controller;
 
+import de.oetting.wwp.controller.IdWrapper;
 import de.oetting.wwp.controller.model.RatedGameModel;
 import de.oetting.wwp.entities.Game;
 import de.oetting.wwp.entities.GameGroup;
