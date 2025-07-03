@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { addGame, searchExistingGames } from '@/services/api/ApiService'
+import { searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
 import Image from 'primevue/image'
+import DataView from 'primevue/dataview'
 
 const emit = defineEmits(['game-added'])
 
@@ -33,20 +32,41 @@ async function onClickAdd(game: Game) {
     ></InputText>
     <Button @click="onClickSearch">Search</Button>
 
-    <DataTable :value="searchItems" tableStyle="min-width: 50rem" scrollable scrollHeight="400px">
-      <Column field="name" header="Name"></Column>
-      <Column field="thumbnailUrl" header="Thumbnail">
-        <template #body="slotProps">
-          <Image :src="slotProps.data.thumbnailUrl" />
-        </template>
-      </Column>
-      <Column header="Actions">
-        <template #body="slotProps">
-          <Button severity="secondary" @click="onClickAdd(slotProps.data)"> Add to list </Button>
-        </template>
-      </Column>
-    </DataTable>
+    <DataView :value="searchItems">
+      <template #list="slotProps">
+       
+          <div v-for="(item, index) in slotProps.items" :key="index">
+            <div class="row">
+              <div class="gameDescription">
+                {{  item.name }} <br/>
+                <Image :src="item.thumbnailUrl" />             
+              </div>
+              <Button @click="onClickAdd(item)"> Add </Button>                    
+            </div>
+          </div>
+       
+      </template>
+    </DataView>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="css">
+
+.row {
+  border-color: #e2e8f0;
+  border-style: solid;
+  border-width: 1px 0 1px 0;  
+  padding: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  padding-left: 16px;
+  display: flex;  
+  vertical-align: middle;
+  align-items: center;  
+  justify-content: space-between;
+}
+
+.gameDescription {
+
+}
+</style>

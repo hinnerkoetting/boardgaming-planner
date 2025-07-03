@@ -82,7 +82,7 @@ nav a {
   margin-left: 2rem;
 
   @media (max-width: 1023px) {
-    visibility: hidden;
+    display: none;
   }
 
 }

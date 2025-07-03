@@ -3,7 +3,7 @@
     <DataView :value="games">
       <template #list="slotProps">
         <div class="grid">
-          <div v-for="(item, index) in slotProps.items" :key="index">
+          <template v-for="(item, index) in slotProps.items" :key="index">
             <div class="grid-card">
               <GameComponent
                 :game="item"
@@ -11,7 +11,7 @@
                 v-on:game="onClickRate"
               />
             </div>
-          </div>
+          </template>
         </div>
       </template>
     </DataView>
@@ -71,21 +71,23 @@ function onGameRated(rating: Rating) {
 <style lang="css" scoped>
 .grid {
   display: flex;
-  justify-content: space-between;
-  flex-basis: 30%;
+  justify-content: space-between;  
   flex-wrap: wrap;
+  gap: 16px;
 }
 
 .grid-card {
-  flex: 1;
+  flex: 0 0 250px;
   margin-bottom: auto;
-  align-self: stretch;
-  width: 250px;
+  align-self: stretch;  
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   .grid {
     display: block;
+  }
+  .grid-card {
+    flex: 0 0 100%;  
   }
 }
 </style>

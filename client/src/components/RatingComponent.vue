@@ -1,14 +1,14 @@
 <template>
   <div>
-    <h1>Rate</h1>
-    <div id="ratingButtons">
-      <Button @click="onClickRating(10)">Very good</Button>
-      <Button @click="onClickRating(7)">Good</Button>
-      <Button @click="onClickRating(4)">Ok</Button>
-      <Button @click="onClickRating(1)">Meh</Button>
-      <Button @click="onClickRating(0)">Veto</Button>
+    <h1>Play this next time?</h1>
+    <div id="ratingButtons">      
+      <Button @click="onClickRating(10)">&#128077;&#128077;&#128077; Absolutely</Button>
+      <Button @click="onClickRating(7)">&#128077;&#128077; </Button>
+      <Button @click="onClickRating(4)">&#128077; </Button>
+      <Button @click="onClickRating(1)" severity="warn"><div class="meh">&#128077;</div></Button>
+      <Button @click="onClickRating(0)" severity="danger"><div class="veto">&#128077;</div>Veto</Button>
 
-      <Button severity="danger" @click="oncClickDeleteRating()">Forget rating</Button>
+      <Button severity="secondary" @click="oncClickDeleteRating()" class="delete">Forget rating</Button>
     </div>
   </div>
 </template>
@@ -73,9 +73,23 @@ async function oncClickDeleteRating() {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 Button {
   margin-top: 4px;
 }
+
+.meh {
+  transform: rotate(90deg);
+}
+
+.veto {
+  transform: rotate(180deg);
+}
+
+.delete {
+  margin-top: 16px;
+}
+
 </style>

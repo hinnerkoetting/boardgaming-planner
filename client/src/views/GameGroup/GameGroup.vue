@@ -2,7 +2,7 @@
   <div>
     <h1>Group {{ gameGroup.name }}</h1>
 
-    <h2>Already played games</h2>
+    <h2>Games</h2>
     <GamesCollection v-if="games.length > 0" :games="games" :game-group-id="gameGroupId" />
 
     <h2 class="green">Add game</h2>

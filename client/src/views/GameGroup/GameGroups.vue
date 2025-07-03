@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="full-width">
     <h1>Groups</h1>
     <DataView :value="gameGroups">
       <template #list="slotProps">
@@ -18,15 +18,6 @@
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
 
 <script setup lang="ts">
 import Button from 'primevue/button'
@@ -105,5 +96,17 @@ button {
 
 .addGameGroup {
   margin-top: 32px
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .about {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
 }
 </style>>

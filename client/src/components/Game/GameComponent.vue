@@ -2,29 +2,33 @@
   <div class="full-height">
     <Card>
       <template #title>
-        {{ game.name }}
+        <div class="title">
+          {{ game.name }}
+        </div>
       </template>
       <template #content>
-        <Image :src="game.thumbnailUrl" />
-        <div>
-          <div v-if="game.rating?.existsVeto" class="center-horizontally">
-            <Tag severity="danger">Vetoed</Tag><br />
+        <div class="content">
+          <Image :src="game.thumbnailUrl" />
+          <div>
+            <div v-if="game.rating?.existsVeto" class="center-horizontally">
+              <Tag severity="danger">Vetoed</Tag><br />
+            </div>
+            <div
+              v-if="!!game.rating?.averageRating || !!game.rating?.myRating"
+              class="center-horizontally"
+            >
+              {{ game.rating?.averageRating || '?' }} / {{ game.rating?.myRating || '?' }}
+            </div>
+            <div
+              v-if="!game.rating?.averageRating && !game.rating?.myRating"
+              class="center-horizontally"
+            >
+              Not rated yet
+            </div>
+            <Button severity="secondary" @click="$emit('game', game)" class="center-horizontally"
+              >Rate</Button
+            >
           </div>
-          <div
-            v-if="!!game.rating?.averageRating || !!game.rating?.myRating"
-            class="center-horizontally"
-          >
-            {{ game.rating?.averageRating || '?' }} / {{ game.rating?.myRating || '?' }}
-          </div>
-          <div
-            v-if="!game.rating?.averageRating && !game.rating?.myRating"
-            class="center-horizontally"
-          >
-            Not rated yet
-          </div>
-          <Button severity="secondary" @click="$emit('game', game)" class="center-horizontally"
-            >Rate</Button
-          >
         </div>
       </template>
     </Card>
@@ -66,5 +70,21 @@ const game = ref(props.game)
   width: 100%;
   margin: 0 auto;
   text-align: center;
+}
+
+.title {  
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;  
+  text-align: center;
+  max-width: 320px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
 }
 </style>
