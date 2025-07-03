@@ -4,6 +4,10 @@ meta {
   seq: 3
 }
 
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
 delete {
   url: http://localhost:8080/api/players/{{playerId}}
   body: none

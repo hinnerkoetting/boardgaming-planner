@@ -1,13 +1,17 @@
 meta {
   name: Setup - Create gamegroup
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
   url: http://localhost:8080/api/gameGroups
   body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
 }
 
 body:json {

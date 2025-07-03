@@ -1,13 +1,17 @@
 meta {
   name: Setup - Add played game to group
   type: http
-  seq: 4
+  seq: 5
 }
 
 post {
   url: http://localhost:8080/api/gameGroups/{{gameGroupId}}/playedGames
   body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
 }
 
 body:json {

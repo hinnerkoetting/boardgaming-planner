@@ -1,13 +1,17 @@
 meta {
   name: Setup - Create game
   type: http
-  seq: 1
+  seq: 2
 }
 
 post {
   url: http://localhost:8080/api/games
   body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
 }
 
 body:json {
@@ -22,4 +26,5 @@ assert {
 
 script:post-response {
   bru.setVar("gameId", res.body.id)
+  
 }
