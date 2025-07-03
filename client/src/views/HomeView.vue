@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Login from '@/components/LoginComponent.vue'
+import LoginComponent from '@/components/LoginComponent.vue'
 import EventBus from '@/services/EventBus'
 import { isLoggedIn } from '@/services/LoginService'
 import { ref } from 'vue'
@@ -18,7 +18,7 @@ EventBus.addEventListener('login-status', () => {
 <template>
   <div>
     <img alt="logo" class="logo" src="@/assets/logo.svg" />
-    <Login v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
+    <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
     <RouterLink v-if="!isLoggedInRef" to="register">Register</RouterLink>
   </div>
 </template>

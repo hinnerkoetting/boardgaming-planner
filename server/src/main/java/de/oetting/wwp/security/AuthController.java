@@ -2,6 +2,7 @@ package de.oetting.wwp.security;
 
 
 import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.infrastructure.HttpErrorResponse;
 import de.oetting.wwp.repositories.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +61,17 @@ public class AuthController {
             return ResponseEntity.ok(loginRes);
 
         }catch (BadCredentialsException e){
-            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,"Invalid username or password");
+            HttpErrorResponse errorResponse = new HttpErrorResponse();
+            errorResponse.setType("CLIENT_ERROR");
+            errorResponse.setDetail("Invalid username or password");
+            errorResponse.setTitle("Could not login");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }catch (Exception e){
             LOG.error("error during login", e);
-            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            HttpErrorResponse errorResponse = new HttpErrorResponse();
+            errorResponse.setType("SERVERT_ERROR");
+            errorResponse.setDetail("Unknown error");
+            errorResponse.setTitle("Could not login");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }

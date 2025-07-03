@@ -15,23 +15,33 @@
       v-on:keyup.enter="onStartLogin"
       v-model="passwordModel"
     />
+
+    <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
     <Button @click="onStartLogin">Login</Button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { login } from '@/services/LoginService'
+import { isLoggedIn, login } from '@/services/LoginService'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 import router from '@/router'
+import Message from 'primevue/message'
 
 const emits = defineEmits(['logged-in'])
 const loginModel = ref('')
 const passwordModel = ref('')
-function onStartLogin() {
-  login(loginModel.value, passwordModel.value)
-  emits('logged-in')
-  router.push('gameGroups')
+const errorMessage = ref('')
+
+async function onStartLogin() {
+  errorMessage.value = ''
+  const loginResponse = await login(loginModel.value, passwordModel.value)
+  if (isLoggedIn()) {
+    emits('logged-in')
+    router.push('gameGroups')
+  } else {
+    errorMessage.value = loginResponse || 'Could not login'
+  }
 }
 </script>

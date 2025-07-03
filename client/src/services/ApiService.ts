@@ -7,27 +7,28 @@ import { Me } from '@/model/Me'
 import type { Player } from '@/model/Player'
 import { getCurrentUserId, isLoggedIn } from './LoginService'
 import type { Interest } from '@/model/Interest'
+import type { ErrorResponse } from '@/model/ErrorResponse'
 
 // Auth
 
 export async function loginRequest(
   name: String,
   password: String
-): Promise<LoginResponse | undefined> {
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        login: name,
-        password
-      })
+): Promise<LoginResponse | ErrorResponse> {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      login: name,
+      password
     })
-    return (await response.json()) as LoginResponse
-  } catch (error) {
-    console.log('There was an error', error)
+  })
+  if (response.status < 300) {
+    return { ...((await response.json()) as LoginResponse), responseType: 'login' }
+  } else {
+    return { ...((await response.json()) as ErrorResponse), responseType: 'error' }
   }
 }
 
@@ -191,22 +192,21 @@ export async function fetchFromBgg(bggId: Number): Promise<BggFetchItem | null> 
 export async function registerRequest(
   name: String,
   password: String
-): Promise<LoginResponse | undefined> {
-  try {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        login: name,
-        password
-      })
+): Promise<LoginResponse | ErrorResponse> {
+  const response = await fetch('/api/auth/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      login: name,
+      password
     })
+  })
+  if (response.status < 300) {
     return (await response.json()) as LoginResponse
-  } catch (error) {
-    console.log('There was an error', error)
   }
+  return (await response.json()) as ErrorResponse
 }
 
 async function authorizedFetch(url: string | URL | globalThis.Request, init?: RequestInit) {
