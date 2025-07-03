@@ -1,60 +1,75 @@
 <template>
   <div>
     <div>
-      <div class="numberOfPlayers">
-        Number of players
-        <InputNumber
-          v-model="numberOfPlayers"
-          showButtons
-          class="numberOfPlayersInput"
-          :min="0"
-          :max="99"
-          @update:model-value="filter"
-        />
-        <Button v-if="numberOfPlayersInGroup" @click="copyNumberOfPlayers"
-          >&#x2190; From group ({{ numberOfPlayersInGroup }})</Button
-        >
+      <div class="numberOfPlayers filterOption">
+        <div class="filterHeader">
+          Players
+        </div>
+        <div class="filterContent ">
+          <InputNumber
+            v-model="numberOfPlayers"
+            showButtons
+            class="numberOfPlayersInput"
+            :min="0"
+            :max="99"
+            @update:model-value="filter"
+          />
+          <Button v-if="numberOfPlayersInGroup" @click="copyNumberOfPlayers"
+            >&#x2190; From group ({{ numberOfPlayersInGroup }})</Button
+          >
+        </div>
       </div>
     </div>
-    <div class="duration">
-      Duration (minutes)
-      <InputNumber
-        v-model="duration[0]"
-        showButtons
-        class="durationInput"
-        :min="0"
-        :max="600"
-        :step="10"
-        @update:model-value="filter"
-      />
-      to
-      <InputNumber
-        v-model="duration[1]"
-        showButtons
-        class="durationInput"
-        :min="0"
-        :max="600"
-        :step="10"
-        @update:model-value="filter"
-      />
-
-      <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" />
+    <div class="duration filterOption">
+      <div class="filterHeader">
+          Duration <br/>(minutes)
+        </div>
+        <div class="filterContent durationContent">
+          <InputNumber
+            v-model="duration[0]"
+            showButtons
+            class="durationInput"
+            :min="0"
+            :max="600"
+            :step="10"
+            @update:model-value="filter"
+          />
+          to
+          <InputNumber
+            v-model="duration[1]"
+            showButtons
+            class="durationInput"
+            :min="0"
+            :max="600"
+            :step="10"
+            @update:model-value="filter"
+          />          
+      </div>
+      <div class="newLine">
+        <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" @update:model-value="filter"/>
+      </div>      
     </div>
-    <div v-for="tag in tags" :key="tag.id" class="one-filter">
-      <Button
-        :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
-        @click="onClickFilterWith(tag)"
-        class="filterButton"
-        >{{ tag.description }}</Button
-      >
-      <Button
-        :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
-        @click="onClickFilterWithout(tag)"
-        class="filterButton"
-        >No {{ tag.description }}</Button
-      >
+    <div class="filterOption">
+      <div class="filterContent">
+        <div v-for="tag in tags" :key="tag.id" class="one-filter">
+          <Button
+            :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
+            @click="onClickFilterWith(tag)"
+            class="filterButton"
+            >{{ tag.description }}</Button
+          >
+          <Button
+            :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
+            @click="onClickFilterWithout(tag)"
+            class="filterButton"
+            >No {{ tag.description }}</Button
+          >
+        </div>
+      </div>
     </div>
-    <div class="resetWrapper">
+   
+    <div class="buttonWrapper">
+      <Button severity="primary" class="confirmButton" @click="onClickConfirm">Confirm</Button>
       <Button severity="danger" class="resetButton" @click="onClickReset">Reset</Button>
     </div>
   </div>
@@ -85,6 +100,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'updated-filter', visibleGames: GameGroupGame[]): void
+  (e: 'close'): void
 }>()
 
 const tags: Ref<TagSelection[]> = ref(createTagSelection(props.allTags))
@@ -156,16 +172,21 @@ function onClickReset() {
   numberOfPlayers.value = undefined
   filter()
 }
+
+function onClickConfirm() {
+  emit('close')
+}
 </script>
 
 <style lang="css" scoped>
-.one-filter {
+
+.one-filter { 
   display: flex;
   gap: 4px;
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
-  margin: 4px;
+  margin: 4px 0;
 }
 
 .filterButton {
@@ -175,6 +196,7 @@ function onClickReset() {
 
 .numberOfPlayersInput {
   width: 75px;
+  margin-right: 4px;
 }
 
 .numberOfPlayers {
@@ -189,21 +211,54 @@ function onClickReset() {
 }
 
 .durationInput {
-  width: 100px;
+  width: 75px;
 }
 
-.slider {
-  margin-top: 16px;
-}
-
-.resetWrapper {
+.buttonWrapper {
   width: 100%;
-}
-.resetButton {
   margin-top: 16px;
+}
+
+.resetButton {
   margin-left: auto;
   margin-right: 4px;
   float: right;
+}
+
+.filterOption {
+  border: 0;
+  border-top: 1px dashed #ccc;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap
+}
+
+.filterHeader {
+  align-self: start;
+  color: var(--p-slate-500);  
+  margin-top: 2px;
+}
+
+.slider {
+  margin-top: 4px;
+}
+
+.filterContent {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  align-self: end;
+}
+
+.durationContent {
+  display: flex;
+  gap: 16px;
+  justify-items: center;
+  align-items: center;
+}
+
+.newLine {
+  flex-basis: 100%;
+  height: 0;
 }
 </style>
 

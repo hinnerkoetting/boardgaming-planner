@@ -7,6 +7,7 @@
         :allTags="allTags"
         :numberOfPlayersInGroup="numberOfPlayersInGroup"
         @updated-filter="onFilterUpdated"
+        @close="onClickClose"
       />
     </Dialog>
   </div>
@@ -59,6 +60,10 @@ function onClickShowFilter() {
 
 function onFilterUpdated(games: GameGroupGame[]) {
   emit('updated-filter', games)
+}
+
+function onClickClose() {
+  showDialog.value = false
 }
 </script>
 

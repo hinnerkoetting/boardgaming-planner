@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run ephemeral DB" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run server with persistent DB" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
@@ -18,7 +18,7 @@
       <option name="taskNames">
         <list>
           <option value="bootRun" />
-          <option value="--args='--spring.profiles.active=dev'" />
+          <option value="--args='--spring.profiles.active=h2'" />
         </list>
       </option>
       <option name="vmOptions" />

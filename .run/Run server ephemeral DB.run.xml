@@ -1,6 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="frontend dev" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run server ephemeral DB" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="BOOTSTRAP_OWNER_ALLOWED" value="yes" />
+          <entry key="H2_FILENAME" value="$PROJECT_DIR$/../../../temp/h2_db3" />
+          <entry key="JWT_SIGNING_KEY" value="example" />
+        </map>
+      </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
@@ -10,7 +17,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":client:npm_run_dev" />
+          <option value="bootRun" />
+          <option value="--args='--spring.profiles.active=dev'" />
         </list>
       </option>
       <option name="vmOptions" />
