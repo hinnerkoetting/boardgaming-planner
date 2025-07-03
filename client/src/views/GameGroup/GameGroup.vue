@@ -114,7 +114,14 @@ async function onGameAdded(game: Game) {
     return
   }
   await addGameToGroup(gameGroupId, game.id)
-  const ratedGame = game as RatedGame
+  const ratedGame: RatedGame = {
+    ...game,
+    rating: {
+      myRating: undefined,
+      averageRating: 0,
+      existsVeto: false
+    }
+  }
   games.value.push(ratedGame)
 }
 
