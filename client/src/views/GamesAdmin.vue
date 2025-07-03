@@ -26,19 +26,20 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { fetchGames } from '@/services/ApiService'
-import { onMounted } from 'vue'
+import { deleteGame, fetchGames } from '@/services/ApiService'
+import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { Game } from '@/model/Game'
 
-const games = ref([] as Game[])
+const games: Ref<Game[]> = ref([] as Game[])
 
 onMounted(async () => {
   games.value = await fetchGames()
 })
 
 function onClickDelete(id: Number) {
-  console.log('delete ' + id)
+  deleteGame(id)
+  games.value = games.value.filter((item) => !(item.id === id))
 }
 </script>
 
