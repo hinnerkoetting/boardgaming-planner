@@ -6,21 +6,14 @@ import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
-import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.model.TagModel;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
 import de.oetting.wwp.gamegroup.service.GameGroupService;
-import de.oetting.wwp.infrastructure.CurrentUser;
+import de.oetting.wwp.rating.controller.RatingService;
 import de.oetting.wwp.repositories.GameGroupRepository;
-import de.oetting.wwp.game.repository.GameRepository;
-import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
-import de.oetting.wwp.service.RatingService;
-import de.oetting.wwp.service.events.GameGroupEvent;
-import de.oetting.wwp.service.events.GameGroupEventType;
-import de.oetting.wwp.service.events.SseEmitterService;
 import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -43,19 +36,10 @@ public class GameGroupController {
     private GameGroupRepository gameGroupRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private GameRepository gameRepository;
-
-    @Autowired
     private RatingRepository ratingRepository;
 
     @Autowired
     private RatingService ratingService;
-
-    @Autowired
-    private SseEmitterService sseEmitterService;
 
     @Autowired
     private GameGroupService gameGroupService;

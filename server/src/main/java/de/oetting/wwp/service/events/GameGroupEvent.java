@@ -2,20 +2,26 @@ package de.oetting.wwp.service.events;
 
 public class GameGroupEvent implements Event {
 
-    private final String source;
+    private final long sourcePlayerId;
+    private final String sourcePlayerName;
     private final long gameGroupId;
     private final GameGroupEventType eventType;
     private final String description;
 
-    public GameGroupEvent(String source, long gameGroupId, GameGroupEventType eventType, String description) {
-        this.source = source;
+    public GameGroupEvent(long sourcePlayerId, String sourcePlayerName, long gameGroupId, GameGroupEventType eventType, String description) {
+        this.sourcePlayerId = sourcePlayerId;
+        this.sourcePlayerName = sourcePlayerName;
         this.gameGroupId = gameGroupId;
         this.eventType = eventType;
         this.description = description;
     }
 
-    public String getSource() {
-        return source;
+    public long getSourcePlayerId() {
+        return sourcePlayerId;
+    }
+
+    public String getSourcePlayerName() {
+        return sourcePlayerName;
     }
 
     public long getGameGroupId() {

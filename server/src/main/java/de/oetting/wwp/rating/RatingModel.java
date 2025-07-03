@@ -1,4 +1,4 @@
-package de.oetting.wwp.controller.model;
+package de.oetting.wwp.rating;
 
 import java.math.BigDecimal;
 

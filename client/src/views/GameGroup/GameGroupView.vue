@@ -102,20 +102,31 @@ onMounted(async () => {
       toast.add(newToast)
     }    
   })
+  toast.removeAllGroups();
 })
 
 function createToast(data: GameGroupEvent): ToastMessageOptions | undefined {  
+  if (data.sourcePlayerId === getCurrentPlayerId()) {
+    return;
+  } 
   if (data.eventType === 'GAME_ADDED') {
     return {
       severity: 'info',
-      summary: `Game added by ${data.source}`,
+      summary: `Game added by ${data.sourcePlayerName}`,
       detail: data.description,
       life: 3000
     }
   } else if (data.eventType === 'PLAYER_ADDED') {
     return {
       severity: 'info',
-      summary: `Player added by ${data.source}`,
+      summary: `Player added by ${data.sourcePlayerName}`,
+      detail: data.description,
+      life: 3000
+    }
+  } else if (data.eventType === 'RATING') {
+    return {
+      severity: 'info',
+      summary: `Game rated by ${data.sourcePlayerName}`,
       detail: data.description,
       life: 3000
     }

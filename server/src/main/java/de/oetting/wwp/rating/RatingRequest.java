@@ -1,6 +1,7 @@
-package de.oetting.wwp.controller.model;
+package de.oetting.wwp.rating;
 
-public class RatingResponse {
+public class RatingRequest {
+
     private long playerId;
     private long gameGroupId;
     private long gameId;
@@ -37,5 +38,4 @@ public class RatingResponse {
     public void setRating(int rating) {
         this.rating = rating;
     }
-
 }

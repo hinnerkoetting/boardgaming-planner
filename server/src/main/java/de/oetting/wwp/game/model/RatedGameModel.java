@@ -1,7 +1,6 @@
 package de.oetting.wwp.game.model;
 
-import de.oetting.wwp.controller.model.RatingModel;
-import jakarta.persistence.Column;
+import de.oetting.wwp.rating.RatingModel;
 
 import java.util.List;
 import java.util.Set;
