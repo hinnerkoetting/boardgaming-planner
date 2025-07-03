@@ -3,7 +3,7 @@
     <h1>Group {{ gameGroup.name }}</h1>
 
     <h2>Already played games</h2>
-    <GamesList v-if="games.length > 0" :games="games" :game-group-id="gameGroupId" />
+    <GamesCollection v-if="games.length > 0" :games="games" :game-group-id="gameGroupId" />
 
     <h2 class="green">Add game</h2>
     <AddExistingGame @game-added="onGameAdded" />
@@ -46,7 +46,7 @@ import type { Game } from '@/model/Game'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { RatedGame } from '@/model/RatedGame'
-import GamesList from '@/components/Game/GamesList.vue'
+import GamesCollection from '@/components/Game/GamesCollection.vue'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])

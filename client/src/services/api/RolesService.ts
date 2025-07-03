@@ -1,6 +1,6 @@
 import type { Role } from '@/model/api/JwtPayload'
 import { authorizedFetch } from './ApiService'
-import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
+import { wrapEmptySuccessResponse, type ResponseWrapper } from '@/model/api/Response'
 
 export async function removeRoleFromPlayer(
   playerId: number,

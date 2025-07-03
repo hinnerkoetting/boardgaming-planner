@@ -7,7 +7,6 @@ import { ref, type Ref } from 'vue'
 import { addGame, fetchFromBgg, searchBgg } from '@/services/api/ApiService'
 import type { BggSearchItem } from '@/model/BggSearchItem'
 import type { BggFetchItem } from '@/model/BggFetchItem'
-import Image from 'primevue/image'
 
 const emit = defineEmits(['game-added'])
 

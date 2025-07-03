@@ -1,29 +1,21 @@
 <template>
   <div>
-    <DataTable :value="games" tableStyle="min-width: 20rem">
-      <Column field="name" header="Name"></Column>
-      <Column header="Rating (Average / Mine)">
-        <template #body="slotProps">
-          <div v-if="slotProps.data.rating?.existsVeto">
-            <Tag severity="danger">Vetoed</Tag>
-            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
+    <DataView :value="games">
+      <template #list="slotProps">
+        <div class="grid">
+          <div v-for="(item, index) in slotProps.items" :key="index">
+            <div class="grid-card">
+              <GameComponent
+                :game="item"
+                @game-rating-selected="onClickRate"
+                v-on:game="onClickRate"
+              />
+            </div>
           </div>
-          <div v-if="!slotProps.data.rating?.existsVeto">
-            {{ slotProps.data.rating?.averageRating }} / {{ slotProps.data.rating?.myRating }}
-          </div>
-        </template>
-      </Column>
-      <Column field="thumbnailUrl" header="Thumbnail">
-        <template #body="slotProps">
-          <Image :src="slotProps.data.thumbnailUrl" />
-        </template>
-      </Column>
-      <Column header="Actions">
-        <template #body="slotProps">
-          <Button severity="secondary" @click="onClickRate(slotProps.data)">Rate</Button>
-        </template>
-      </Column>
-    </DataTable>
+        </div>
+      </template>
+    </DataView>
+
     <Dialog v-model:visible="ratingWindowVisible" modal :header="selectedGame?.name">
       <RatingComponent
         :game="selectedGame!"
@@ -41,11 +33,8 @@ import type { Rating } from '@/model/Rating'
 import Dialog from 'primevue/dialog'
 import { ref, type Ref } from 'vue'
 import RatingComponent from '../RatingComponent.vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Button from 'primevue/button'
-import Image from 'primevue/image'
-import Tag from 'primevue/tag'
+import DataView from 'primevue/dataview'
+import GameComponent from './GameComponent.vue'
 
 const props = defineProps({
   games: {
@@ -63,6 +52,7 @@ const ratingWindowVisible = ref(false)
 const selectedGame: Ref<RatedGame | undefined> = ref()
 
 async function onClickRate(game: RatedGame) {
+  console.log('bla')
   selectedGame.value = game
   ratingWindowVisible.value = true
 }
@@ -77,3 +67,25 @@ function onGameRated(rating: Rating) {
   ratingWindowVisible.value = false
 }
 </script>
+
+<style lang="css" scoped>
+.grid {
+  display: flex;
+  justify-content: space-between;
+  flex-basis: 30%;
+  flex-wrap: wrap;
+}
+
+.grid-card {
+  flex: 1;
+  margin-bottom: auto;
+  align-self: stretch;
+  width: 250px;
+}
+
+@media (max-width: 400px) {
+  .grid {
+    display: block;
+  }
+}
+</style>

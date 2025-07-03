@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 h1 {
   margin-top: 100px;
 }
