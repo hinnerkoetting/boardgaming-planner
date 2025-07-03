@@ -9,20 +9,8 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import java.util.List;
 import java.util.Optional;
 
-@RepositoryRestResource(collectionResourceRel = "players", path = "players")
-
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Long>, CrudRepository<Player,Long> {
-
-    @Override
-    List<Player> findAll();
 
     Optional<Player> findByName(String name);
 
-    @Override
-    @RestResource(exported = false)
-    <S extends Player> S save(S entity);
-
-    @Override
-    @RestResource(exported = false)
-    void delete(Player entity);
 }

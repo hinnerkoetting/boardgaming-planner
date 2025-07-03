@@ -40,8 +40,7 @@ function defaultFetchOptions() {
 // Fetch top level groups
 export async function fetchPlayers(): Promise<Player[]> {
   const response = await authorizedFetch('/api/players')
-  const json = await response.json()
-  return json._embedded.players as Player[]
+  return await response.json()
 }
 
 export async function fetchGames(): Promise<Game[]> {

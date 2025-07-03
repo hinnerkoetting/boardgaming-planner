@@ -10,6 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "api/players")
 public class PlayerController {
@@ -31,5 +34,12 @@ public class PlayerController {
         playerRepository.delete(player);
 
         userDetailsService.deleteUser(player.getName());
+    }
+
+    @GetMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
+    public Iterable<Player> listPlayers() {
+        return playerRepository.findAll();
     }
 }
