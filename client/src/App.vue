@@ -21,6 +21,12 @@ header {
   max-height: 100vh;
 }
 
+@media (max-width: 1023px) {
+  header {
+    background: #f1f1f1;
+  }
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;

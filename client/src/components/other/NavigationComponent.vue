@@ -4,29 +4,26 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/gameGroups">Groups</RouterLink>
-        <RouterLink :to="'/gameGroup/' + selectedGameGroup.id" v-if="selectedGameGroup">
-          <div to="/gameGroups/1" id="gameGroupSelected" v-if="selectedGameGroup">
+        <RouterLink :to="'/gameGroup/' + selectedGameGroup.id" v-if="selectedGameGroup" id="gameGroupSelected">
+          <div to="/gameGroups/1"  v-if="selectedGameGroup">
             {{ selectedGameGroup.name }}
           </div>
         </RouterLink>
         <a id="logout" @click="onClickLogout">Logout</a>
-      </nav>
-      <div v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
-        <h1>Admin</h1>
-        <nav>
+        <template v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
+          <h1>Admin</h1>
+        
           <RouterLink to="/admin/players">Players</RouterLink>
           <RouterLink to="/admin/games">Games</RouterLink>
-          <RouterLink to="/admin/gameGroups">Groups</RouterLink>
-        </nav>
-      </div>
+          <RouterLink to="/admin/gameGroups">Groups</RouterLink>        
+        </template>
+      </nav>       
     </div>
   </div>
 </template>
 
 <style lang="css" scoped>
-h1 {
-  margin-top: 100px;
-}
+
 
 nav {
   width: 100%;
@@ -34,9 +31,11 @@ nav {
   text-align: center;
   margin-top: 2rem;
 
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
 }
 
 nav a.router-link-exact-active {
@@ -53,11 +52,11 @@ nav a {
   border-left: 1px solid var(--color-border);
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
 @media (min-width: 1024px) {
+  h1 {
+    margin-top: 100px;
+  }
+
   .logo {
     margin: 0 2rem 0 0;
   }
@@ -81,6 +80,11 @@ nav a:first-of-type {
 #gameGroupSelected {
   color: gray;
   margin-left: 2rem;
+
+  @media (max-width: 1023px) {
+    visibility: hidden;
+  }
+
 }
 
 #logout {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <InputText
       name="username"
       placeholder="Name"
@@ -45,3 +45,17 @@ async function onStartLogin() {
   }
 }
 </script>
+
+<style scoped lang="css">
+
+.wrapper {
+  display: flex;  
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+Button {
+  width: 100%;
+}
+</style>
