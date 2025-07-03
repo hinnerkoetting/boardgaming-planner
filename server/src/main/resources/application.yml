@@ -2,7 +2,9 @@ spring:
   data:
     rest:
       basePath: /api
-
+  jpa:
+    hibernate:
+      ddl-auto: update
 security:
   ignored: '/assets/**'
 

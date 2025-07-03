@@ -1,20 +1,20 @@
 package de.oetting.wwp.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.UrlResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +23,6 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
 
@@ -31,12 +30,16 @@ import javax.sql.DataSource;
 @Configuration
 public class DefaultSecurityConfig {
 
+    private static final Logger LOG= LoggerFactory.getLogger(DefaultSecurityConfig.class);
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
-        resourceDatabasePopulator.addScript(new UrlResource(
-                JdbcDaoImpl.class.getResource("/" + JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION
-                )));
+        if (!databaseAlreadyInitialized(dataSource)) {
+            resourceDatabasePopulator.addScript(new UrlResource(
+                    JdbcDaoImpl.class.getResource("/" + JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION
+                    )));
+        }
 
         DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
         dataSourceInitializer.setDataSource(dataSource);
@@ -77,6 +80,16 @@ public class DefaultSecurityConfig {
      return new BCryptPasswordEncoder();
     }
 
+    private boolean databaseAlreadyInitialized(DataSource dataSource) {
+        try {
+            new JdbcTemplate(dataSource).queryForList("select 1 from USERS limit 1");
+            LOG.info("Database is initialized");
+            return true;
+        } catch (Exception e) {
+            LOG.info("Database is not initialized");
+            return false;
+        }
+    }
 
 
 }
