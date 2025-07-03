@@ -26,7 +26,7 @@ export class AdminGame extends Game {
     readonly maxPlayers: number | undefined,
     readonly playingTimeMinutes: number | undefined,
     readonly url: string | undefined,
-    readonly globalTags: TagModel[]
+    public globalTags: TagModel[]
   ) {
     super(
       id,

@@ -8,6 +8,7 @@
         :allTags="tags"
         :allGames="allGames"
         @updatedFilter="onUpdatedFilters"
+        :visibleGames="displayedGames"
         :numberOfPlayersInGroup="players.length"
       />
     </h2>
@@ -106,14 +107,13 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     ...game,
     rating: {
       myRating: undefined,
+      numberOfVotes: 0,
       averageRating: 0,
       existsVeto: false
     },
     tags: []
   }
-  console.log('Games before add ' + displayedGames.value.length)
   allGames.value.push(gameGroupGame)
-  console.log('Games after add ' + displayedGames.value.length)
   callback(new EventMessage('Game added', true))
 }
 
@@ -131,9 +131,7 @@ async function onClickLeaveButton() {
 }
 
 function onUpdatedFilters(filteredGames: GameGroupGame[]) {
-  console.log('Games before filter ' + displayedGames.value.length)
   displayedGames.value = filteredGames
-  console.log('Games after filter ' + displayedGames.value.length)
 }
 </script>
 

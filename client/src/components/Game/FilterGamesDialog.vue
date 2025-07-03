@@ -29,6 +29,10 @@ const props = defineProps({
     type: Array as PropType<GameGroupGame[]>,
     required: true
   },
+  visibleGames: {
+    type: Array as PropType<GameGroupGame[]>,
+    required: true
+  },
   numberOfPlayersInGroup: {
     type: Number
   }
@@ -41,11 +45,9 @@ const emit = defineEmits<{
 }>()
 
 watch(
-  () => props.allGames,
+  () => props.visibleGames,
   (games: GameGroupGame[]) => {
-    if (!numberOfVisibleGames.value) {
-      numberOfVisibleGames.value = games.length
-    }
+    numberOfVisibleGames.value = games.length
   }
 )
 
@@ -56,7 +58,6 @@ function onClickShowFilter() {
 }
 
 function onFilterUpdated(games: GameGroupGame[]) {
-  numberOfVisibleGames.value = games.length
   emit('updated-filter', games)
 }
 </script>

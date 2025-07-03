@@ -1,7 +1,25 @@
 import type { GameGroupGame } from '@/model/Game'
 
 export class FilterService {
+  loadFilterSettings(): FilterGamesSettings | undefined {
+    const item = localStorage.getItem('filter-settings')
+    if (!item) {
+      return undefined
+    }
+    try {
+      return JSON.parse(item)
+    } catch (e) {
+      console.error(e)
+    }
+    return undefined
+  }
+
+  saveFilterSettings(settings: FilterGamesSettings) {
+    localStorage.setItem('filter-settings', JSON.stringify(settings))
+  }
+
   filterGames(allGames: GameGroupGame[], filter: FilterGamesSettings): GameGroupGame[] {
+    this.saveFilterSettings(filter)
     return allGames.filter((game) => {
       return !this.excludesGame(game, filter)
     })
@@ -21,6 +39,9 @@ export class FilterService {
   }
 
   private doesPlayingTimeExludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+    if (!game.playingTimeMinutes) {
+      return false
+    }
     return (
       filter.minPlayingTime > (game.playingTimeMinutes || 0) ||
       filter.maxPlayingTime < (game.playingTimeMinutes || Number.MAX_VALUE)

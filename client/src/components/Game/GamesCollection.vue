@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import type { Rating } from '@/model/Rating'
 import Dialog from 'primevue/dialog'
-import { ref, type PropType, type Ref } from 'vue'
+import { ref, watch, type PropType, type Ref } from 'vue'
 import RatingComponent from '../RatingComponent.vue'
 import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
@@ -57,6 +57,13 @@ const games: Ref<GameGroupGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
 const ratingWindowVisible = ref(false)
 const selectedGame: Ref<GameGroupGame | undefined> = ref()
+
+watch(
+  () => props.games,
+  (newGames: GameGroupGame[]) => {
+    games.value = newGames
+  }
+)
 
 async function onClickRate(game: GameGroupGame) {
   selectedGame.value = game

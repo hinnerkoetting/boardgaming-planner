@@ -17,7 +17,9 @@
               v-if="!!game.rating?.averageRating || !!game.rating?.myRating"
               class="center-horizontally"
             >
-              {{ game.rating?.averageRating || '?' }} / {{ game.rating?.myRating || '?' }}
+              Rating: &Oslash; {{ game.rating?.averageRating || '?' }} &#183; Me
+              {{ game.rating?.myRating || '?' }} &#183;
+              {{ game.rating?.numberOfVotes || '0' }} votes
             </div>
             <div
               v-if="!game.rating?.averageRating && !game.rating?.myRating"

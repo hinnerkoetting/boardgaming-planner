@@ -54,6 +54,9 @@
         >No {{ tag.description }}</Button
       >
     </div>
+    <div class="resetWrapper">
+      <Button severity="danger" class="resetButton" @click="onClickReset">Reset</Button>
+    </div>
   </div>
 </template>
 
@@ -64,7 +67,7 @@ import { FilterService, TagSelection } from '@/services/FilterService'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Slider from 'primevue/slider'
-import { ref, watch, type PropType, type Ref } from 'vue'
+import { onMounted, ref, watch, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
   allTags: {
@@ -97,6 +100,15 @@ watch(
   }
 )
 
+onMounted(async () => {
+  const settings = filterService.loadFilterSettings()
+  if (settings) {
+    tags.value = settings.tags
+    numberOfPlayers.value = settings.numberOfPlayers
+    duration.value = [settings.minPlayingTime, settings.maxPlayingTime]
+  }
+})
+
 function createTagSelection(allTags: TagModel[]): TagSelection[] {
   return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
@@ -123,8 +135,8 @@ function filter() {
   const filterSettings = {
     tags: tags.value,
     numberOfPlayers: numberOfPlayers.value,
-    minPlayingTime: 0,
-    maxPlayingTime: Number.MAX_VALUE
+    minPlayingTime: duration.value[0],
+    maxPlayingTime: duration.value[1]
   }
   const filteredGames = filterService.filterGames(props.allGames, filterSettings)
   emit('updated-filter', filteredGames)
@@ -132,6 +144,16 @@ function filter() {
 
 function copyNumberOfPlayers() {
   numberOfPlayers.value = props.numberOfPlayersInGroup
+  filter()
+}
+
+function onClickReset() {
+  tags.value.forEach((tag) => {
+    tag.selected = 'DO_NOT_FILTER'
+  })
+  duration.value[0] = 10
+  duration.value[1] = 300
+  numberOfPlayers.value = undefined
   filter()
 }
 </script>
@@ -172,6 +194,16 @@ function copyNumberOfPlayers() {
 
 .slider {
   margin-top: 16px;
+}
+
+.resetWrapper {
+  width: 100%;
+}
+.resetButton {
+  margin-top: 16px;
+  margin-left: auto;
+  margin-right: 4px;
+  float: right;
 }
 </style>
 

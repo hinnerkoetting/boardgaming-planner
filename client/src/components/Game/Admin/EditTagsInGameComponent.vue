@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { Game } from '@/model/Game'
+import { AdminGame } from '@/model/Game'
 import { TagModel } from '@/model/TagModel'
 import { addTagToGame, removeTagFromGame } from '@/services/api/GameApiService'
 import Button from 'primevue/button'
@@ -33,7 +33,7 @@ const props = defineProps({
     required: true
   },
   game: {
-    type: Game,
+    type: AdminGame,
     required: true
   }
 })
@@ -50,13 +50,14 @@ onMounted(async () => {
 })
 
 async function onClickToggle(tag: TagSelection) {
+  // TODO this is not published correctly to the parent, it will not see the update immediately
   if (tag.selected) {
-    const response = await addTagToGame(props.game, tag.id)
+    const response = await removeTagFromGame(props.game, tag.id)
     if (response.success) {
       tag.selected = false
     }
   } else {
-    const response = await removeTagFromGame(props.game, tag.id)
+    const response = await addTagToGame(props.game, tag.id)
     if (response.success) {
       tag.selected = true
     }
