@@ -13,7 +13,7 @@ public class GameGroup {
     private Long id;
 
     @ManyToMany
-    private Set<Game> playedGames;
+    private Set<Game> games;
 
     @ManyToMany
     private Set<Player> players;
@@ -30,12 +30,12 @@ public class GameGroup {
         this.id = id;
     }
 
-    public Set<Game> getPlayedGames() {
-        return playedGames;
+    public Set<Game> getGames() {
+        return games;
     }
 
-    public void setPlayedGames(Set<Game> playedGames) {
-        this.playedGames = playedGames;
+    public void setGames(Set<Game> games) {
+        this.games = games;
     }
 
     public Set<Player> getPlayers() {
@@ -60,12 +60,12 @@ public class GameGroup {
     }
 
     public void addGame(Game game) {
-        this.playedGames.add(game);
+        this.games.add(game);
         game.addGameGroup(this);
     }
 
     public void deleteGame(Game g) {
-        this.playedGames.remove(g);
+        this.games.remove(g);
         g.deleteGameGroup(this);
     }
 

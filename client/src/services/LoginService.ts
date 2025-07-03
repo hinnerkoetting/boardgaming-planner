@@ -67,7 +67,7 @@ export function getCurrentPlayerId(): number {
 
 export function doesCurrentPlayerHaveRole(role: Role): boolean {
   const payload = getJwtPayload()
-  if (!payload) {
+  if (!payload?.roles) {
     throw 'User is not logged in'
   }
   return payload!.roles.includes(role)

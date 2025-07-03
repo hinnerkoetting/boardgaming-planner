@@ -10,7 +10,7 @@ Server
 ```shell
 JWT_SIGNING_KEY=TEST BOOTSTRAP_OWNER_ALLOWED=yes ./gradlew :server:bootRun
 # Oder mit persistenter Datenbank
-JWT_SIGNING_KEY=TEST H2_DB=~/wwwp_h2 BOOTSTRAP_OWNER_ALLOWED=yes ./gradlew :server:bootRun --args='--spring.profiles.active=h2'
+JWT_SIGNING_KEY=TEST H2_FILENAME=~/wwwp_h2 BOOTSTRAP_OWNER_ALLOWED=yes ./gradlew :server:bootRun --args='--spring.profiles.active=h2'
 ```
 
 Frontend

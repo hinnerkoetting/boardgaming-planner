@@ -1,0 +1,236 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Hinnerk" id="1728113142202-1">
+        <createSequence sequenceName="GAME_GROUP_SEQ" incrementBy="50"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-2">
+        <createSequence sequenceName="GAME_SEQ" incrementBy="50"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-3">
+        <createSequence sequenceName="PLAYER_SEQ" incrementBy="50"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-4">
+        <createSequence sequenceName="RATING_SEQ" incrementBy="50"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-5">
+        <createTable tableName="AUTHORITIES">
+            <column name="USERNAME" type="VARCHAR_IGNORECASE(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHORITY" type="VARCHAR_IGNORECASE(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-6">
+        <createTable tableName="GAME">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_PK"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(4096)"/>
+            <column name="IMAGE_URL" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="THUMBNAIL_URL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-7">
+        <createTable tableName="GAME_GROUP">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_GROUP_PK"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-8">
+        <createTable tableName="GAME_GROUP_GAMES">
+            <column name="GAME_GROUPS_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_C"/>
+            </column>
+            <column name="GAMES_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_C"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-9">
+        <createTable tableName="GAME_GROUP_PLAYERS">
+            <column name="GAME_GROUPS_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_7D"/>
+            </column>
+            <column name="PLAYERS_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_7D"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-10">
+        <createTable tableName="GROUPS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_7"/>
+            </column>
+            <column name="GROUP_NAME" type="VARCHAR_IGNORECASE(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-11">
+        <createTable tableName="GROUP_AUTHORITIES">
+            <column name="GROUP_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHORITY" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-12">
+        <createTable tableName="GROUP_MEMBERS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_F"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-13">
+        <createTable tableName="PLAYER">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_GROUP_PKC"/>
+            </column>
+            <column name="NAME" type="VARCHAR(35)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-14">
+        <createTable tableName="RATING">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_GROUP_PKF"/>
+            </column>
+            <column name="RATING" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GAME_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GAME_GROUP_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PLAYER_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-15">
+        <createTable tableName="USERS">
+            <column name="USERNAME" type="VARCHAR_IGNORECASE(50)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_4"/>
+            </column>
+            <column name="PASSWORD" type="VARCHAR_IGNORECASE(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-16">
+        <addUniqueConstraint columnNames="NAME" constraintName="UK2STNB33BVTGRHGLIXSAF658KW" tableName="PLAYER"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-17">
+        <addUniqueConstraint columnNames="NAME" constraintName="UKJARE70VQQTI665DS3B2EH7RK8" tableName="GAME"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-18">
+        <addUniqueConstraint columnNames="NAME" constraintName="UKLRTDBI4UX6L1H4EVWF0J0LI7M" tableName="GAME_GROUP"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-19">
+        <createIndex associatedWith="" indexName="FK4HWGA5T5H36G9K9ER2YYLU5C2_INDEX_7" tableName="GAME_GROUP_PLAYERS">
+            <column name="PLAYERS_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-20">
+        <createIndex associatedWith="" indexName="FK5YCWUUP9LN1JV9RL2RJUNUWLD_INDEX_C" tableName="GAME_GROUP_GAMES">
+            <column name="GAMES_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-21">
+        <createIndex associatedWith="" indexName="FKHOTXGRGTRIN4XCTO6N1J4A946_INDEX_8" tableName="RATING">
+            <column name="GAME_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-22">
+        <createIndex associatedWith="" indexName="FKLGM1SY5V8Y6JAQQXTCHWUY5LG_INDEX_7" tableName="GAME_GROUP_PLAYERS">
+            <column name="GAME_GROUPS_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-23">
+        <createIndex associatedWith="" indexName="FKM361NCR6JHVM89499BGO8J563_INDEX_8" tableName="RATING">
+            <column name="PLAYER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-24">
+        <createIndex associatedWith="" indexName="FKP59G4XIM7HXKRKVGBTFAKT56T_INDEX_C" tableName="GAME_GROUP_GAMES">
+            <column name="GAME_GROUPS_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-25">
+        <createIndex associatedWith="" indexName="FKQL19UEHAWNBBFCRQBNIWK3POH_INDEX_8" tableName="RATING">
+            <column name="GAME_GROUP_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-26">
+        <createIndex associatedWith="" indexName="FK_AUTHORITIES_USERS_INDEX_A" tableName="AUTHORITIES">
+            <column name="USERNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-27">
+        <createIndex associatedWith="" indexName="FK_GROUP_AUTHORITIES_GROUP_INDEX_6" tableName="GROUP_AUTHORITIES">
+            <column name="GROUP_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-28">
+        <createIndex associatedWith="" indexName="FK_GROUP_MEMBERS_GROUP_INDEX_F" tableName="GROUP_MEMBERS">
+            <column name="GROUP_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-29">
+        <createIndex associatedWith="" indexName="IX_AUTH_USERNAME" tableName="AUTHORITIES" unique="true">
+            <column name="USERNAME"/>
+            <column name="AUTHORITY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-30">
+        <addForeignKeyConstraint baseColumnNames="PLAYERS_ID" baseTableName="GAME_GROUP_PLAYERS" constraintName="FK4HWGA5T5H36G9K9ER2YYLU5C2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-31">
+        <addForeignKeyConstraint baseColumnNames="GAMES_ID" baseTableName="GAME_GROUP_GAMES" constraintName="FK5YCWUUP9LN1JV9RL2RJUNUWLD" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-32">
+        <addForeignKeyConstraint baseColumnNames="GAME_ID" baseTableName="RATING" constraintName="FKHOTXGRGTRIN4XCTO6N1J4A946" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-33">
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_PLAYERS" constraintName="FKLGM1SY5V8Y6JAQQXTCHWUY5LG" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-34">
+        <addForeignKeyConstraint baseColumnNames="PLAYER_ID" baseTableName="RATING" constraintName="FKM361NCR6JHVM89499BGO8J563" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-35">
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_GAMES" constraintName="FKP59G4XIM7HXKRKVGBTFAKT56T" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-36">
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUP_ID" baseTableName="RATING" constraintName="FKQL19UEHAWNBBFCRQBNIWK3POH" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-37">
+        <addForeignKeyConstraint baseColumnNames="USERNAME" baseTableName="AUTHORITIES" constraintName="FK_AUTHORITIES_USERS" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="USERNAME" referencedTableName="USERS" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-38">
+        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_AUTHORITIES" constraintName="FK_GROUP_AUTHORITIES_GROUP" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
+    </changeSet>
+    <changeSet author="Hinnerk" id="1728113142202-39">
+        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_MEMBERS" constraintName="FK_GROUP_MEMBERS_GROUP" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

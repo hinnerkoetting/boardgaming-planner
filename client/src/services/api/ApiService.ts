@@ -85,7 +85,7 @@ export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]
 }
 
 export async function fetchGamesInGroup(gameGroupId: Number): Promise<Game[]> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/playedGames`)
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`)
   return (await response.json()) as Game[]
 }
 
@@ -106,7 +106,7 @@ export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
 }
 
 export async function addGameToGroup(gameGroupId: number, gameId: number): Promise<boolean> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/playedGames`, {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

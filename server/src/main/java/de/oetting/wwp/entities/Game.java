@@ -22,7 +22,7 @@ public class Game {
     private String imageUrl;
     private String thumbnailUrl;
 
-    @ManyToMany(mappedBy = "playedGames")
+    @ManyToMany(mappedBy = "games")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
 

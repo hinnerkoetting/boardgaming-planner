@@ -7,10 +7,10 @@ import type { Game } from '@/model/Game'
 
 const emit = defineEmits(['game-added'])
 
-const name: Ref<String> = ref('')
-const description: Ref<String> = ref('')
-const imageUrl: Ref<String> = ref('')
-const thumbnailUrl: Ref<String> = ref('')
+const name: Ref<string> = ref('')
+const description: Ref<string> = ref('')
+const imageUrl: Ref<string> = ref('')
+const thumbnailUrl: Ref<string> = ref('')
 
 function onClickAddGame() {
   const game: Game = {

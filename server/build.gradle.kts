@@ -27,6 +27,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("org.liquibase:liquibase-core")
 
     runtimeOnly("javax.xml.bind:jaxb-api:2.3.1") // JWT
     runtimeOnly("com.h2database:h2")

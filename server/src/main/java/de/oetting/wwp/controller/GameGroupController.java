@@ -56,7 +56,7 @@ public class GameGroupController {
     }
 
     @Transactional
-    @PostMapping(path = "playedGames")
+    @PostMapping(path = "games")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayedGameById(@RequestBody IdWrapper gameId, @PathVariable("gameGroupId") long gameGroupId) {
         var game = gameRepository.findById(gameId.getId()).orElseThrow();
@@ -64,9 +64,9 @@ public class GameGroupController {
         gameGroup.addGame(game);
     }
 
-    @GetMapping(path = "playedGames")
+    @GetMapping(path = "games")
     public Collection<RatedGameModel> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
-        Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayedGames();
+        Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
 
         return playedGames.stream().map(game ->
