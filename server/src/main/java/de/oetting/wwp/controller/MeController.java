@@ -6,6 +6,7 @@ import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ForbiddenException;
 import de.oetting.wwp.exceptions.UnprocessableEntityException;
 import de.oetting.wwp.player.PlayerRepository;
+import de.oetting.wwp.player.service.PlayerService;
 import de.oetting.wwp.security.JwtUtil;
 import de.oetting.wwp.security.LoginResponse;
 import de.oetting.wwp.security.model.UpdateNameRequest;
@@ -45,6 +46,10 @@ public class MeController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private PlayerService playerService;
+
     @GetMapping
     public MeModel getInformationAboutMe() {
         var player = findMyPlayer();
@@ -111,6 +116,13 @@ public class MeController {
                 userDetails.getAuthorities()
         );
         userDetailsManager.updateUser(updatedUser);
+    }
+
+    @DeleteMapping
+    @Transactional
+    public void delete() {
+        var player = findMyPlayer();
+        playerService.delete(player);
     }
 
     private Player findMyPlayer() {

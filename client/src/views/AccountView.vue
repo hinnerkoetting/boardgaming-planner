@@ -8,6 +8,7 @@
         </div>
             <Button severity="secondary" @click="onClickChangeName">Update name </Button>
             <Button severity="secondary" @click="onClickUpdatePassword">Update password </Button>
+            <Button severity="danger" @click="onClickDeleteMe">Delete your account</Button>
         </div>
         <Dialog v-model:visible="nameDialogVisible" modal header="Change name">
             <div class="dialogContent">
@@ -36,6 +37,13 @@
                 <Button severity="primary" @click="onClickSubmitPasswordChange">Change </Button>
             </div>
         </Dialog>
+        <Dialog v-model:visible="deleteDialogVisible" modal header="Are you sure to delete your account?">
+            <div class="dialogContent">
+                <Message v-if="deleteErrorMessage" severity="error">{{ deleteErrorMessage }}</Message>
+                <Button severity="secondary" @click="onClickCancelDeleteMe">Cancel (keep account) </Button> <br/>
+                <Button severity="danger" @click="onClickConfirmDeleteMe">Confirm deletion (cannot be undone) </Button>
+            </div>
+        </Dialog>
     </div>
 
   </template>
@@ -47,9 +55,10 @@ import { onMounted, ref } from 'vue'
 
 import { getInformationAboutMe } from '@/services/api/ApiService'
 import Dialog from 'primevue/dialog';
-import { updateName, updatePassword } from '@/services/api/AccountService';
-import { updateToken } from '@/services/LoginService';
+import { deleteMe, updateName, updatePassword } from '@/services/api/AccountService';
+import { logout, updateToken } from '@/services/LoginService';
 import Message from 'primevue/message';
+import router from '@/router'
 
 const nameModel = ref('')
 const nameDialogVisible = ref(false)
@@ -59,6 +68,9 @@ const oldPasswordModel = ref('')
 const newPasswordModel = ref('')
 const passwordDialogVisible = ref(false)
 const passwordErrorMessage = ref('')
+
+const deleteErrorMessage = ref('')
+const deleteDialogVisible = ref(false)
 
 onMounted(async () => {
     const me = await getInformationAboutMe()
@@ -95,6 +107,25 @@ async function onClickSubmitPasswordChange() {
         passwordDialogVisible.value = false
     } else {
         passwordErrorMessage.value = response.error?.detail || 'Error'
+    }
+}
+
+function onClickDeleteMe() {
+    deleteDialogVisible.value = true
+}
+
+function onClickCancelDeleteMe() {
+    deleteDialogVisible.value = false
+}
+
+async function onClickConfirmDeleteMe() {
+    const response = await deleteMe()
+    if (response.success) {        
+        deleteDialogVisible.value = false
+        logout()
+        router.push('home')        
+    } else {
+        deleteErrorMessage.value = response.error?.detail || 'Error'
     }
 }
 

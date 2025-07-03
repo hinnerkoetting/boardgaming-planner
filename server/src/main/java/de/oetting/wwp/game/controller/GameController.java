@@ -41,6 +41,7 @@ public class GameController {
     @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public Game createGame(@RequestBody Game game) {
         if (game.getId() != null) {
             throw new ConflictException("GameId must not be defined");
@@ -50,6 +51,7 @@ public class GameController {
 
     @Transactional
     @PutMapping(path = "/{gameId}")
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void updateGame(@RequestBody Game game, @PathVariable("gameId") long gameId) {
         if (gameId != game.getId()) {
             throw new ConflictException("GameId is not correct");
@@ -81,6 +83,7 @@ public class GameController {
     @Transactional
     @PostMapping(path = "/{gameId}/globalTag")
     @ResponseStatus(value = HttpStatus.CREATED)
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void addGlobalTagById(@RequestBody IdWrapper gameTagId, @PathVariable("gameId") long gameId) {
         Game game = gameRepository.findById(gameId).orElseThrow();
         TagEntity tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
@@ -92,6 +95,7 @@ public class GameController {
 
     @Transactional
     @DeleteMapping(path = "/{gameId}/globalTag/{tagId}")
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void removeGlobalTagById(@PathVariable("gameId") long gameId, @PathVariable("tagId") long tagId) {
         gameRepository.findById(gameId).orElseThrow().getGlobalTags().removeIf(tag -> tag.getId() == tagId);
     }

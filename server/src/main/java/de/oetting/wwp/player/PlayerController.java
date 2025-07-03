@@ -4,6 +4,7 @@ import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.exceptions.ForbiddenException;
 import de.oetting.wwp.player.PlayerRepository;
+import de.oetting.wwp.player.service.PlayerService;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import jakarta.transaction.Transactional;
@@ -33,26 +34,17 @@ public class PlayerController {
     @Autowired
     private RatingRepository ratingRepository;
 
+    @Autowired
+    private PlayerService playerService;
     @DeleteMapping(path = "/{playerId}")
     @ResponseStatus(value = HttpStatus.OK)
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void deletePlayerById(@PathVariable("playerId") long playerId) {
         Player player = playerRepository.findById(playerId).orElseThrow();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(player.getName());
         checkNotEditingYourself(player);
-        if (isOwner(userDetails)) {
-            throw new ForbiddenException("Owner cannot be deleted");
-        }
-        ratingRepository.deleteByPlayerId(playerId);
-        player.getGameGroups().forEach(gameGroup -> gameGroup.deletePlayer(player));
-
-        playerRepository.delete(player);
-
-        userDetailsService.deleteUser(player.getName());
+        playerService.delete(player);
     }
-
-
 
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
@@ -73,10 +65,6 @@ public class PlayerController {
         model.setName(player.getName());
         model.setRoles(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
         return model;
-    }
-
-    private static boolean isOwner(UserDetails userDetails) {
-        return userDetails.getAuthorities().stream().anyMatch(authority -> Role.OWNER.getName().equals(authority.getAuthority()));
     }
 
     private void checkNotEditingYourself( Player player) {
