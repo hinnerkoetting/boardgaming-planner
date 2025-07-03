@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -131,9 +132,16 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IOException.class)
+    public void ioException(Exception e) {
+        // Might be server sent events
+        LOG.debug("IOException");
+    }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public HttpErrorResponse otherError(Exception e) {
-        LOG.error("Exception: Type: {}, Message: {}", e);
+        LOG.error("Exception: ", e);
 
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());

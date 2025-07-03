@@ -10,12 +10,16 @@ import de.oetting.wwp.exceptions.ConflictException;
 import de.oetting.wwp.game.model.TagModel;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
+import de.oetting.wwp.infrastructure.CurrentUser;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
 import de.oetting.wwp.service.RatingService;
+import de.oetting.wwp.service.events.GameGroupEvent;
+import de.oetting.wwp.service.events.GameGroupEventType;
+import de.oetting.wwp.service.events.SseEmitterService;
 import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +53,9 @@ public class GameGroupController {
     @Autowired
     private RatingService ratingService;
 
+    @Autowired
+    private SseEmitterService sseEmitterService;
+
     @Transactional
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -71,14 +78,14 @@ public class GameGroupController {
     }
 
     @GetMapping
-    public List<GameGroupModel> getGameGoups(){
+    public List<GameGroupModel> getGameGroups(){
         return StreamSupport.stream(gameGroupRepository.findAll().spliterator(), false)
                 .map(this::map)
                 .toList();
     }
 
     @GetMapping(path = "/{gameGroupId}")
-    public GameGroupModel getGameGoup(@PathVariable("gameGroupId") long gameGroupId){
+    public GameGroupModel getGameGroup(@PathVariable("gameGroupId") long gameGroupId){
        return gameGroupRepository.findById(gameGroupId)
                .map(this::map)
                .orElseThrow(() -> new NoSuchElementException("Group does not exist"));
@@ -94,6 +101,8 @@ public class GameGroupController {
         Player player = playerRepository.findById(playerId.getId()).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         gameGroup.addPlayer(player);
+
+        sseEmitterService.onEventInGameGroup(new GameGroupEvent(CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.PLAYER_ADDED));
     }
 
     @GetMapping(path = "/{gameGroupId}/players")
@@ -108,6 +117,8 @@ public class GameGroupController {
         var game = gameRepository.findById(gameId.getId()).orElseThrow();
         var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         gameGroup.addGame(game);
+
+        sseEmitterService.onEventInGameGroup(new GameGroupEvent(CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.GAME_ADDED));
     }
 
     @GetMapping(path = "/{gameGroupId}/games")

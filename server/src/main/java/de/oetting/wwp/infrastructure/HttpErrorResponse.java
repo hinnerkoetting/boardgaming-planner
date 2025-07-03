@@ -6,6 +6,9 @@ public class HttpErrorResponse {
     private String detail;
     private String instance;
 
+    public HttpErrorResponse() {
+    }
+
     public String getType() {
         return type;
     }
