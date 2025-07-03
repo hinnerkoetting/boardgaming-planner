@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 server/server.p12
 vite.config.ts.timestamp*
+scripts/remote_env
 
 ### STS ###
 .apt_generated
