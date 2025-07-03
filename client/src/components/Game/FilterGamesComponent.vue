@@ -132,7 +132,7 @@ const emit = defineEmits<{
 const tags: Ref<TagSelection[]> = ref([])
 const numberOfPlayers: Ref<number | undefined> = ref(props.numberOfPlayersInGroup)
 const duration: Ref<number[]> = ref([10, 300])
-const playerFilterType: Ref<PlayerFilterType> = ref('OFF')
+const playerFilterType: Ref<PlayerFilterType> = ref('PLAYABLE')
 
 const filterService = new FilterService()
 

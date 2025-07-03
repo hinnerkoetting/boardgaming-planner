@@ -82,7 +82,8 @@ public class BggUpdateService {
     private void updateGameInOwnTransaction(Game game, List<TagEntity> globalTags) {
         new TransactionTemplate(transactionManager).executeWithoutResult((__) -> {
             try {
-                updateGame(game, globalTags);
+                Game gameInNewTransaction = gameRepository.findById(game.getId()).orElseThrow();
+                updateGame(gameInNewTransaction, globalTags);
                 sleepRandom(2000);
             } catch (SearchException e) {
                 LOG.warn("Could not update game {}: {}", game.getName(), e.getMessage());
@@ -201,7 +202,11 @@ public class BggUpdateService {
     }
 
     private static int getNumberOfVotesForOption(Poll.Results pollResults, String option) {
-        return getNumberOfVotesForOption(pollResults, option);
+        return pollResults.getResults().stream()
+                .filter(result -> option.equals(result.getValue()))
+                .map(Poll.Result::getNumVotes)
+                .findAny()
+                .orElseThrow();
     }
 
     private void sleepRandom(int maxMillis) {
