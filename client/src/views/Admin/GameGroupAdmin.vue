@@ -31,10 +31,10 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { deleteGameGroup, fetchGameGroups } from '@/services/api/ApiService'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
+import { deleteGameGroup, fetchGameGroups } from '@/services/api/GameGroupApiService'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
@@ -45,10 +45,6 @@ onMounted(async () => {
 function onClickDelete(id: Number) {
   deleteGameGroup(id)
   gameGroups.value = gameGroups.value.filter((item) => !(item.id === id))
-}
-
-function onGameGroupAdded(gameGroup: GameGroup) {
-  gameGroups.value.push(gameGroup)
 }
 </script>
 

@@ -2,33 +2,28 @@
   <div class="wrapper">
     <div class="pageContent">
       <h1>Groups</h1>
-      <DataView :value="gameGroups" class="collection">
-        <template #empty> No group exists. Try creating one below. </template>
-        <template #list="slotProps">
-          <div v-for="(item, index) in slotProps.items" :key="index">
-            <div class="row" @click="onRowClick(item)">
-              {{ item.name }}
-              <Button @click="onClickJoinGroup(item)"> Join </Button>
-            </div>
-          </div>
-        </template>
-      </DataView>
+      <GameGroupCollection
+        :game-groups="gameGroups"
+        :with-join-button="true"
+        @onRowClick="onRowClick"
+        @onClickJoinGroup="onClickJoinGroup"
+      />
+
       <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import type { GameGroup } from '@/model/GameGroup'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import router from '@/router'
 import EventBus from '@/services/EventBus'
-import DataView from 'primevue/dataview'
 import CreateGameGroupWrapper from '@/components/GameGroup/CreateGameGroupWrapper.vue'
 import { addPlayerToGroup, fetchGameGroups } from '@/services/api/GameGroupApiService'
+import GameGroupCollection from '@/components/GameGroup/GameGroupCollection.vue'
 
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
@@ -70,29 +65,6 @@ function openGroup(gameGroup: GameGroup) {
 </script>
 
 <style scoped lang="css">
-.row {
-  border-color: #e2e8f0;
-  border-style: solid;
-  border-width: 1px 0 1px 0;
-  padding: 8px;
-  font-size: 15px;
-  line-height: 1.6;
-  padding-left: 16px;
-  display: flex;
-  column-gap: 32px;
-  vertical-align: middle;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.row:hover {
-  background: #f1f5f9;
-}
-
-button {
-  margin-left: 20px;
-}
-
 .wrapper {
   width: 100%;
   display: flex;
