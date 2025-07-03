@@ -102,3 +102,4 @@ export async function getInformationAboutMe(): Promise<Me> {
   const response = await authorizedFetch('/api/me')
   return (await response.json()) as Me
 }
+

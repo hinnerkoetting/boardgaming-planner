@@ -50,7 +50,7 @@
       </div>      
     </div>
     <div class="filterOption">
-      <div class="filterContent">
+      <div class="filterContent">        
         <div v-for="tag in tags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
@@ -103,7 +103,7 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const tags: Ref<TagSelection[]> = ref(createTagSelection(props.allTags))
+const tags: Ref<TagSelection[]> = ref([])
 const numberOfPlayers: Ref<number | undefined> = ref(undefined)
 const duration: Ref<number[]> = ref([10, 300])
 
@@ -112,18 +112,35 @@ const filterService = new FilterService()
 watch(
   () => props.allTags,
   (allTags: TagModel[]) => {
-    tags.value = createTagSelection(allTags)
+    tags.value = updateTagsFromSettings(allTags)
   }
 )
 
 onMounted(async () => {
   const settings = filterService.loadFilterSettings()
   if (settings) {
-    tags.value = settings.tags
+    tags.value = updateTagsFromSettings(props.allTags)
     numberOfPlayers.value = settings.numberOfPlayers
     duration.value = [settings.minPlayingTime, settings.maxPlayingTime]
+  } else {
+    tags.value = createTagSelection(props.allTags)
   }
 })
+
+function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
+  const tagSettings = filterService.loadFilterSettings()?.tags
+  if (tagSettings) {
+    return allTags.map(tag => {
+      const currentSelection = tagSettings.find(tagSetting => tagSetting.id === tag.id)
+      if (currentSelection) {
+        return new TagSelection(tag.description, tag.id, currentSelection.selected)
+      } else {
+        return new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
+      }
+    })
+  }
+  return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+}
 
 function createTagSelection(allTags: TagModel[]): TagSelection[] {
   return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
