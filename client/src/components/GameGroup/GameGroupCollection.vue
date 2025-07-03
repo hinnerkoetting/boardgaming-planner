@@ -1,11 +1,11 @@
 <template>
   <DataView :value="gameGroups" class="collection">
-    <template #empty> No group exists. Try creating one below. </template>
+    <template #empty> {{ emptyText }} </template>
     <template #list="slotProps">
       <div v-for="(item, index) in slotProps.items" :key="index">
         <div class="row" @click="$emit('onRowClick', item)">
           {{ item.name }}
-          <Button @click="$emit('onClickJoinGroup', item)" v-if="withJoinButton"> Join </Button>
+          <Button @click="$emit('onClickActionButton', item)"> {{ actionButtonText }} </Button>
         </div>
       </div>
     </template>
@@ -23,15 +23,18 @@ defineProps({
     type: Array as PropType<GameGroup[]>,
     required: true
   },
-  withJoinButton: {
-    type: Boolean,
-    default: false
+  actionButtonText: {
+    type: String
+  },
+  emptyText: {
+    type: String,
+    default: 'No group exists.'
   }
 })
 
 defineEmits<{
   (e: 'onRowClick', gameGroup: GameGroup): void
-  (e: 'onClickJoinGroup', gameGroup: GameGroup): void
+  (e: 'onClickActionButton', gameGroup: GameGroup): void
 }>()
 </script>
 

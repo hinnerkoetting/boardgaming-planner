@@ -15,6 +15,11 @@ export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrappe
   return await wrapResponse(response)
 }
 
+export async function fetchMyGameGroups(): Promise<GameGroup[]> {
+  const response = await authorizedFetch('/api/me/gameGroups')
+  return await response.json()
+}
+
 export async function fetchGameGroups(): Promise<GameGroup[]> {
   const response = await authorizedFetch('/api/gameGroups')
   return await response.json()
@@ -23,7 +28,7 @@ export async function fetchGameGroups(): Promise<GameGroup[]> {
 export async function deleteGameGroup(id: Number) {
   await authorizedFetch(`/api/gameGroups/${id}`, { method: 'DELETE' })
 }
-// Gamegroups
+
 export async function loadGameGroup(gameGroupId: number): Promise<GameGroup> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}`)
   return (await response.json()) as GameGroup

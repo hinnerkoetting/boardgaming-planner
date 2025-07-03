@@ -2,6 +2,7 @@
 import LoginComponent from '@/components/LoginComponent.vue'
 import EventBus from '@/services/EventBus'
 import { isLoggedIn } from '@/services/LoginService'
+import Button from 'primevue/button'
 import { ref } from 'vue'
 
 const isLoggedInRef = ref(isLoggedIn())
@@ -21,6 +22,9 @@ EventBus.addEventListener('login-status', () => {
     <div class="wrapper2">
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
+      <div>
+        <RouterLink v-if="isLoggedInRef" to="gameGroups">Show groups</RouterLink>
+      </div>
     </div>
   </div>
 </template>

@@ -1,12 +1,23 @@
 <template>
   <div class="wrapper">
     <div class="pageContent">
-      <h1>Groups</h1>
+      <h1>My groups</h1>
+      <GameGroupCollection
+        :game-groups="myGameGroups"
+        :with-join-button="false"
+        action-button-text="Open"
+        @onRowClick="onClickOpenGroup"
+        empty-text="No groups found. Try joining one."
+      />
+
+      <h1>Groups <Button @click="onClickLoadButton" severity="secondary">Find others</Button></h1>
       <GameGroupCollection
         :game-groups="gameGroups"
         :with-join-button="true"
-        @onRowClick="onRowClick"
-        @onClickJoinGroup="onClickJoinGroup"
+        action-button-text="Join"
+        @onRowClick="onClickOpenGroup"
+        @onClickActionButton="onClickJoinGroup"
+        empty-text=""
       />
 
       <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
@@ -22,14 +33,28 @@ import { getCurrentPlayerId } from '@/services/LoginService'
 import router from '@/router'
 import EventBus from '@/services/EventBus'
 import CreateGameGroupWrapper from '@/components/GameGroup/CreateGameGroupWrapper.vue'
-import { addPlayerToGroup, fetchGameGroups } from '@/services/api/GameGroupApiService'
+import {
+  addPlayerToGroup,
+  fetchGameGroups,
+  fetchMyGameGroups
+} from '@/services/api/GameGroupApiService'
 import GameGroupCollection from '@/components/GameGroup/GameGroupCollection.vue'
+import Button from 'primevue/button'
 
+const myGameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
 onMounted(async () => {
-  gameGroups.value = await fetchGameGroups()
+  myGameGroups.value = await fetchMyGameGroups()
 })
+
+function onClickLoadButton() {
+  fetchGameGroups().then((groups) => (gameGroups.value = removeMyGroupsFromOthers(groups)))
+}
+function removeMyGroupsFromOthers(gameGroups: GameGroup[]): GameGroup[] {
+  const myGameGroupIds = myGameGroups.value.map((group) => group.id)
+  return gameGroups.filter((group) => !myGameGroupIds.includes(group.id))
+}
 
 function onClickJoinGroup(gameGroup: GameGroup) {
   if (!gameGroup.id) {
@@ -44,7 +69,7 @@ function onGameGroupAdded(gameGroup: GameGroup) {
   gameGroups.value.push(gameGroup)
 }
 
-function onRowClick(gameGroup: GameGroup) {
+function onClickOpenGroup(gameGroup: GameGroup) {
   const gameGroupId = gameGroup.id
   if (!gameGroupId) {
     console.error('Gamegroup has no id')
@@ -80,5 +105,9 @@ function openGroup(gameGroup: GameGroup) {
 
 .collection {
   margin-top: 8px;
+}
+
+h1 {
+  margin-top: 32px;
 }
 </style>
