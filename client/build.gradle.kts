@@ -8,8 +8,17 @@ node {
     npmVersion = "10.8.3"
 }
 
-tasks.getByName("npm_run_build") {
+val buildTask = tasks.getByName("npm_run_build") {
     inputs.dir("src")
     inputs.files("package.json", "tsconfig.json", "vite.config.ts")
     outputs.dir("dist")
+}
+
+val clientOutput by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+artifacts {
+    add(clientOutput.name, tasks.named("npm_run_build"))
 }

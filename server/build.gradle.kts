@@ -4,12 +4,17 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 }
 
+val clientOutput by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
 group = "de.oetting"
 version = "0.0.1-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(23)
     }
 }
 
@@ -18,6 +23,8 @@ repositories {
 }
 
 dependencies {
+    clientOutput(project(":client", "clientOutput"))
+
     implementation("com.github.marcioos:bgg-client:1.0")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -46,9 +53,8 @@ tasks.getByName("bootJar") {
 }
 
 tasks.register<Copy>("copy_client_resources") {
-    dependsOn(":client:npm_run_build")
-
-    from("../client/dist")
+    val sharedFiles: FileCollection = clientOutput
+    from(sharedFiles)
     into("build/client/static")
 }
 
