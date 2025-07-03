@@ -1,0 +1,15 @@
+meta {
+  name: Get gamegroup information
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8080/gameGroup/{{gameGroupId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}

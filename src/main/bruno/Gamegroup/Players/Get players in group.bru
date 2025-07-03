@@ -1,0 +1,15 @@
+meta {
+  name: Get players in group
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/gameGroup/{{gameGroupId}}/players
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}
