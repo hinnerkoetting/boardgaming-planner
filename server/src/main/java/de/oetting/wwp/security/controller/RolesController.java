@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping("/api/players/{playerId}/roles")
 public class RolesController {
 
     private static final Logger LOG = LoggerFactory.getLogger(RolesController.class);
@@ -40,7 +40,7 @@ public class RolesController {
     @Autowired
     private UserDetailsManager userDetailsManager;
 
-    @PostMapping(value = "/{playerId}/bootstrapOwner")
+    @PostMapping(value = "/bootstrapOwner")
     @Transactional
     public ResponseEntity<?> bootstrapOwner(@PathVariable("playerId") long playerId)  {
         if (System.getenv("BOOTSTRAP_OWNER_ALLOWED") == null) {
@@ -67,7 +67,7 @@ public class RolesController {
         return ResponseEntity.ok(null);
     }
 
-    @PutMapping(value = "/{playerId}/{role}")
+    @PutMapping(value = "/{role}")
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     @ResponseStatus(HttpStatus.OK)
@@ -80,7 +80,7 @@ public class RolesController {
         addRoles(player, Collections.singleton(role));
     }
 
-    @DeleteMapping(value = "/{playerId}/{role}")
+    @DeleteMapping(value = "/{role}")
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     @ResponseStatus(HttpStatus.OK)
@@ -97,7 +97,7 @@ public class RolesController {
         deleteRoles(playerId, Collections.singleton(role));
     }
 
-    @GetMapping(value = "/{playerId}")
+    @GetMapping()
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     @ResponseStatus(HttpStatus.OK)
     public List<String> getRoles(@PathVariable("playerId") long playerId) {

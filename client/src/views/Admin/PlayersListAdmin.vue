@@ -15,7 +15,7 @@
       </Column>
     </DataTable>
     <Dialog v-model:visible="playerDialogVisible" modal :header="'Player ' + selectedPlayer?.name">
-      <ViewPlayerComponent :player="selectedPlayer!" />
+      <ViewPlayerComponent :player="selectedPlayer!" @player-update="onPlayerUpdated" />
     </Dialog>
   </div>
 </template>
@@ -41,23 +41,39 @@ import type { Player } from '@/model/Player/Player'
 import { deletePlayer, fetchPlayers } from '@/services/api/PlayerApiService'
 import Dialog from 'primevue/dialog'
 import ViewPlayerComponent from '@/components/Player/Admin/ViewPlayerComponent.vue'
+import { useToast } from 'primevue/usetoast'
 
 const players = ref([] as Player[])
 const selectedPlayer: Ref<Player | undefined> = ref()
 const playerDialogVisible = ref(false)
+const toast = useToast()
 
 onMounted(async () => {
   players.value = await fetchPlayers()
 })
 
-function onClickDelete(id: Number) {
-  deletePlayer(id)
-  players.value = players.value.filter((item) => !(item.id === id))
+async function onClickDelete(id: Number) {
+  const response = await deletePlayer(id)
+  if (response.success) {
+    players.value = players.value.filter((item) => !(item.id === id))
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: response.error?.type,
+      detail: response.error?.detail,
+      life: 3000
+    })
+  }
 }
 
 function onClickEdit(event: any) {
   const player = players.value[event.index]
   selectedPlayer.value = player
   playerDialogVisible.value = true
+}
+
+async function onPlayerUpdated() {
+  selectedPlayer.value = undefined
+  playerDialogVisible.value = false
 }
 </script>

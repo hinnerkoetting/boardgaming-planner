@@ -1,6 +1,6 @@
 export class PlayerDetails {
   constructor(
-    readonly id: Number,
+    readonly id: number,
     readonly name: String,
     readonly roles: string[]
   ) {}

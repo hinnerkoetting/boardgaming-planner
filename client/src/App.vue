@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import NavigationComponent from './components/other/NavigationComponent.vue'
+import Toast from 'primevue/toast'
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import NavigationComponent from './components/other/NavigationComponent.vue'
   </header>
 
   <RouterView />
+  <Toast />
 </template>
 
 <style scoped>

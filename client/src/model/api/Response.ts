@@ -23,5 +23,22 @@ export async function wrapResponse<T extends {}>(response: Response): Promise<Re
   }
 }
 
+export async function wrapEmptySuccessResponse(
+  response: Response
+): Promise<ResponseWrapper<boolean>> {
+  if (response.status < 300) {
+    return {
+      success: true,
+      error: undefined
+    }
+  }
+  const content = (await response.json()) as ErrorResponse
+
+  return {
+    success: undefined,
+    error: content
+  }
+}
+
 export type SucessResponseType = 'success'
 export type ErrorResponseType = 'error'
