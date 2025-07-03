@@ -29,7 +29,7 @@ const router = createRouter({
     {
       path: '/gameGroup/:gameGroupId',
       name: 'gameGroup',
-      component: () => import('../views/GameGroup/GameGroup.vue')
+      component: () => import('../views/GameGroup/GameGroupView.vue')
     },
 
     // Admin

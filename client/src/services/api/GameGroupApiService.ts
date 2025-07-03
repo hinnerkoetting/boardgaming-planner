@@ -3,6 +3,7 @@ import { authorizedFetch } from './ApiService'
 import { wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
+import { getCurrentPlayerId } from '../LoginService'
 
 export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
   const response = await authorizedFetch('/api/gameGroups', {
@@ -45,6 +46,13 @@ export async function fetchGamesInGroup(gameGroupId: Number): Promise<Game[]> {
 }
 
 export async function removePlayerFromGroup(gameGroupId: Number, playerId: Number) {
+  await authorizedFetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
+    method: 'DELETE'
+  })
+}
+
+export async function leaveGroup(gameGroupId: Number) {
+  const playerId = getCurrentPlayerId()
   await authorizedFetch(`/api/gameGroups/${gameGroupId}/players/${playerId}`, {
     method: 'DELETE'
   })

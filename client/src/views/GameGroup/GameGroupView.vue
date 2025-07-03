@@ -15,6 +15,8 @@
     <DataTable :value="players" tableStyle="min-width: 20rem">
       <Column field="name" header="Name"></Column>
     </DataTable>
+
+    <Button severity="danger" @click="onClickLeaveButton">Leave group</Button>
   </div>
 </template>
 
@@ -31,12 +33,16 @@ import AddGameBgg from '@/components/Game/AddGameBgg.vue'
 import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { RatedGame } from '@/model/RatedGame'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
+import router from '@/router'
 import {
   addGameToGroup,
   fetchGamesInGroup,
   fetchPlayersInGroup,
+  leaveGroup,
   loadGameGroup
 } from '@/services/api/GameGroupApiService'
+import Button from 'primevue/button'
+import EventBus from '@/services/EventBus'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -81,5 +87,12 @@ async function onGameAdded(game: Game) {
 
 function sortGames() {
   games.value.sort((game1, game2) => game2.rating.averageRating - game1.rating.averageRating)
+}
+
+async function onClickLeaveButton() {
+  await leaveGroup(gameGroupId)
+  EventBus.emit('gaming-group-removed')
+  await router.push({ name: 'gameGroups' })
+  router.go(0) // not sure why this is necessary, otherwise the page will not be displayed
 }
 </script>

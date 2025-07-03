@@ -7,7 +7,7 @@
         :with-join-button="false"
         action-button-text="Open"
         @onRowClick="onClickOpenGroup"
-        empty-text="No groups found. Try joining one."
+        empty-text="Try joining a group or create one below."
       />
 
       <h1>Groups <Button @click="onClickLoadButton" severity="secondary">Find others</Button></h1>

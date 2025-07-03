@@ -4,27 +4,29 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/gameGroups">Groups</RouterLink>
-        <RouterLink :to="'/gameGroup/' + selectedGameGroup.id" v-if="selectedGameGroup" id="gameGroupSelected">
-          <div to="/gameGroups/1"  v-if="selectedGameGroup">
+        <RouterLink
+          :to="'/gameGroup/' + selectedGameGroup.id"
+          v-if="selectedGameGroup"
+          id="gameGroupSelected"
+        >
+          <div to="/gameGroups/1" v-if="selectedGameGroup">
             {{ selectedGameGroup.name }}
           </div>
         </RouterLink>
         <a id="logout" @click="onClickLogout">Logout</a>
         <template v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
           <h1>Admin</h1>
-        
+
           <RouterLink to="/admin/players">Players</RouterLink>
           <RouterLink to="/admin/games">Games</RouterLink>
-          <RouterLink to="/admin/gameGroups">Groups</RouterLink>        
+          <RouterLink to="/admin/gameGroups">Groups</RouterLink>
         </template>
-      </nav>       
+      </nav>
     </div>
   </div>
 </template>
 
 <style lang="css" scoped>
-
-
 nav {
   width: 100%;
   font-size: 20px;
@@ -84,7 +86,6 @@ nav a {
   @media (max-width: 1023px) {
     display: none;
   }
-
 }
 
 #logout {
@@ -111,6 +112,10 @@ EventBus.addEventListener('login-status', () => {
 EventBus.addEventListener('gaming-group-opened', (event: Event) => {
   const eventBusEvent = event as EventBusEvent
   selectedGameGroup.value = eventBusEvent.data
+})
+
+EventBus.addEventListener('gaming-group-removed', () => {
+  selectedGameGroup.value = undefined
 })
 
 function onClickLogout() {
