@@ -1,0 +1,24 @@
+meta {
+  name: Setup - Create interest
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8080/api/interests
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "playerId": {{playerId}},
+    "gameId": {{gameId}},
+    "gameGroupId": {{gameGroupId}},
+    "rating": 1
+  }
+}

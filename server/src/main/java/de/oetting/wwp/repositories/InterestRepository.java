@@ -4,7 +4,12 @@ import de.oetting.wwp.entities.Interest;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
-@RepositoryRestResource(collectionResourceRel = "interests", path = "interests")
+import java.util.List;
+
+@Repository
 public interface InterestRepository  extends PagingAndSortingRepository<Interest, Long>,CrudRepository<Interest,Long> {
+
+    List<Interest> findByGameGroupIdAndPlayerId(long gameGroupId, long playerId);
 }
