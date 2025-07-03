@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
 import { addGame, fetchFromBgg, searchBgg } from '@/services/api/ApiService'
@@ -53,28 +51,24 @@ async function onClickAdd(bggId: number) {
 
     <DataView :value="bggSearchItems">
       <template #list="slotProps">
-       
-          <div v-for="(item, index) in slotProps.items" :key="index">
-            <div class="row">
-              <div>
-                {{  item.name }}                 
-              </div>
-              <Button @click="onClickAdd(item.id)"> Add </Button>                    
+        <div v-for="(item, index) in slotProps.items" :key="index">
+          <div class="row">
+            <div>
+              {{ item.name }}
             </div>
+            <Button @click="onClickAdd(item.id)"> Add </Button>
           </div>
-       
+        </div>
       </template>
     </DataView>
-   
   </div>
 </template>
 
 <style scoped>
-
 .row {
   border-color: #e2e8f0;
   border-style: solid;
-  border-width: 1px 0 1px 0;  
+  border-width: 1px 0 1px 0;
   padding: 8px;
   font-size: 15px;
   line-height: 1.6;
@@ -82,6 +76,6 @@ async function onClickAdd(bggId: number) {
   display: flex;
   justify-content: space-between;
   vertical-align: middle;
-  align-items: center;  
+  align-items: center;
 }
 </style>

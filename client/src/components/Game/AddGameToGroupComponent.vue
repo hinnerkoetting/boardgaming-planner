@@ -4,20 +4,21 @@ import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
 import { searchExistingGames } from '@/services/api/ApiService'
 import type { Game } from '@/model/Game'
-import Image from 'primevue/image'
-import DataView from 'primevue/dataview'
+import AddExistingGameTable from './AddExistingGameTable.vue'
+import type { EventMessage } from '@/model/internal/EventMessage'
 
-const emit = defineEmits(['game-added'])
+const emit = defineEmits<{
+  (e: 'game-added', game: Game, callback: (message: EventMessage) => void): void
+}>()
 
 const searchTerm: Ref<string> = ref('')
 const searchItems: Ref<Game[]> = ref([])
-
 async function onClickSearch() {
   searchItems.value = await searchExistingGames(searchTerm.value)
 }
 
-async function onClickAdd(game: Game) {
-  emit('game-added', game)
+async function onClickAdd(game: Game, callback: (message: EventMessage) => void) {
+  emit('game-added', game, callback)
 }
 </script>
 
@@ -30,40 +31,28 @@ async function onClickAdd(game: Game) {
       placeholder="Searchterm..."
       v-on:keyup.enter="onClickSearch"
     ></InputText>
-    <Button @click="onClickSearch">Search</Button>
+    <Button @click="onClickSearch" class="searchButton">Search</Button>
 
-    <DataView :value="searchItems">
-      <template #list="slotProps">
-       
-          <div v-for="(item, index) in slotProps.items" :key="index">
-            <div class="row">
-              <div class="gameDescription">
-                {{  item.name }} <br/>
-                <Image :src="item.thumbnailUrl" />             
-              </div>
-              <Button @click="onClickAdd(item)"> Add </Button>                    
-            </div>
-          </div>
-       
-      </template>
-    </DataView>
+    <AddExistingGameTable :searchItems="searchItems" v-on:game-added="onClickAdd" />
   </div>
 </template>
 
 <style scoped lang="css">
-
 .row {
   border-color: #e2e8f0;
   border-style: solid;
-  border-width: 1px 0 1px 0;  
+  border-width: 1px 0 1px 0;
   padding: 8px;
   font-size: 15px;
   line-height: 1.6;
   padding-left: 16px;
-  display: flex;  
+  display: flex;
   vertical-align: middle;
-  align-items: center;  
+  align-items: center;
   justify-content: space-between;
 }
 
+.searchButton {
+  margin-left: 4px;
+}
 </style>

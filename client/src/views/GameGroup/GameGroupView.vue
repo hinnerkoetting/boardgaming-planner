@@ -12,7 +12,7 @@
 
     <template v-if="isPartOfGroup">
       <h2 class="green">Add game</h2>
-      <AddExistingGame @game-added="onGameAdded" />
+      <AddGameToGroupComponent @game-added="onGameAdded" />
 
       <h2 class="green">Import from Boardgamegeek</h2>
       <AddGameBgg @game-added="onGameAdded" />
@@ -37,7 +37,6 @@ import { useRoute } from 'vue-router'
 import type { Player } from '@/model/Player/Player'
 import type { Game } from '@/model/Game'
 import AddGameBgg from '@/components/Game/AddGameBgg.vue'
-import AddExistingGame from '@/components/Game/AddExistingGame.vue'
 import type { RatedGame } from '@/model/RatedGame'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
@@ -51,6 +50,8 @@ import {
 import Button from 'primevue/button'
 import EventBus from '@/services/EventBus'
 import { getCurrentPlayerId } from '@/services/LoginService'
+import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue'
+import { EventMessage } from '@/model/internal/EventMessage'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -74,16 +75,16 @@ onMounted(async () => {
   })
 })
 
-async function onGameAdded(game: Game) {
+async function onGameAdded(game: Game, callback: (message: EventMessage) => void) {
   if (!game.id) {
-    console.log('Game has no id')
+    callback(new EventMessage('Game has no id', false))
     return
   }
   if (games.value.find((existingGame) => existingGame.id == game.id)) {
-    console.log('Game already exists')
+    callback(new EventMessage('Game already exists', false))
     return
   }
-  await addGameToGroup(gameGroupId, game.id)
+  await addGameToGroup(gameGroupId, game.id!)
   const ratedGame: RatedGame = {
     ...game,
     rating: {
@@ -93,6 +94,7 @@ async function onGameAdded(game: Game) {
     }
   }
   games.value.push(ratedGame)
+  callback(new EventMessage('Game added', true))
 }
 
 function sortGames() {
@@ -106,3 +108,9 @@ async function onClickLeaveButton() {
   router.go(0) // not sure why this is necessary, otherwise the page will not be displayed
 }
 </script>
+
+<style lang="css" scoped>
+h2 {
+  margin-top: 16px;
+}
+</style>
