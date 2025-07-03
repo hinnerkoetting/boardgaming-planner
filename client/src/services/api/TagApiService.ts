@@ -16,7 +16,10 @@ export async function deleteTag(tag: TagModel): Promise<void> {
 export async function createTag(tag: TagModel): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch('/api/tags', {
     method: 'POST',
-    body: JSON.stringify(tag)
+    body: JSON.stringify(tag),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
   return wrapEmptySuccessResponse(response)
 }
