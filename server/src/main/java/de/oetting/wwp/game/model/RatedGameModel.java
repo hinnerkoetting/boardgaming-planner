@@ -4,6 +4,7 @@ import de.oetting.wwp.controller.model.RatingModel;
 import jakarta.persistence.Column;
 
 import java.util.List;
+import java.util.Set;
 
 public class RatedGameModel {
 
@@ -20,6 +21,8 @@ public class RatedGameModel {
     private String url;
 
     private List<TagModel> tags;
+    private Set<Integer> recommendedNumberOfPlayers;
+    private Set<Integer> bestNumberOfPlayers;
 
     public String getImageUrl() {
         return imageUrl;
@@ -107,5 +110,21 @@ public class RatedGameModel {
 
     public void setTags(List<TagModel> tags) {
         this.tags = tags;
+    }
+
+    public Set<Integer> getRecommendedNumberOfPlayers() {
+        return recommendedNumberOfPlayers;
+    }
+
+    public void setRecommendedNumberOfPlayers(Set<Integer> recommendedNumberOfPlayers) {
+        this.recommendedNumberOfPlayers = recommendedNumberOfPlayers;
+    }
+
+    public Set<Integer> getBestNumberOfPlayers() {
+        return bestNumberOfPlayers;
+    }
+
+    public void setBestNumberOfPlayers(Set<Integer> bestNumberOfPlayers) {
+        this.bestNumberOfPlayers = bestNumberOfPlayers;
     }
 }

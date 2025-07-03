@@ -66,6 +66,8 @@ public class GameController {
         existingGame.setDescription(game.getDescription());
         existingGame.setImageUrl(game.getImageUrl());
         existingGame.setThumbnailUrl(game.getThumbnailUrl());
+        existingGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
+        existingGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
     }
 
     @DeleteMapping(path = "/{gameId}")

@@ -3,7 +3,6 @@ package de.oetting.wwp.bgg.controller;
 import com.github.marcioos.bggclient.BGG;
 import com.github.marcioos.bggclient.common.ThingType;
 import com.github.marcioos.bggclient.fetch.FetchException;
-import com.github.marcioos.bggclient.fetch.domain.FetchItem;
 import com.github.marcioos.bggclient.search.SearchException;
 import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;

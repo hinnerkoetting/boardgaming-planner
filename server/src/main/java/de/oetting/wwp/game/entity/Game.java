@@ -9,7 +9,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Game {
@@ -41,6 +45,16 @@ public class Game {
 
     @Column(length = 1000)
     private String url;
+
+    // Encoded as comma-separed list to avoid additional tables, e.g.
+    // 1,4,5
+    @Column
+    private String recommendedNumberOfPlayers;
+
+    // Encoded as comma-separed list to avoid additional tables, e.g.
+    // 1,4,5
+    @Column
+    private String bestNumberOfPlayers;
 
     @ManyToMany(mappedBy = "games")
     @JsonBackReference
@@ -148,5 +162,37 @@ public class Game {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Set<Integer> getRecommendedNumberOfPlayers() {
+        return parseNumberOfPlayers(recommendedNumberOfPlayers);
+    }
+
+    public void setRecommendedNumberOfPlayers(Set<Integer> recommendedNumberOfPlayers) {
+        this.recommendedNumberOfPlayers = encodeNumberOfPlayers(recommendedNumberOfPlayers);
+    }
+
+    public Set<Integer> getBestNumberOfPlayers() {
+        return parseNumberOfPlayers(bestNumberOfPlayers);
+    }
+
+    public void setBestNumberOfPlayers(Set<Integer> bestNumberOfPlayers) {
+        this.bestNumberOfPlayers = encodeNumberOfPlayers(bestNumberOfPlayers);
+    }
+
+    private Set<Integer> parseNumberOfPlayers(String value) {
+        if (value == null) {
+            return Collections.emptySet();
+        }
+        return Arrays.stream(value.split(","))
+                .filter(s -> !s.isBlank())
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
+    }
+
+    private String encodeNumberOfPlayers(Set<Integer> bestNumberOfPlayers) {
+        return bestNumberOfPlayers.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

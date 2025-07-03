@@ -14,7 +14,7 @@ const props = defineProps({
     required: true
   },
   game: {
-    type: Game
+    type: Object as PropType<Game>
   }
 })
 
@@ -25,6 +25,8 @@ const thumbnailUrl: Ref<string> = ref(props.game?.thumbnailUrl || '')
 const url: Ref<string | undefined> = ref(props.game?.url || '')
 const minPlayers: Ref<number | undefined> = ref(props.game?.minPlayers)
 const maxPlayers: Ref<number | undefined> = ref(props.game?.maxPlayers)
+const recommendedPlayers: Ref<string> = ref(props.game?.recommendedNumberOfPlayers.join(',') || '')
+const bestPlayers: Ref<string> = ref(props.game?.bestNumberOfPlayers.join(',') || '')
 const playingTimeMinutes: Ref<number | undefined> = ref(props.game?.playingTimeMinutes)
 
 const errorMessage = ref('')
@@ -48,7 +50,9 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     minPlayers: minPlayers.value,
     maxPlayers: maxPlayers.value,
     url: url.value,
-    playingTimeMinutes: playingTimeMinutes.value
+    playingTimeMinutes: playingTimeMinutes.value,
+    recommendedNumberOfPlayers: recommendedPlayers.value.split(',').map((it) => +it),
+    bestNumberOfPlayers: bestPlayers.value.split('').map((it) => +it)
   }
   if (props.mode === 'CREATE') {
     return await addGame(game)
@@ -91,6 +95,14 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     <div class="item">
       Max. players
       <InputText v-model="maxPlayers" placeholder="Max. players"></InputText>
+    </div>
+    <div class="item">
+      Recommended players
+      <InputText v-model="recommendedPlayers" placeholder="Rec. players"></InputText>
+    </div>
+    <div class="item">
+      Best players
+      <InputText v-model="bestPlayers" placeholder="Best. players"></InputText>
     </div>
     <div class="item">
       Playing time (minutes)

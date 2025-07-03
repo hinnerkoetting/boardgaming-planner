@@ -4,6 +4,7 @@ import com.github.marcioos.bggclient.BGG;
 import com.github.marcioos.bggclient.common.ThingType;
 import com.github.marcioos.bggclient.fetch.FetchException;
 import com.github.marcioos.bggclient.fetch.domain.FetchItem;
+import com.github.marcioos.bggclient.fetch.domain.Poll;
 import com.github.marcioos.bggclient.search.SearchException;
 import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
@@ -19,10 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class BggUpdateService {
@@ -145,9 +145,63 @@ public class BggUpdateService {
         game.setImageUrl(fetchItem.getImageUrl());
         game.setThumbnailUrl(fetchItem.getThumbnailUrl());
         game.setPlayingTimeMinutes(Integer.parseInt(fetchItem.getPlayingTime().getValue()));
+        game.setBestNumberOfPlayers(getBestNumberOfPlayers(fetchItem));
+        game.setRecommendedNumberOfPlayers(getRecommededNumberOfPlayers(fetchItem));
         findMatchingTags(fetchItem, globalTags)
                 .forEach(game::addGlobalTag);
         return gameRepository.save(game);
+    }
+
+    private Set<Integer> getRecommededNumberOfPlayers(FetchItem fetchItem) {
+        Optional<Poll> numberPlayersPoll = fetchItem.getPolls().stream()
+                .filter(Poll::isSuggestedNumPlayersPoll)
+                .findAny();
+        return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
+                .filter(BggUpdateService::isPlayerNumberRecommended)
+                .map(results -> Integer.parseInt(results.getNumPlayers()))
+                .collect(Collectors.toSet())).orElse(Collections.emptySet());
+    }
+
+    private Set<Integer> getBestNumberOfPlayers(FetchItem fetchItem) {
+        Optional<Poll> numberPlayersPoll = fetchItem.getPolls().stream()
+                .filter(Poll::isSuggestedNumPlayersPoll)
+                .findAny();
+        return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
+                .filter(BggUpdateService::isPlayerNumberBest)
+                .map(results -> Integer.parseInt(results.getNumPlayers()))
+                .collect(Collectors.toSet())).orElse(Collections.emptySet());
+    }
+
+    private static boolean isPlayerNumberRecommended(Poll.Results pollResults) {
+        int numberOfBest = getNumberOfVotesForBest(pollResults);
+        int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
+        int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
+        var sum = numberOfBest +  numberOfRecommended + numberOfNotRecommended;
+        return numberOfBest * 2 < sum && (numberOfBest + numberOfRecommended) > numberOfNotRecommended;
+    }
+
+    private static boolean isPlayerNumberBest(Poll.Results pollResults) {
+        int numberOfBest = getNumberOfVotesForBest(pollResults);
+        int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
+        int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
+        var sum = numberOfBest +  numberOfRecommended + numberOfNotRecommended;
+        return numberOfBest * 2 >= sum;
+    }
+
+    private static int getNumberOfVotesForBest(Poll.Results pollResults) {
+        return getNumberOfVotesForOption(pollResults, "Best");
+    }
+
+    private static int getNumberOfVotesForRecommended(Poll.Results pollResults) {
+        return getNumberOfVotesForOption(pollResults, "Recommended");
+    }
+
+    private static int getNumberOfVotesForNotRecommended(Poll.Results pollResults) {
+        return getNumberOfVotesForOption(pollResults, "Not Recommended");
+    }
+
+    private static int getNumberOfVotesForOption(Poll.Results pollResults, String option) {
+        return getNumberOfVotesForOption(pollResults, option);
     }
 
     private void sleepRandom(int maxMillis) {

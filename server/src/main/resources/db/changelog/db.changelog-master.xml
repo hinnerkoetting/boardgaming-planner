@@ -237,6 +237,7 @@
 
     <!-- Manually created starting here -->
     <changeSet author="Hinnerk" id="tag-1">
+        <!-- Adds a table for tags -->
         <createSequence sequenceName="GAME_TAG_SEQ" incrementBy="50"/>
         <createTable tableName="GAME_TAG">
             <column name="ID" type="BIGINT">
@@ -257,6 +258,7 @@
     </changeSet>
 
     <changeSet author="Hinnerk" id="game-2-tag-1">
+        <!-- Adds a mapping table for tags to games -->
         <createTable tableName="GAMES_2_TAGS">
             <column name="GAME_ID" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="TAGES_TAGS_PK"/>
@@ -297,6 +299,7 @@
     </changeSet>
 
     <changeSet author="Hinnerk" id="game-2">
+        <!-- Adds somes attributes to games -->
         <addColumn tableName="GAME">
             <column name="MIN_PLAYERS" type="INT"/>
             <column name="MAX_PLAYERS" type="INT"/>
@@ -306,8 +309,17 @@
     </changeSet>
 
     <changeSet author="Hinnerk" id="tag-2">
+        <!-- Adds a column to automatically import tags from BGG -->
         <addColumn tableName="GAME_TAG">
             <column name="IMPORTED_SOURCE_NAME" type="VARCHAR(200)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Hinnerk" id="game-3">
+        <!-- Adds a column to save recommended and best number of players for games -->
+        <addColumn tableName="GAME">
+            <column name="RECOMMENDED_NUMBER_OF_PLAYERS" type="VARCHAR(200)"/>
+            <column name="BEST_NUMBER_OF_PLAYERS" type="VARCHAR(200)"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

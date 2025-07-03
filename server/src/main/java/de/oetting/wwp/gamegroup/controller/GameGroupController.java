@@ -115,22 +115,27 @@ public class GameGroupController {
         Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
 
-        return playedGames.stream().map(game ->
-        {
-            RatedGameModel ratedGame =new RatedGameModel();
-            ratedGame.setDescription(game.getDescription());
-            ratedGame.setThumbnailUrl(game.getThumbnailUrl());
-            ratedGame.setImageUrl(game.getImageUrl());
-            ratedGame.setId(game.getId());
-            ratedGame.setName(game.getName());
-            ratedGame.setRating(ratingService.computeRating(game, ratings));
-            ratedGame.setMaxPlayers(game.getMaxPlayers());
-            ratedGame.setMinPlayers(game.getMinPlayers());
-            ratedGame.setUrl(game.getUrl());
-            ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
-            ratedGame.setTags(game.getGlobalTags().stream().map(this::map).collect(Collectors.toList()));
-            return ratedGame;
-        }).toList();
+        return playedGames.stream()
+                .map(game -> map(ratings, game))
+                .toList();
+    }
+
+    private RatedGameModel map(List<Rating> ratings, Game game) {
+        RatedGameModel ratedGame =new RatedGameModel();
+        ratedGame.setDescription(game.getDescription());
+        ratedGame.setThumbnailUrl(game.getThumbnailUrl());
+        ratedGame.setImageUrl(game.getImageUrl());
+        ratedGame.setId(game.getId());
+        ratedGame.setName(game.getName());
+        ratedGame.setRating(ratingService.computeRating(game, ratings));
+        ratedGame.setMaxPlayers(game.getMaxPlayers());
+        ratedGame.setMinPlayers(game.getMinPlayers());
+        ratedGame.setUrl(game.getUrl());
+        ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
+        ratedGame.setTags(game.getGlobalTags().stream().map(this::map).collect(Collectors.toList()));
+        ratedGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
+        ratedGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
+        return ratedGame;
     }
 
     private TagModel map(TagEntity tag) {

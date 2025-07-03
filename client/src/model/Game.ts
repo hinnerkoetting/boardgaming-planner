@@ -11,7 +11,9 @@ export class Game {
     readonly minPlayers: number | undefined,
     readonly maxPlayers: number | undefined,
     readonly playingTimeMinutes: number | undefined,
-    readonly url: string | undefined
+    readonly url: string | undefined,
+    readonly recommendedNumberOfPlayers: number[],
+    readonly bestNumberOfPlayers: number[]
   ) {}
 }
 
@@ -26,7 +28,9 @@ export class AdminGame extends Game {
     readonly maxPlayers: number | undefined,
     readonly playingTimeMinutes: number | undefined,
     readonly url: string | undefined,
-    public globalTags: TagModel[]
+    public globalTags: TagModel[],
+    readonly recommendedNumberOfPlayers: number[],
+    readonly bestNumberOfPlayers: number[]
   ) {
     super(
       id,
@@ -37,7 +41,9 @@ export class AdminGame extends Game {
       minPlayers,
       maxPlayers,
       playingTimeMinutes,
-      url
+      url,
+      recommendedNumberOfPlayers,
+      bestNumberOfPlayers
     )
   }
 }
@@ -54,7 +60,9 @@ export class GameGroupGame extends Game {
     readonly playingTimeMinutes: number | undefined,
     readonly url: string | undefined,
     readonly tags: TagInGameGroup[],
-    public rating: Rating
+    public rating: Rating,
+    readonly recommendedNumberOfPlayers: number[],
+    readonly bestNumberOfPlayers: number[]
   ) {
     super(
       id,
@@ -65,7 +73,9 @@ export class GameGroupGame extends Game {
       minPlayers,
       maxPlayers,
       playingTimeMinutes,
-      url
+      url,
+      recommendedNumberOfPlayers,
+      bestNumberOfPlayers
     )
   }
 }

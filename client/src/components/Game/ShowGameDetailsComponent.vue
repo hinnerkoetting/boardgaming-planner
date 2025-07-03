@@ -11,12 +11,30 @@
         }}</Button>
       </div>
       <div class="row" v-if="game.minPlayers && game.maxPlayers">
-        <div class="title">{{ game.minPlayers }} - {{ game.maxPlayers }}</div>
-        <div>players</div>
+        <div class="title">
+          {{ game.minPlayers }} - {{ game.maxPlayers }}
+          <span v-if="showExpandedPlayerNumber"
+            ><br />
+            {{ game.bestNumberOfPlayers.join(', ') }} <br />
+            {{ game.recommendedNumberOfPlayers.join(', ') }}
+          </span>
+        </div>
+        <div>
+          players
+          <Button link class="expandButton nopadding" @click="onClickTogglePlayers">{{
+            showExpandedPlayerNumber ? 'Collapse' : 'Expand'
+          }}</Button>
+          <span v-if="showExpandedPlayerNumber">
+            <br />
+            best
+            <br />
+            recommended
+          </span>
+        </div>
       </div>
       <div class="row" v-if="game.playingTimeMinutes">
-        <div class="title">{{ game.playingTimeMinutes }} minutes</div>
-        <div>playing time</div>
+        <div class="title">{{ game.playingTimeMinutes }}</div>
+        <div>minutes playing time</div>
       </div>
       <div class="row" v-if="game.url">
         <a :href="game.url" target="_blank">Further information</a>
@@ -47,6 +65,7 @@ defineEmits<{
 }>()
 
 const showExpandedDescription = ref(false)
+const showExpandedPlayerNumber = ref(false)
 
 const game = ref(props.game)
 
@@ -57,8 +76,10 @@ function htmlDecode(input: string) {
 
 function onClickDescription() {
   showExpandedDescription.value = !showExpandedDescription.value
-  if (!showExpandedDescription.value) {
-  }
+}
+
+function onClickTogglePlayers() {
+  showExpandedPlayerNumber.value = !showExpandedPlayerNumber.value
 }
 </script>
 
@@ -70,6 +91,12 @@ function onClickDescription() {
   white-space: nowrap;
   text-align: center;
   max-width: 320px;
+
+  font-weight: 700;
+  font-size: 1.2em;
+  width: 150px;
+  text-align: right;
+  padding-right: 16px;
 }
 
 .image {
@@ -91,13 +118,7 @@ function onClickDescription() {
   display: flex;
   flex-wrap: wrap;
   margin-top: 16px;
-}
-
-.title {
-  font-weight: 700;
-  font-size: 1.2em;
-  width: 150px;
-  text-align: left;
+  line-height: 28px;
 }
 
 .summary {
@@ -109,7 +130,7 @@ function onClickDescription() {
 }
 
 .expandButton {
-  text-align: start;
+  text-align: end;
 }
 
 .nopadding {
