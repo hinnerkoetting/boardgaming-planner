@@ -24,10 +24,13 @@ export async function createTag(tag: CreateTagModel): Promise<ResponseWrapper<Ta
   return wrapResponse(response)
 }
 
-export async function updateTag(tag: CreateTagModel): Promise<ResponseWrapper<boolean>> {
-  const response = await authorizedFetch('/api/tags/${tag.id}', {
+export async function updateTag(tag: TagModel): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/tags/${tag.id}`, {
     method: 'PUT',
-    body: JSON.stringify(tag)
+    body: JSON.stringify(tag),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
   return wrapEmptySuccessResponse(response)
 }

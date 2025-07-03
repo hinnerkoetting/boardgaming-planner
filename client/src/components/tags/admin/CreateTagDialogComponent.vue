@@ -13,7 +13,7 @@
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
-import EditTagComponent from './EditTagComponent.vue'
+import EditTagComponent from './EditOrCreateTagComponent.vue'
 import type { TagModel } from '@/model/TagModel'
 
 const emit = defineEmits(['tag-added'])

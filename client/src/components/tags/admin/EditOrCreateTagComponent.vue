@@ -64,7 +64,19 @@ async function createOrUpdate(): Promise<ResponseWrapper<TagModel>> {
   if (props.mode === 'CREATE') {
     return await createTag(tag)
   } else {
-    await updateTag(tag)
+    const updateRequestModel = new TagModel(
+      props.propId!,
+      description.value,
+      props.propRanking!,
+      type.value
+    )
+    const updateResponse = await updateTag(updateRequestModel)
+    if (updateResponse.error) {
+      return {
+        success: undefined,
+        error: updateResponse.error
+      }
+    }
     return {
       success: new TagModel(props.propId!, description.value, props.propRanking!, type.value),
       error: undefined

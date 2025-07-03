@@ -48,4 +48,15 @@ public class GlobalExceptionHandler {
         problem.setType("CLIENT_ERROR");
         return problem;
     }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public HttpErrorResponse otherError(Exception e) {
+        LOG.info("Exception: {}", e.getMessage());
+
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        problem.setType("SERVER_ERROR");
+        return problem;
+    }
 }

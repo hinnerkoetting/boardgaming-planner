@@ -1,9 +1,9 @@
 export class TagModel {
   constructor(
     readonly id: number,
-    readonly description: string,
-    readonly ranking: number,
-    readonly type: string
+    public description: string,
+    public ranking: number,
+    public type: string
   ) {}
 }
 

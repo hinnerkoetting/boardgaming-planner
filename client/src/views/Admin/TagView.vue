@@ -14,7 +14,7 @@ import { ref } from 'vue'
 import { fetchTags } from '@/services/api/TagApiService'
 import type { TagModel } from '@/model/TagModel'
 import TagsTable from '@/components/tags/admin/TagsTable.vue'
-import CreateTagComponent from '@/components/tags/admin/CreateTagComponent.vue'
+import CreateTagComponent from '@/components/tags/admin/CreateTagDialogComponent.vue'
 
 const tags: Ref<TagModel[]> = ref([] as TagModel[])
 
