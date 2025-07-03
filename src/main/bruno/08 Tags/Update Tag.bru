@@ -1,12 +1,12 @@
 meta {
-  name: Get roles
+  name: Update Tag
   type: http
-  seq: 4
+  seq: 3
 }
 
-get {
-  url: http://localhost:8080/api/players/{{player_id}}/roles
-  body: none
+put {
+  url: http://localhost:8080/api/tags/TAG_ID
+  body: json
   auth: none
 }
 
@@ -16,8 +16,10 @@ headers {
 
 body:json {
   {
-    "login": "user",
-    "password": "user"
+    "id": "TAG_ID",
+    "description": "DESCRIPTION",
+    "order": 1,
+    "type": "GLOBAL"
   }
 }
 

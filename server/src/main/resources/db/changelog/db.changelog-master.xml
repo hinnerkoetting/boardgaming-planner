@@ -233,4 +233,22 @@
     <changeSet author="Hinnerk" id="1728113142202-39">
         <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_MEMBERS" constraintName="FK_GROUP_MEMBERS_GROUP" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
     </changeSet>
+
+    <changeSet author="Hinnerk" id="tag-1">
+        <createTable tableName="GAME_TAG">
+            <column name="ID" type="VARCHAR_IGNORECASE(35)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAME_TAG_PK"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SORT_ORDER" type="DECIMAL(3, 0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint columnNames="SORT_ORDER" constraintName="GAME_TAG_SORT_ORDER_UK" tableName="GAME_TAG"/>
+    </changeSet>
 </databaseChangeLog>
