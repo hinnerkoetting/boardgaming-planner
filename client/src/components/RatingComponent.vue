@@ -26,11 +26,11 @@ import { deleteInterest, updateRating } from '@/services/api/RatingService'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import { ref, type Ref } from 'vue'
+import { ref, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
   game: {
-    type: Game,
+    type: Object as PropType<Game>,
     required: true
   },
   gameGroupId: {

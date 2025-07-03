@@ -1,15 +1,12 @@
 <template>
   <div class="full-height">
-    <h1>
-      {{ game.name }}
-    </h1>
     <div class="content">
       <Image :src="game.imageUrl" class="image" width="100%" />
       <div class="row">
         <div :class="showExpandedDescription ? '' : 'summary'" @click="onClickDescription">
           {{ htmlDecode(game.description) }}
         </div>
-        <Button link class="expandButton" @click="onClickDescription">{{
+        <Button link class="expandButton nopadding" @click="onClickDescription">{{
           showExpandedDescription ? 'Collapse' : 'Expand'
         }}</Button>
       </div>
@@ -66,10 +63,6 @@ function onClickDescription() {
 </script>
 
 <style scoped>
-h1 {
-  text-align: center;
-}
-
 .title {
   display: block;
   text-overflow: ellipsis;
@@ -118,10 +111,8 @@ h1 {
 .expandButton {
   text-align: start;
 }
-</style>
 
-<style lang="css">
-.row > .p-button {
+.nopadding {
   padding: 0;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="full-height">
-    <Card>
+    <Card @click="onClickCard">
       <template #title>
         <div class="title">
           {{ game.name }}
@@ -30,7 +30,7 @@
             <Button
               v-if="withRateButton"
               severity="secondary"
-              @click="$emit('game-rating-selected', game)"
+              @click.stop="$emit('game-rating-selected', game)"
               class="center-horizontally"
               >Rate</Button
             >
@@ -38,6 +38,15 @@
         </div>
       </template>
     </Card>
+    <Dialog
+      v-model:visible="showGameDialog"
+      modal
+      :header="game.name"
+      class="fullWidth"
+      :style="{ width: '100%' }"
+    >
+      <ShowGameDetailsComponent :game="game" />
+    </Dialog>
   </div>
 </template>
 
@@ -47,11 +56,13 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Image from 'primevue/image'
 import Tag from 'primevue/tag'
-import { ref } from 'vue'
+import { ref, type PropType } from 'vue'
+import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
+import Dialog from 'primevue/dialog'
 
 const props = defineProps({
   game: {
-    type: GameGroupGame,
+    type: Object as PropType<GameGroupGame>,
     required: true
   },
   withRateButton: {
@@ -65,6 +76,11 @@ defineEmits<{
 }>()
 
 const game = ref(props.game)
+const showGameDialog = ref(false)
+
+function onClickCard() {
+  showGameDialog.value = true
+}
 </script>
 
 <style scoped>
@@ -96,5 +112,9 @@ const game = ref(props.game)
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.fullWidth {
+  width: 100%;
 }
 </style>

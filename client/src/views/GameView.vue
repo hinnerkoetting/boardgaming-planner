@@ -1,4 +1,5 @@
 <template>
+  <h1>{{ game?.name }}</h1>
   <div><ShowGameDetailsComponent v-if="game" :game="game" /></div>
 </template>
 
@@ -17,3 +18,9 @@ onMounted(async () => {
   game.value = await loadGame(gameId)
 })
 </script>
+
+<style lang="css" scoped>
+h1 {
+  text-align: center;
+}
+</style>

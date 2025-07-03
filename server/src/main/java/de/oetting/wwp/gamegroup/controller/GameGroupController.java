@@ -120,6 +120,7 @@ public class GameGroupController {
             RatedGameModel ratedGame =new RatedGameModel();
             ratedGame.setDescription(game.getDescription());
             ratedGame.setThumbnailUrl(game.getThumbnailUrl());
+            ratedGame.setImageUrl(game.getImageUrl());
             ratedGame.setId(game.getId());
             ratedGame.setName(game.getName());
             ratedGame.setRating(ratingService.computeRating(game, ratings));

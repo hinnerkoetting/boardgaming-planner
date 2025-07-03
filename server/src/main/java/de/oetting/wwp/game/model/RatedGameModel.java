@@ -12,6 +12,7 @@ public class RatedGameModel {
     private String description;
 
     private String thumbnailUrl;
+    private String imageUrl;
     private RatingModel rating;
     private Integer minPlayers;
     private Integer maxPlayers;
@@ -19,6 +20,14 @@ public class RatedGameModel {
     private String url;
 
     private List<TagModel> tags;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Long getId() {
         return id;
