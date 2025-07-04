@@ -142,7 +142,7 @@ async function onClickConfirmDeleteMe() {
   if (response.success) {
     deleteDialogVisible.value = false
     logout()
-    router.push('home')
+    router.push({ name: 'home' })
   } else {
     deleteErrorMessage.value = response.error?.detail || 'Error'
   }

@@ -121,6 +121,6 @@ EventBus.addEventListener('gaming-group-removed', () => {
 
 function onClickLogout() {
   logout()
-  router.push('home')
+  router.push({ name: 'home' })
 }
 </script>
