@@ -87,6 +87,9 @@ onMounted(async () => {
   fetchPlayersInGroup(gameGroupId).then((result) => {
     players.value = result
     isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
+    if (isPartOfGroup.value) {
+      subscribeToEvents()
+    }
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
@@ -95,15 +98,17 @@ onMounted(async () => {
   })
   loadTags().then((response) => {
     tags.value = response
-  })
+  })  
+})
+
+async function subscribeToEvents() {
   subscribeToEventsOnGameGroup(gameGroupId, (data) =>{    
     const newToast = createToast(data)
     if (newToast) {
       toast.add(newToast)
     }    
   })
-  toast.removeAllGroups();
-})
+}
 
 function createToast(data: GameGroupEvent): ToastMessageOptions | undefined {  
   if (data.sourcePlayerId === getCurrentPlayerId()) {
