@@ -6,7 +6,7 @@ public class TagWrapper {
 
     private List<TagModel> global;
     private List<TagModel> group;
-    private List<TagModel> player;
+    private List<PlayerTagModel> player;
 
     public List<TagModel> getGlobal() {
         return global;
@@ -24,11 +24,11 @@ public class TagWrapper {
         this.group = group;
     }
 
-    public List<TagModel> getPlayer() {
+    public List<PlayerTagModel> getPlayer() {
         return player;
     }
 
-    public void setPlayer(List<TagModel> player) {
+    public void setPlayer(List<PlayerTagModel> player) {
         this.player = player;
     }
 }

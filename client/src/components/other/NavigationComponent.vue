@@ -15,7 +15,7 @@
         </RouterLink>
         <a id="logout" @click="onClickLogout">Logout</a>
         <template v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
-          <h1>Admin</h1>
+          <h2>Admin</h2>
 
           <RouterLink to="/admin/players">Players</RouterLink>
           <RouterLink to="/admin/games">Games</RouterLink>

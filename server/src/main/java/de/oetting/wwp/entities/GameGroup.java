@@ -1,6 +1,8 @@
 package de.oetting.wwp.entities;
 
 import de.oetting.wwp.game.entity.Game;
+import de.oetting.wwp.tags.entity.GameGroupTagEntity;
+import de.oetting.wwp.tags.entity.PlayerTagEntity;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -20,7 +22,10 @@ public class GameGroup {
     private Set<Player> players;
 
     @ManyToMany(mappedBy = "gameGroup")
-    private Set<GameGroupTag> tags;
+    private Set<GameGroupTagEntity> gameGroupTags;
+
+    @ManyToMany(mappedBy = "gameGroup")
+    private Set<PlayerTagEntity> playerTags;
 
     @Column(unique = true)
     private String name;
@@ -78,19 +83,35 @@ public class GameGroup {
         player.deleteGameGroup(this);
     }
 
-    public void addGameGroupTag(GameGroupTag tag) {
-        this.tags.add(tag);
+    public void addGameGroupTag(GameGroupTagEntity tag) {
+        this.gameGroupTags.add(tag);
     }
 
-    public void removeGameGroupTag(GameGroupTag tag) {
-        this.tags.remove(tag);
+    public void removeGameGroupTag(GameGroupTagEntity tag) {
+        this.gameGroupTags.remove(tag);
     }
 
-    public Set<GameGroupTag> getTags() {
-        return tags;
+    public Set<GameGroupTagEntity> getGameGroupTags() {
+        return gameGroupTags;
     }
 
-    public void setTags(Set<GameGroupTag> tags) {
-        this.tags = tags;
+    public void setGameGroupTags(Set<GameGroupTagEntity> gameGroupTags) {
+        this.gameGroupTags = gameGroupTags;
+    }
+
+    public void addPlayerTag(PlayerTagEntity tag) {
+        this.playerTags.add(tag);
+    }
+
+    public void removePlayerTag(PlayerTagEntity tag) {
+        this.playerTags.remove(tag);
+    }
+
+    public Set<PlayerTagEntity> getPlayerTags() {
+        return playerTags;
+    }
+
+    public void setPlayerTags(Set<PlayerTagEntity> playerTags) {
+        this.playerTags = playerTags;
     }
 }

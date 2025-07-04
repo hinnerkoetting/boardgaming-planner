@@ -46,6 +46,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if(claims != null & jwtUtil.validateClaims(claims)){
                 String subject = claims.getSubject();
+                @SuppressWarnings("unchecked")
                 List<String> roles= (List<String>) claims.get("roles", List.class);
                 List<GrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
                 var authentication = new UsernamePasswordAuthenticationToken(subject,"", authorities);

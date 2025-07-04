@@ -138,6 +138,12 @@ public class GlobalExceptionHandler {
         LOG.debug("IOException");
     }
 
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(NumberFormatException.class)
+    public void numberFormatException(NumberFormatException e) {
+        LOG.info("NumberFormatException {}", e.getMessage());
+    }
+
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public HttpErrorResponse otherError(Exception e) {

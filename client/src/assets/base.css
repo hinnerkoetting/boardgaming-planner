@@ -84,3 +84,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+h1 {
+  font-size: 28x;
+  margin: 8px 0px 0;
+}
+
+h2 {
+  font-size: 24x;
+  margin: 8px 0px 0;
+}
+
+h3 {
+  font-size: 20x;
+  margin: 8px 0px 0;
+}

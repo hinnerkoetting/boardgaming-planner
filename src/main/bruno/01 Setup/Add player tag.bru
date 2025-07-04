@@ -1,0 +1,36 @@
+meta {
+  name: Add player tag
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{server}}/api/tags
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "description": "Interested",  
+    "type": "PLAYER"
+  }
+}
+
+vars:pre-request {
+  role: ROLE_ADMIN
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("tagId", res.body.id)
+  }
+}

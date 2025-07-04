@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Play {{ game.name }} next time?</h1>
+    <h3>Interested in playing {{ game.name }}?</h3>
     <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
     <div id="ratingButtons">
       <Button @click="onClickRating(10)">&#128077;&#128077;&#128077; Absolutely</Button>

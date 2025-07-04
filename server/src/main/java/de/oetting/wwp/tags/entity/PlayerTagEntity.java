@@ -1,0 +1,74 @@
+package de.oetting.wwp.tags.entity;
+
+import de.oetting.wwp.entities.GameGroup;
+import de.oetting.wwp.entities.Player;
+import de.oetting.wwp.game.entity.Game;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "PLAYER_2_TAGS")
+public class PlayerTagEntity {
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="GAME_ID", nullable=false, updatable=false)
+    private Game game;
+
+    @ManyToOne
+    @JoinColumn(name="TAG_ID", nullable=false, updatable=false)
+    private TagEntity tag;
+
+    @ManyToOne
+    @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
+    private GameGroup gameGroup;
+
+    @ManyToOne
+    @JoinColumn(name="PLAYER_ID", nullable=false, updatable=false)
+    private Player player;
+
+    public PlayerTagEntity() {
+        // empty
+    }
+
+    public PlayerTagEntity(Game game, TagEntity tag, GameGroup gameGroup, Player player) {
+        this.game = game;
+        this.tag = tag;
+        this.gameGroup = gameGroup;
+        this.player = player;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public TagEntity getTag() {
+        return tag;
+    }
+
+    public void setTag(TagEntity tag) {
+        this.tag = tag;
+    }
+
+    public GameGroup getGameGroup() {
+        return gameGroup;
+    }
+
+    public void setGameGroup(GameGroup gameGroup) {
+        this.gameGroup = gameGroup;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+}

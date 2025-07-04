@@ -1,13 +1,12 @@
-package de.oetting.wwp.entities;
+package de.oetting.wwp.tags.entity;
 
+import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.game.entity.Game;
-import de.oetting.wwp.tags.entity.TagEntity;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "GAME_GROUP_2_TAGS")
-public class GameGroupTag {
-
+public class GameGroupTagEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -25,11 +24,11 @@ public class GameGroupTag {
     @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
     private GameGroup gameGroup;
 
-    public GameGroupTag() {
+    public GameGroupTagEntity() {
         // empty
     }
 
-    public GameGroupTag(Game game, TagEntity tag, GameGroup gameGroup) {
+    public GameGroupTagEntity(Game game, TagEntity tag, GameGroup gameGroup) {
         this.game = game;
         this.tag = tag;
         this.gameGroup = gameGroup;

@@ -1,7 +1,7 @@
 meta {
-  name: Remove tag from gamegroup
+  name: Remove player tag
   type: http
-  seq: 2
+  seq: 4
 }
 
 delete {
@@ -12,6 +12,12 @@ delete {
 
 headers {
   Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  gameGroupId: 1
+  gameId: 1
+  tagId: 3
 }
 
 assert {

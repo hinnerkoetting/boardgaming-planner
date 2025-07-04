@@ -4,7 +4,7 @@ export class TagModel {
     public description: string,
     public importedSourceName: string,
     public ranking: number,
-    public type: string
+    public type: TagType
   ) {}
 }
 
@@ -16,3 +16,16 @@ export class CreateTagModel {
     readonly type: string
   ) {}
 }
+
+export class PlayerTagModel {
+  constructor(
+    readonly id: number,
+    public description: string,
+    public importedSourceName: string,
+    public ranking: number,
+    public type: string,
+    public playerId: number
+  ) {}
+}
+
+export type TagType = 'GAME_GROUP' | 'PLAYER' | 'GLOBAL'

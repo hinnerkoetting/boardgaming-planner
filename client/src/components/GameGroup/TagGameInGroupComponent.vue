@@ -2,11 +2,18 @@
   <div>
     <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
     
-    <div v-for="tag in tags" :key="tag.id" class="one-filter">
-      <Checkbox v-model="tag.selected" binary :inputId="'tag_' + tag.id" @value-change="toggleTagSelection(tag)"></Checkbox>
-      <label :for="'tag_' + tag.id">{{ tag.description }}</label>
-      
+    <h3>Group</h3>
+    <div v-for="tag in groupTags" :key="tag.id" class="one-filter">
+      <Checkbox v-model="tag.selected" binary :inputId="'tag_' + tag.id" @value-change="toggleGroupTagSelection(tag)"></Checkbox>
+      <label :for="'tag_' + tag.id">{{ tag.description }}</label>      
     </div>
+
+    <h3>Me</h3>
+    <div v-for="tag in myPlayerTags" :key="tag.id" class="one-filter">
+      <Checkbox v-model="tag.selected" binary :inputId="'tag_' + tag.id" @value-change="togglePlayerTagSelection(tag)"></Checkbox>
+      <label :for="'tag_' + tag.id">{{ tag.description }}</label>      
+    </div>
+
     <Button 
       style="margin-top: 16px;"
       @click.stop="$emit('close')" 
@@ -15,9 +22,10 @@
 </template>
 
 <script setup lang="ts">
-import { TagInGameGroup, type GameGroupGame } from '@/model/Game';
-import type { TagModel } from '@/model/TagModel';
-import { addTagToGameInGroup, deleteTagFromGameInGroup } from '@/services/api/GameGroupApiService';
+import { PlayerTagInGameGroup, TagInGameGroup, type GameGroupGame } from '@/model/Game';
+import type { PlayerTagModel, TagModel } from '@/model/TagModel';
+import { addTagToGameInGroup, addTagToPlayereInGroup, deleteTagFromGameInGroup, deleteTagFromPlayerInGroup } from '@/services/api/GameGroupApiService';
+import { getCurrentPlayerId } from '@/services/LoginService';
 import { loadTags } from '@/services/StoreApiService';
 import { Button, Checkbox, Message } from 'primevue';
 import { onMounted, ref, type PropType, type Ref } from 'vue';
@@ -44,41 +52,68 @@ class TagSelection {
 }
 const game = ref(props.game)
 const allTags: Ref<TagModel[]> = ref([])
-const tags: Ref<TagSelection[]> = ref([])
+const groupTags: Ref<TagSelection[]> = ref([])
+const myPlayerTags: Ref<TagSelection[]> = ref([])
 
 onMounted(async () => {  
   allTags.value = await loadTags()
   
-  tags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, isGameGroupTagSelected(t)))
+  groupTags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, isGameGroupTagSelected(t)))
+  myPlayerTags.value = allTags.value.filter(t => t.type === 'PLAYER').map(t => new TagSelection(t.description, t.id, isPlayerTagSelected(t)))
 })
 
 const errorMessage: Ref<string> = ref('')
 
-async function toggleTagSelection(tag: TagSelection) {  
+async function toggleGroupTagSelection(tag: TagSelection) {  
   if (tag.selected) {
-    onClickAddTag(tag);
+    onClickAddGroupTag(tag);
     game.value.tags.group.push(new TagInGameGroup(tag.id, tag.description))
   } else {
-    onClickRemoveTag(tag);
+    onClickRemoveGroupTag(tag);
     const index = game.value.tags.group.findIndex(t => t.id === tag.id)
     if (index >= 0) {
       game.value.tags.group.splice(index)
     }
   }
-  
 }
 
-async function onClickAddTag(tag: TagSelection) {
+async function onClickAddGroupTag(tag: TagSelection) {
   await addTagToGameInGroup(props.gameGroupId, props.game.id!, tag.id)
 }
 
-async function onClickRemoveTag(tag: TagSelection) {
+async function onClickRemoveGroupTag(tag: TagSelection) {
   await deleteTagFromGameInGroup(props.gameGroupId, props.game.id!, tag.id)
 }
 
 function isGameGroupTagSelected(tag: TagModel): boolean {
   return !!game.value.tags.group.find(gameGroupTag => gameGroupTag.id === tag.id)
 }
+
+async function togglePlayerTagSelection(tag: TagSelection) {  
+  if (tag.selected) {
+    onClickAddPlayerTag(tag);
+    game.value.tags.player.push(new PlayerTagInGameGroup(tag.id, tag.description, getCurrentPlayerId()))
+  } else {
+    onClickRemovePlayerTag(tag);
+    const index = game.value.tags.player.findIndex(t => t.id === tag.id)
+    if (index >= 0) {
+      game.value.tags.player.splice(index)
+    }
+  }
+}
+
+async function onClickAddPlayerTag(tag: TagSelection) {
+  await addTagToPlayereInGroup(props.gameGroupId, props.game.id!, getCurrentPlayerId(), tag.id)
+}
+
+async function onClickRemovePlayerTag(tag: TagSelection) {
+  await deleteTagFromPlayerInGroup(props.gameGroupId, props.game.id!, getCurrentPlayerId(), tag.id)
+}
+
+function isPlayerTagSelected(tag: PlayerTagModel): boolean {
+  return !!game.value.tags.player.find(playerTag => playerTag.id === tag.id)
+}
+
 </script>
 
 <style lang="css" scoped>

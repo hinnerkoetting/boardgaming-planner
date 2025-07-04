@@ -2,7 +2,10 @@ package de.oetting.wwp.gamegroup.controller;
 
 import de.oetting.wwp.controller.IdWrapper;
 import de.oetting.wwp.entities.GameGroup;
-import de.oetting.wwp.entities.GameGroupTag;
+import de.oetting.wwp.game.model.PlayerTagModel;
+import de.oetting.wwp.player.PlayerRepository;
+import de.oetting.wwp.player.service.PlayerService;
+import de.oetting.wwp.tags.entity.GameGroupTagEntity;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.exceptions.ConflictException;
@@ -18,9 +21,11 @@ import de.oetting.wwp.rating.controller.RatingService;
 import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
+import de.oetting.wwp.tags.entity.PlayerTagEntity;
 import de.oetting.wwp.tags.entity.TagEntity;
 import de.oetting.wwp.tags.entity.TagType;
 import de.oetting.wwp.tags.repository.GameGroupTagRepository;
+import de.oetting.wwp.tags.repository.PlayerTagRepository;
 import de.oetting.wwp.tags.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +62,16 @@ public class GameGroupController {
 
     @Autowired
     private GameGroupTagRepository gameGroupTagRepository;
+
+    @Autowired
+    private PlayerTagRepository playerTagRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private PlayerService playerService;
+
 
     @Transactional
     @PostMapping
@@ -112,36 +127,73 @@ public class GameGroupController {
         Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
         var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
+        var playerTags = playerTagRepository.findByGameGroupId(gameGroupId);
 
         return playedGames.stream()
-                .map(game -> map(ratings, game, gameGroupTags))
+                .map(game -> map(ratings, game, gameGroupTags, playerTags))
                 .toList();
     }
 
     @Transactional
     @PostMapping(path = "/{gameGroupId}/{gameId}/gameGroupTag")
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void addGameGroupTagById(@RequestBody IdWrapper gameTagId, @PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId) {
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         Game game = gameRepository.findById(gameId).orElseThrow();
         TagEntity tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         if (!TagType.GAME_GROUP.equals(tag.getType())) {
             throw new ConflictException("Only game group tags can be added to game groups");
         }
-        GameGroupTag gameGroupTag = new GameGroupTag(game, tag, gameGroup);
+        GameGroupTagEntity gameGroupTag = new GameGroupTagEntity(game, tag, gameGroup);
         gameGroup.addGameGroupTag(gameGroupTagRepository.save(gameGroupTag));
     }
 
     @Transactional
     @DeleteMapping(path = "/{gameGroupId}/{gameId}/gameGroupTag/{tagId}")
-    @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void removeGameGroupTagById(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId, @PathVariable("tagId") long tagId) {
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         gameGroupTagRepository.findByGameGroupIdAndGameIdAndTagId(gameGroupId, gameId, tagId)
                 .ifPresent(gameGroupTagRepository::delete);
     }
 
-    private RatedGameModel map(List<Rating> ratings, Game game, List<GameGroupTag> tags) {
+    @Transactional
+    @PostMapping(path = "/{gameGroupId}/{gameId}/{playerId}/playerTag")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addPlayerTagById(@RequestBody IdWrapper gameTagId,
+                                 @PathVariable("gameGroupId") long gameGroupId,
+                                 @PathVariable("gameId") long gameId,
+                                 @PathVariable("playerId") long playerId
+    ) {
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
+        playerService.checkCurrentPlayerId(playerId);
+
+        var game = gameRepository.findById(gameId).orElseThrow();
+        var tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
+        var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        var player = playerRepository.findById(playerId).orElseThrow();
+        if (!TagType.PLAYER.equals(tag.getType())) {
+            throw new ConflictException("Only player tags can be added here");
+        }
+        var playerTag = new PlayerTagEntity(game, tag, gameGroup, player);
+        gameGroup.addPlayerTag(playerTagRepository.save(playerTag));
+    }
+
+    @Transactional
+    @DeleteMapping(path = "/{gameGroupId}/{gameId}/{playerId}/playerTag/{tagId}")
+    public void removePlayerTagById(
+            @PathVariable("gameGroupId") long gameGroupId,
+            @PathVariable("gameId") long gameId,
+            @PathVariable("tagId") long tagId,
+            @PathVariable("playerId") long playerId
+    ) {
+        gameGroupService.checkUserIsPartOfGroup(playerId);
+        playerService.checkCurrentPlayerId(playerId);
+        playerTagRepository.findByGameGroupIdAndGameIdAndTagIdAndPlayerId(gameGroupId, gameId, tagId, playerId)
+                .ifPresent(playerTagRepository::delete);
+    }
+
+    private RatedGameModel map(List<Rating> ratings, Game game, List<GameGroupTagEntity> gameGroupTags, List<PlayerTagEntity> playerTags) {
         RatedGameModel ratedGame =new RatedGameModel();
         ratedGame.setDescription(game.getDescription());
         ratedGame.setThumbnailUrl(game.getThumbnailUrl());
@@ -155,9 +207,12 @@ public class GameGroupController {
         ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
         var tagWrapper = new TagWrapper();
         tagWrapper.setGlobal(game.getGlobalTags().stream().map(this::map).toList());
-        tagWrapper.setGroup(tags.stream()
+        tagWrapper.setGroup(gameGroupTags.stream()
                 .filter(gameGroupTag -> gameGroupTag.getGame().getId().equals(game.getId()))
-                .map(GameGroupTag::getTag).map(this::map).toList());
+                .map(GameGroupTagEntity::getTag).map(this::map).toList());
+        tagWrapper.setPlayer(playerTags.stream()
+                .filter(playerTag -> playerTag.getGame().getId().equals(game.getId()))
+                .map(this::map).toList());
         ratedGame.setTags(tagWrapper);
         ratedGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
         ratedGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
@@ -175,6 +230,14 @@ public class GameGroupController {
         GameGroupModel model = new GameGroupModel();
         model.setId(savedEntity.getId());
         model.setName(savedEntity.getName());
+        return model;
+    }
+
+    private PlayerTagModel map(PlayerTagEntity tag) {
+        var model = new PlayerTagModel();
+        model.setDescription(tag.getTag().getDescription());
+        model.setId(tag.getTag().getId());
+        model.setPlayerId(tag.getPlayer().getId());
         return model;
     }
 }

@@ -6,6 +6,7 @@ import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.exceptions.UnprocessableEntityException;
 import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.game.repository.GameRepository;
+import de.oetting.wwp.gamegroup.service.GameGroupService;
 import de.oetting.wwp.infrastructure.CurrentUser;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.rating.RatingModel;
@@ -40,6 +41,8 @@ public class RatingService {
     private GameGroupRepository gameGroupRepository;
     @Autowired
     private GameGroupEventService gameGroupEventService;
+    @Autowired
+    private GameGroupService gameGroupService;
 
     public RatingModel updateRating(RatingRequest request) {
         checkUserIsPartOfGroup(request.getGameGroupId());
@@ -64,15 +67,7 @@ public class RatingService {
     }
 
     private void checkUserIsPartOfGroup(long gameGroupId){
-        var myPlayer = findMyPlayer();
-        if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
-            throw new UnprocessableEntityException("You cannot rate games in groups that you did not join");
-        }
-    }
-
-    private Player findMyPlayer() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
     }
 
     private void createNewRating(RatingRequest request) {

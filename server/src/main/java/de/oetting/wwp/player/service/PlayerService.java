@@ -2,6 +2,8 @@ package de.oetting.wwp.player.service;
 
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ForbiddenException;
+import de.oetting.wwp.exceptions.UnprocessableEntityException;
+import de.oetting.wwp.infrastructure.CurrentUser;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.repositories.RatingRepository;
 import de.oetting.wwp.security.Role;
@@ -39,4 +41,9 @@ public class PlayerService {
         return userDetails.getAuthorities().stream().anyMatch(authority -> Role.OWNER.getName().equals(authority.getAuthority()));
     }
 
+    public void checkCurrentPlayerId(long playerId){
+        if (CurrentUser.getCurrentPlayerId() != playerId) {
+            throw new ForbiddenException("Not allowed");
+        }
+    }
 }

@@ -83,7 +83,8 @@ export class GameGroupGame extends Game {
 export class TagWrapper {
   constructor(
     readonly global: TagInGameGroup[],
-    readonly group: TagInGameGroup[]
+    readonly group: TagInGameGroup[],
+    readonly player: PlayerTagInGameGroup[]
   ) {}
 }
 
@@ -93,3 +94,12 @@ export class TagInGameGroup {
     readonly description: string
   ) {}
 }
+
+export class PlayerTagInGameGroup {
+  constructor(
+    readonly id: number,
+    readonly description: string,
+    readonly playerId: number,
+  ) {}
+}
+

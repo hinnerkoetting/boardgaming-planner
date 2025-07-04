@@ -158,7 +158,7 @@ onMounted(async () => {
 function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
   const tagSettings = filterService.loadFilterSettings()?.tags
   if (tagSettings) {
-    return allTags.map((tag) => {
+    return allTags.filter(t => t.type !== 'PLAYER').map((tag) => {
       const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
       if (currentSelection) {
         return new TagSelection(tag.description, tag.id, currentSelection.selected)

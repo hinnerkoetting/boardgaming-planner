@@ -3,6 +3,7 @@ package de.oetting.wwp.gamegroup.service;
 import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ConflictException;
+import de.oetting.wwp.exceptions.UnprocessableEntityException;
 import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.infrastructure.CurrentUser;
@@ -13,7 +14,10 @@ import de.oetting.wwp.service.events.GameGroupEventService;
 import de.oetting.wwp.service.events.GameGroupEventType;
 import de.oetting.wwp.service.events.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 public class GameGroupService {
@@ -56,5 +60,17 @@ public class GameGroupService {
         gameGroup.addGame(game);
 
         gameGroupEventService.gameAdded(gameGroupId, game);
+    }
+
+    public void checkUserIsPartOfGroup(long gameGroupId){
+        var myPlayer = findMyPlayer();
+        if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
+            throw new UnprocessableEntityException("Only allowed if you are member of group");
+        }
+    }
+
+    private Player findMyPlayer() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
     }
 }
