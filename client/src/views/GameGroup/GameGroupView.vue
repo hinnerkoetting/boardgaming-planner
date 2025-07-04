@@ -162,7 +162,8 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     },
     tags: {
       global: [],
-      group: []      
+      group: [],
+      player: []  
     }
   }
   displayedGames.value.push(gameGroupGame)

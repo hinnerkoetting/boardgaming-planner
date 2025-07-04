@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { PlayerTagInGameGroup, TagInGameGroup, type GameGroupGame } from '@/model/Game';
-import type { PlayerTagModel, TagModel } from '@/model/TagModel';
+import type { TagModel } from '@/model/TagModel';
 import { addTagToGameInGroup, addTagToPlayereInGroup, deleteTagFromGameInGroup, deleteTagFromPlayerInGroup } from '@/services/api/GameGroupApiService';
 import { getCurrentPlayerId } from '@/services/LoginService';
 import { loadTags } from '@/services/StoreApiService';
@@ -110,7 +110,7 @@ async function onClickRemovePlayerTag(tag: TagSelection) {
   await deleteTagFromPlayerInGroup(props.gameGroupId, props.game.id!, getCurrentPlayerId(), tag.id)
 }
 
-function isPlayerTagSelected(tag: PlayerTagModel): boolean {
+function isPlayerTagSelected(tag: TagModel): boolean {
   return !!game.value.tags.player.find(playerTag => playerTag.id === tag.id)
 }
 
