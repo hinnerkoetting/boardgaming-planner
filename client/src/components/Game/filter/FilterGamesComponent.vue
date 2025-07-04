@@ -120,6 +120,12 @@
       </div>
     </div>
 
+    <div class="newLine"></div>
+    <div class="align-right">
+      <Checkbox v-model="notRatedYet" binary @change="filter" inputId="notRatedYet"></Checkbox>
+      <label for="notRatedYet">Only unrated games</label>
+    </div>
+
     <div class="buttonWrapper">
       <Button severity="primary" class="confirmButton" @click="onClickConfirm">Confirm</Button>
       <Button severity="danger" class="resetButton" @click="onClickReset">Reset</Button>
@@ -132,6 +138,7 @@ import type { GameGroupGame } from '@/model/Game'
 import type { Player } from '@/model/Player/Player'
 import { TagModel } from '@/model/TagModel'
 import { FilterService, TagSelection, PlayerTagSelection, type PlayerFilterType } from '@/services/FilterService'
+import { Checkbox } from 'primevue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import RadioButton from 'primevue/radiobutton'
@@ -166,6 +173,7 @@ const playerTags: Ref<PlayerTagSelection[]> = ref([])
 const numberOfPlayers: Ref<number | undefined> = ref(props.numberOfPlayersInGroup)
 const duration: Ref<number[]> = ref([10, 300])
 const playerFilterType: Ref<PlayerFilterType> = ref('PLAYABLE')
+const notRatedYet: Ref<boolean> = ref(false)
 
 const filterService = new FilterService()
 
@@ -186,6 +194,7 @@ onMounted(async () => {
     numberOfPlayers.value = settings.numberOfPlayers
     duration.value = [settings.minPlayingTime, settings.maxPlayingTime]
     playerFilterType.value = settings.playerFilterType || 'OFF'
+    notRatedYet.value = settings.notRatedYet || false
   } else {
     nonPlayerTags.value = createInitialTagSelection(props.allTags)
     playerTags.value = createInitialPlayerTagSelection(props.allTags)
@@ -282,7 +291,8 @@ function filter() {
     numberOfPlayers: numberOfPlayers.value,
     minPlayingTime: duration.value[0],
     maxPlayingTime: duration.value[1],
-    playerFilterType: playerFilterType.value
+    playerFilterType: playerFilterType.value,
+    notRatedYet: notRatedYet.value
   }
   const filteredGames = filterService.filterGames(props.allGames, filterSettings, props.allPlayers)
   emit('updated-filter', filteredGames)
@@ -402,10 +412,18 @@ function onClickConfirm() {
 .duration {
   margin-bottom: 16px;
 }
-</style>
 
-<style lang="css">
 .p-inputnumber input {
   width: 100%;
+}
+
+label {
+  margin-left: 8px;
+}
+
+.align-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
 }
 </style>

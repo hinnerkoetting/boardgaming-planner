@@ -44,7 +44,8 @@ export class FilterService {
       this.doesPlayerfilterTypeExcludeGame(game, filter) ||
       this.doesPlayingTimeExludeGame(game, filter) ||
       this.doNonPlayerTagsExcludeGame(game, filter) ||
-      this.doPlayerTagsExcludeGame(game, filter, allPlayers)
+      this.doPlayerTagsExcludeGame(game, filter, allPlayers) ||
+      this.unratedDoesExcludeGame(game, filter)
     )
   }
 
@@ -150,6 +151,13 @@ export class FilterService {
     }
     return false;    
   }
+
+  private unratedDoesExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+    if (!filter.notRatedYet) {
+      return false;
+    }
+    return game.rating.myRating;
+  }
 }
 
 export type SelectionType = 'FILTER_WITH' | 'FILTER_WITHOUT' | 'DO_NOT_FILTER'
@@ -178,6 +186,7 @@ export class FilterGamesSettings {
     readonly numberOfPlayers: number | undefined,
     readonly minPlayingTime: number,
     readonly maxPlayingTime: number,
-    readonly playerFilterType: PlayerFilterType
+    readonly playerFilterType: PlayerFilterType,
+    readonly notRatedYet: boolean
   ) {}
 }

@@ -1,4 +1,5 @@
 <template>
+  <h2>Login</h2>
   <div class="wrapper">
     <InputText
       name="username"
