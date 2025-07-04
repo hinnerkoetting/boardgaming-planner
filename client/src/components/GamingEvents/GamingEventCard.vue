@@ -1,5 +1,5 @@
 <template>
-  <Card @click="onClickCard" class="clickable-card">
+  <Card @click()="onClickCard" :class="{clickable_card: true, past:  event.start < new Date().getTime()}">
     <template #title>
       <div class="title">
         {{ formatDate(new Date(event.start)) }}        
@@ -66,8 +66,13 @@ function scheduleDescription(schedule: Schedule): string {
 </script>
 
 <style lang="css" scoped>
-.clickable-card {
+.clickable_card {
   cursor: pointer;
-  height: 100%;
+  height: 100%;  
 }
+
+.past {
+  --p-card-background: lightgray;
+}
+
 </style>

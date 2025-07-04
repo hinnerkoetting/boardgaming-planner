@@ -125,6 +125,7 @@ function onGameRated(rating: Rating) {
   margin-bottom: auto;
   align-self: stretch;
   margin-top: 4px;
+  margin-bottom: 0px;
 }
 
 @media (max-width: 500px) {

@@ -3,7 +3,7 @@
     <h1>Group {{ gameGroup?.name }}</h1>
     <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId }}">To games</router-link>
     
-    <h2>Events</h2>
+    <h2>Events in {{  formatMonth(startTime) }}</h2>
     <Button @click="showDialog = true" label="Create event" />
     <GamingEventsCollection
       v-if="gamingEvents.length > 0"
@@ -52,7 +52,7 @@ const showDialog = ref(false);
 
 
 onMounted(async () => {
-  startTime = route.query.startTime ? new Date(parseInt(route.query.startTime as string)) : new Date();
+  startTime = route.query.startTime ? new Date(parseInt(route.query.startTime as string)) : startOfCurrentMonth();
   loadGameGroup(gameGroupId).then((result) => {
     gameGroup.value = result
   })
@@ -69,6 +69,17 @@ watch(() => route.query.startTime, (newValue) => {
     })
   }
 })
+
+function startOfCurrentMonth(): Date {
+  const date = new Date();
+  date.setDate(1);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function formatMonth(date: Date) {
+  return date.toLocaleDateString(undefined, { month: "long" });
+}
 
 function filterDuplicateEvents(events: GamingEvent[]): GamingEvent[] {
   const uniqueEvents: GamingEvent[] = []
@@ -163,9 +174,6 @@ function onEventCreated(gamingEvent: GamingEvent) {
   });
 }
 
-function formatDate(date: Date) {
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "long", weekday: "long", year: "numeric" });
-}
 
 function onClickPreviousEvents() {
   router.replace({

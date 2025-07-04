@@ -7,8 +7,8 @@
         </div>
       </template>
       <template #content>
-        <div class="content">
-          <Image :src="game.thumbnailUrl" />
+        <div class="content">          
+          <Image :src="game.thumbnailUrl"  />          
           <div>
             <div v-if="game.rating?.existsVeto" class="center-horizontally">
               <Tag severity="danger">Vetoed</Tag><br />
@@ -157,4 +157,6 @@ function onClickCard() {
 .p-dialog {
   --p-dialog-background: var(--color-background);
 }
+
+
 </style>
