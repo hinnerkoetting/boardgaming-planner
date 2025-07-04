@@ -4,10 +4,10 @@
     
     <h1>{{ startTime && formatDate(startTime) }}</h1>
     <div v-if="event.schedule == 'WEEKLY'">
-      <i>Every week</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
+      <i>Every week</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent" v-if="isPartOfGroup"/>
     </div>
     <div v-if="event.schedule == 'MONTHLY'">
-      <i>Every month</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
+      <i>Every month</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent" v-if="isPartOfGroup"/>
     </div>
 
     {{ event.description }}
@@ -33,11 +33,11 @@
       
     </div>
     <Button label="Invite missing players" severity="secondary" 
-              @click="addMissingPlayers" style="margin-top: 16px"/>
+              @click="addMissingPlayers" style="margin-top: 16px" v-if="isPartOfGroup"/>
 
     <h2>Games:</h2>
-      <h2 class="green">Add game</h2>
-      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent"  style="margin-bottom: 16px;"/>
+      <h2 class="green" v-if="isPartOfGroup">Add game</h2>
+      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent"  style="margin-bottom: 16px;" v-if="isPartOfGroup"/>
       <div v-for="(game, index) in event.games" :key="index" style="margin: 8px">
         <GameEventGameCard
           :game="game.game"
@@ -51,7 +51,7 @@
           @game-removed="onGameRemoved"
           />
       </div>      
-    <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px"/>
+    <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px" v-if="isPartOfGroup"/>
   </div>
 
   
@@ -65,10 +65,11 @@ import { onMounted, ref, type Ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute, type LocationQuery } from 'vue-router';
 import 'primeicons/primeicons.css'
 import { Button, Message } from 'primevue';
-import { getCurrentPlayerId } from '@/services/LoginService';
+import { getCurrentPlayerId, isLoggedIn } from '@/services/LoginService';
 import type { Game } from '@/model/Game';
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue';
 import router from '@/router';
+import { fetchPlayersInGroup } from '@/services/api/GameGroupApiService';
 
 
 const route = useRoute()
@@ -78,6 +79,7 @@ let gamingEventId: number;
 let startTime: Date | null = null;
 const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
+const isPartOfGroup = ref(false);
 
 onBeforeRouteUpdate(async (to, from, next) => {
   gameGroupId = Number(to.params.gameGroupId)
@@ -113,6 +115,9 @@ async function loadData(){
   } else {    
     console.error('Error when loading event ' + gamingEventId)
   }
+
+  const players = await fetchPlayersInGroup(gameGroupId)
+  isPartOfGroup.value = players.some((player) => player.id === getCurrentPlayerId())
 }
 
 function formatDate(date: Date) {
@@ -219,7 +224,6 @@ async function onDeleteEvent() {
   } else {
     errorMessage.value = result.error?.detail ?? 'Error';
   }
-  
 }
 
 function onBackToEvents() {
@@ -233,6 +237,7 @@ function onBackToEvents() {
     }
   });
 }
+
 </script>
 
 <style lang="css" scoped>

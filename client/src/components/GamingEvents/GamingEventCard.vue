@@ -1,5 +1,5 @@
 <template>
-  <Card @click()="onClickCard" :class="{clickable_card: true, past:  event.start < new Date().getTime()}">
+  <Card @click="onClickCard" :class="{clickable_card: true, past:  event.start < new Date().getTime()}">
     <template #title>
       <div class="title">
         {{ formatDate(new Date(event.start)) }}        

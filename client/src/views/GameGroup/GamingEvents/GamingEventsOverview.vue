@@ -3,8 +3,17 @@
     <h1>Group {{ gameGroup?.name }}</h1>
     <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId }}">To games</router-link>
     
-    <h2>Events in {{  formatMonth(startTime) }}</h2>
-    <Button @click="showDialog = true" label="Create event" />
+    <h2>
+      <Button @click="onClickPreviousEvents" variant="link">
+       <i class="pi pi-chevron-circle-left"/>
+      </Button>
+      Events in {{  formatMonth(startTime) }}
+      <Button @click="onClickNextEvents" variant="link">
+        <i class="pi pi-chevron-circle-right"/>
+      </Button>
+    </h2>
+    
+    <Button @click="showDialog = true" label="Create event" style="margin-top: 8px;" />
     <GamingEventsCollection
       v-if="gamingEvents.length > 0"
       :gaming-events="gamingEvents"
@@ -12,13 +21,14 @@
       />
 
       <br/>
-      <Button @click="onClickPreviousEvents" variant="link">
-        Previous
-      </Button>
-
+      
+       <Button @click="onClickPreviousEvents" variant="link">
+        Previous month
+      </Button>      
       <Button @click="onClickNextEvents" variant="link">
-        Next
+        Next month
       </Button>
+      
       
       <Dialog v-model:visible="showDialog" modal header="Create event"><div>
         <CreateGamingEventComponent :game-group-id="gameGroupId" @event-created="onEventCreated"/>
@@ -39,7 +49,7 @@ import { fetchNextGamingEvents } from '@/services/api/GamingEventsApiService';
 import { Button, Dialog } from 'primevue';
 import { onMounted, ref, watch, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
-
+import 'primeicons/primeicons.css'
 
 const route = useRoute()
 
