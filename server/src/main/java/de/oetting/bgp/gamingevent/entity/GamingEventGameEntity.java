@@ -67,4 +67,13 @@ public class GamingEventGameEntity {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public GamingEventGameEntity cloneTo(GamingEventEntity newEvent) {
+        var newEntity = new GamingEventGameEntity();
+        newEntity.setGameStatus(this.gameStatus);
+        newEntity.setGame(this.game);
+        newEntity.setGamingEvent(newEvent);
+        newEntity.setComment(this.comment);
+        return newEntity;
+    }
 }

@@ -1,6 +1,7 @@
 <template>
   <div v-if="event">
-    <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Back to events</router-link><br/>
+    <Button label="Back to events" variant="link" @click="onBackToEvents"/>
+    
     <h1>{{ startTime && formatDate(startTime) }}</h1>
     <div v-if="event.schedule == 'WEEKLY'">
       <i>Every week</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
@@ -220,6 +221,17 @@ async function onDeleteEvent() {
   
 }
 
+function onBackToEvents() {
+  router.push({
+    name: 'groupGamingEventsOverview',
+    params: {
+      gameGroupId: gameGroupId
+    },
+    query: {
+      startTime: startTime?.getTime().toString()
+    }
+  });
+}
 </script>
 
 <style lang="css" scoped>

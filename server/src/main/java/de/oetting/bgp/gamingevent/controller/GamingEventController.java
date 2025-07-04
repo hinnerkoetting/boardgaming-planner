@@ -98,10 +98,10 @@ public class GamingEventController {
 
         var newEntity = new GamingEventEntity();
         newEntity.setSchedule(toBeCloned.getSchedule());
-        newEntity.setGames(toBeCloned.getGames() != null ? new ArrayList<>(toBeCloned.getGames()) : null);
+        newEntity.setGames(toBeCloned.getGames() != null ? toBeCloned.getGames().stream().map(g -> g.cloneTo(newEntity)).toList() : null);
         newEntity.setStart(toBeCloned.getStart());
         newEntity.setGameGroup(toBeCloned.getGameGroup());
-        newEntity.setParticipants(toBeCloned.getParticipants() != null ? new ArrayList<>(toBeCloned.getParticipants()) : null);
+        newEntity.setParticipants(toBeCloned.getParticipants() != null ? toBeCloned.getParticipants().stream().map(p -> p.cloneTo(newEntity)).toList() : null);
         GamingEventEntity savedEntity = gamingEventRepository.save(newEntity);
         return map(savedEntity);
     }

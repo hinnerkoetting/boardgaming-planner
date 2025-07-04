@@ -23,7 +23,7 @@ public class RootController {
             "/register",
             "/gameGroups",
             "/account",
-            "/gameGroup/*",
+            "/gameGroup/**",
             "/admin/**"
     })
     @ResponseBody

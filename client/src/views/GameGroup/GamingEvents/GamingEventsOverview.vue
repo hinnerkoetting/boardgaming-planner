@@ -47,6 +47,8 @@ const gameGroup: Ref<GameGroup | null> = ref(null);
 const gamingEvents: Ref<GamingEvent[]> = ref([])
 const gameGroupId = Number(route.params.gameGroupId)
 let startTime = new Date();
+startTime.setUTCHours(0,0,0,0);
+
 const showDialog = ref(false);
 
 

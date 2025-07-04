@@ -88,4 +88,5 @@ public class GamingEventEntity {
     public void setGames(List<GamingEventGameEntity> games) {
         this.games = games;
     }
+
 }
