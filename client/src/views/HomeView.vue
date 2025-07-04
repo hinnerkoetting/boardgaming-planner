@@ -18,8 +18,14 @@ EventBus.addEventListener('login-status', () => {
 
 <template>
   <div class="wrapper full-width">
-    <img alt="logo" class="logo" src="@/assets/logo.svg" />
+    <div class="box">
+      <img alt="logo" class="logo" src="@/assets/logo.png" />
+       <h1>Boardgaming planner</h1>
+    </div>      
+    
+    
     <div class="wrapper2">
+      <h2>Login</h2>
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
       <div>
@@ -38,6 +44,8 @@ EventBus.addEventListener('login-status', () => {
 .logo {
   max-width: 100%;
   margin-bottom: 16px;
+  width: 100px;
+   border-radius: 80%;
 }
 
 .wrapper {
@@ -75,4 +83,16 @@ button {
 .margintop {
   margin-top: 8px;
 }
+
+.box {
+   display: flex;   
+
+}
+
+
+.box > h1 {
+  margin-left: 16px;
+}
+
+
 </style>

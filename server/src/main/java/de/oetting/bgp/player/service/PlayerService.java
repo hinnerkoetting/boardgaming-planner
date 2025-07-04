@@ -1,0 +1,48 @@
+package de.oetting.bgp.player.service;
+
+import de.oetting.bgp.entities.Player;
+import de.oetting.bgp.exceptions.ForbiddenException;
+import de.oetting.bgp.infrastructure.CurrentUser;
+import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.repositories.RatingRepository;
+import de.oetting.bgp.security.Role;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PlayerService {
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private UserDetailsManager userDetailsService;
+
+    @Autowired
+    private RatingRepository ratingRepository;
+
+    public void delete(Player player) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(player.getName());
+        if (isOwner(userDetails)) {
+            throw new ForbiddenException("Owner cannot be deleted");
+        }
+        ratingRepository.deleteByPlayerId(player.getId());
+        player.getGameGroups().forEach(gameGroup -> gameGroup.deletePlayer(player));
+
+        playerRepository.delete(player);
+
+        userDetailsService.deleteUser(player.getName());
+    }
+
+    private static boolean isOwner(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream().anyMatch(authority -> Role.OWNER.getName().equals(authority.getAuthority()));
+    }
+
+    public void checkCurrentPlayerId(long playerId){
+        if (CurrentUser.getCurrentPlayerId() != playerId) {
+            throw new ForbiddenException("Not allowed");
+        }
+    }
+}

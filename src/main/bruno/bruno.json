@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "wwwp",
+  "name": "bgp",
   "type": "collection",
   "ignore": [
     "node_modules",
