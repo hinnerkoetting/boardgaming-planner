@@ -2,7 +2,7 @@ package de.oetting.bgp.game.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.tags.entity.TagEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;

@@ -1,5 +1,6 @@
-package de.oetting.bgp.entities;
+package de.oetting.bgp.gamegroup.entity;
 
+import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;

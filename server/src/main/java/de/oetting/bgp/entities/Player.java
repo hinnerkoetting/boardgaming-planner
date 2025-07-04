@@ -1,6 +1,7 @@
 package de.oetting.bgp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -40,7 +41,7 @@ public class Player {
         this.gameGroups = gameGroups;
     }
 
-    void addGameGroup(GameGroup gameGroup) {
+    public void addGameGroup(GameGroup gameGroup) {
         this.gameGroups.add(gameGroup);
     }
 

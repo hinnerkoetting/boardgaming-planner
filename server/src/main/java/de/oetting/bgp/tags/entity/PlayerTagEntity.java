@@ -1,6 +1,6 @@
 package de.oetting.bgp.tags.entity;
 
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
 import jakarta.persistence.*;

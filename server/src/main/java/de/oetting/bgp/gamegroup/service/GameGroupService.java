@@ -1,19 +1,20 @@
 package de.oetting.bgp.gamegroup.service;
 
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.player.PlayerRepository;
-import de.oetting.bgp.repositories.GameGroupRepository;
+import de.oetting.bgp.gamegroup.GameGroupRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class GameGroupService {
@@ -63,6 +64,10 @@ public class GameGroupService {
         if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
             throw new UnprocessableEntityException("Only allowed if you are member of group");
         }
+    }
+
+    public Optional<GameGroup> find(long gameGroupId) {
+        return gameGroupRepository.findById(gameGroupId);
     }
 
     private Player findMyPlayer() {

@@ -1,6 +1,7 @@
 package de.oetting.bgp.entities;
 
 import de.oetting.bgp.game.entity.Game;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import jakarta.persistence.*;
 
 @Entity

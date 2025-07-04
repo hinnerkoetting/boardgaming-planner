@@ -2,7 +2,7 @@ package de.oetting.bgp.rating;
 
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.rating.controller.RatingService;
-import de.oetting.bgp.repositories.GameGroupRepository;
+import de.oetting.bgp.gamegroup.GameGroupRepository;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.player.PlayerRepository;

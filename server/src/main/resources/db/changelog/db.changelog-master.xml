@@ -462,4 +462,39 @@
 
         <createSequence sequenceName="PLAYER_2_TAGS_SEQ" incrementBy="50"/>
     </changeSet>
+
+    <changeSet author="Hinnerk" id="gamingEvents">
+        <createSequence sequenceName="GAMING_EVENT_SEQ" incrementBy="50"/>
+        <createTable tableName="GAMING_EVENT">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="GAMING_EVENT_PK"/>
+            </column>
+            <column name="START_TS" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="END_TS"  type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR2(4000)"/>
+            <column name="GAME_GROUP_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex associatedWith="" indexName="GAMING_EVENT_GAME_GROUP_IDX" tableName="GAMING_EVENT">
+            <column name="GAME_GROUP_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint
+                baseColumnNames="GAME_GROUP_ID"
+                baseTableName="GAMING_EVENT"
+                constraintName="GAMING_EVENT_GAME_GROUP_FK"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="RESTRICT"
+                onUpdate="RESTRICT"
+                referencedColumnNames="ID"
+                referencedTableName="GAME_GROUP"
+                validate="true"/>
+    </changeSet>
 </databaseChangeLog>

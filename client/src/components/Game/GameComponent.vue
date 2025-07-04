@@ -132,7 +132,7 @@ function onClickCard() {
   overflow: hidden;
   white-space: nowrap;
   text-align: center;
-  max-width: 200px;
+  max-width: 260px;
 }
 
 .content {

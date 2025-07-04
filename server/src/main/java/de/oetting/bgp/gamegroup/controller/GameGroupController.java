@@ -1,7 +1,7 @@
 package de.oetting.bgp.gamegroup.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.game.model.PlayerTagModel;
 import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
@@ -18,7 +18,7 @@ import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.rating.controller.RatingService;
-import de.oetting.bgp.repositories.GameGroupRepository;
+import de.oetting.bgp.gamegroup.GameGroupRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;

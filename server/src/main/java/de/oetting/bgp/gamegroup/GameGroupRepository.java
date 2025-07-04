@@ -1,6 +1,6 @@
-package de.oetting.bgp.repositories;
+package de.oetting.bgp.gamegroup;
 
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.entities.Player;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -1,6 +1,6 @@
 package de.oetting.bgp.rating.controller;
 
-import de.oetting.bgp.entities.GameGroup;
+import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.game.entity.Game;
@@ -10,7 +10,7 @@ import de.oetting.bgp.infrastructure.CurrentUser;
 import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.rating.RatingModel;
 import de.oetting.bgp.rating.RatingRequest;
-import de.oetting.bgp.repositories.GameGroupRepository;
+import de.oetting.bgp.gamegroup.GameGroupRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
 import org.springframework.beans.factory.annotation.Autowired;

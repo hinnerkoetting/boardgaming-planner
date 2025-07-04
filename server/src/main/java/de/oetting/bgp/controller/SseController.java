@@ -1,7 +1,7 @@
 package de.oetting.bgp.controller;
 
 import de.oetting.bgp.infrastructure.CurrentUser;
-import de.oetting.bgp.repositories.GameGroupRepository;
+import de.oetting.bgp.gamegroup.GameGroupRepository;
 import de.oetting.bgp.service.events.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

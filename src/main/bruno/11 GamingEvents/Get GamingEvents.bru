@@ -1,0 +1,15 @@
+meta {
+  name: Get GamingEvents
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{server}}/api/gamingEvents/{{gameGroupId}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
