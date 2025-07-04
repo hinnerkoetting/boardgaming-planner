@@ -160,7 +160,10 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
       averageRating: 0,
       existsVeto: false
     },
-    tags: []
+    tags: {
+      global: [],
+      group: []      
+    }
   }
   displayedGames.value.push(gameGroupGame)
   allGames.value.push(gameGroupGame)

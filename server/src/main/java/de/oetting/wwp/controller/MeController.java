@@ -5,6 +5,7 @@ import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.exceptions.ForbiddenException;
 import de.oetting.wwp.exceptions.UnprocessableEntityException;
+import de.oetting.wwp.gamegroup.model.GameGroupModel;
 import de.oetting.wwp.player.PlayerRepository;
 import de.oetting.wwp.player.service.PlayerService;
 import de.oetting.wwp.security.JwtUtil;
@@ -61,9 +62,9 @@ public class MeController {
     }
 
     @GetMapping(path = "/gameGroups")
-    public Collection<GameGroup> findMyGroups() {
+    public Collection<GameGroupModel> findMyGroups() {
         var player = findMyPlayer();
-        return player.getGameGroups();
+        return player.getGameGroups().stream().map(this::map).toList();
     }
 
     @PutMapping(path = "/name")
@@ -123,6 +124,13 @@ public class MeController {
     public void delete() {
         var player = findMyPlayer();
         playerService.delete(player);
+    }
+
+    private GameGroupModel map(GameGroup savedEntity) {
+        GameGroupModel model = new GameGroupModel();
+        model.setId(savedEntity.getId());
+        model.setName(savedEntity.getName());
+        return model;
     }
 
     private Player findMyPlayer() {

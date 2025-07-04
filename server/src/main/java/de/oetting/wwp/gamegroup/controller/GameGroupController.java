@@ -1,13 +1,13 @@
 package de.oetting.wwp.gamegroup.controller;
 
 import de.oetting.wwp.controller.IdWrapper;
-import de.oetting.wwp.entities.GameGroupTag;
-import de.oetting.wwp.exceptions.ConflictException;
-import de.oetting.wwp.game.model.RatedGameModel;
-import de.oetting.wwp.game.entity.Game;
 import de.oetting.wwp.entities.GameGroup;
+import de.oetting.wwp.entities.GameGroupTag;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
+import de.oetting.wwp.exceptions.ConflictException;
+import de.oetting.wwp.game.entity.Game;
+import de.oetting.wwp.game.model.RatedGameModel;
 import de.oetting.wwp.game.model.TagModel;
 import de.oetting.wwp.game.model.TagWrapper;
 import de.oetting.wwp.game.repository.GameRepository;
@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @RestController
