@@ -1,7 +1,7 @@
 <template>
   <div class="full-height">
     <div class="content">
-      <Image :src="game.imageUrl" class="image" width="100%" />
+      <Image :src="game.imageUrl" class="image" style="max-width: min(100%, 600px)" imageStyle="max-width: 100%" />
       <div class="row">
         <div :class="showExpandedDescription ? '' : 'summary'" @click="onClickDescription">
           {{ htmlDecode(game.description) }}
@@ -111,7 +111,7 @@ function onClickTogglePlayers() {
 }
 
 .row {
-  max-width: 600px;
+  max-width: min(100%, 600px);
   width: 100%;
   border: 0;
   border-top: 1px dashed #ccc;
