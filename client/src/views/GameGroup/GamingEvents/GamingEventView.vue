@@ -61,7 +61,7 @@ import GameEventGameCard from '@/components/GamingEvents/GameEventGameCard.vue';
 import type { GamingEvent, ParticipationStatus } from '@/model/GamingEvent';
 import { addAllGroupMembersToGamingEvent, addGameToEvent, cloneEvent, deleteEvent, fetchGamingEvent, updateEvent, updateParticipationStatus } from '@/services/api/GamingEventsApiService';
 import { onMounted, ref, type Ref } from 'vue';
-import { onBeforeRouteUpdate, useRoute, type LocationQuery, type RouteParamsGeneric } from 'vue-router';
+import { onBeforeRouteUpdate, useRoute, type LocationQuery } from 'vue-router';
 import 'primeicons/primeicons.css'
 import { Button, Message } from 'primevue';
 import { getCurrentPlayerId } from '@/services/LoginService';

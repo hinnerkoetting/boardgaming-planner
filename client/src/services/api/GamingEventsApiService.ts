@@ -12,9 +12,9 @@ export async function fetchGamingEvent(gamingEventId: Number): Promise<ResponseW
   return wrapResponse(response)
 }
 
-export async function fetchNextGamingEvents(gameGroupId: Number): Promise<GamingEvent[]> {
+export async function fetchNextGamingEvents(gameGroupId: Number, startTime: Date): Promise<GamingEvent[]> {
   const response = await authorizedFetch(`/api/gameGroup/${gameGroupId}/gamingEvents?` + new URLSearchParams({
-    onlyNext: "true",
+    startTime: startTime.getTime().toString(),
     number: "5"
   }))
   return await response.json()

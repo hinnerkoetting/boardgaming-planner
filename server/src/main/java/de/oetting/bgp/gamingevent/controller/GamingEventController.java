@@ -48,9 +48,9 @@ public class GamingEventController {
     @Transactional
     @GetMapping("/gameGroup/{gameGroupId}/gamingEvents")
     public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId,
-                                                   @RequestParam(name = "onlyNext", defaultValue = "false") boolean onlyNext,
+                                                   @RequestParam(name = "startTime", required = false) Long startTime,
                                                    @RequestParam(name = "number", defaultValue = "5") int number) {
-        var events = findGameEvents(gameGroupId, onlyNext, number);
+        var events = findGameEvents(gameGroupId, startTime, number);
 
         return events.stream()
                 .map(this::map)
@@ -223,19 +223,19 @@ public class GamingEventController {
     }
 
     private List<GamingEventEntity> findGameEvents(long gameGroupId,
-                                                   boolean onlyNext,
+                                                   Long startTime,
                                                    int number) {
-        if (onlyNext) {
-            // It's a bit difficult to exactly return the number of requested events if we always want to include recurring events.
-            // I think it's good enough for now to just return more, but this needs to be fixed at some point.
-            var recurringEvents= gamingEventRepository.findByGameGroupIdAndScheduleIn(gameGroupId, Arrays.asList(Schedule.MONTHLY, Schedule.WEEKLY));
-            var singleEvents = gamingEventRepository.findByGameGroupIdAndScheduleAndStartAfter(gameGroupId, Schedule.ONCE, ZonedDateTime.now(), PageRequest.of(0, number, Sort.by("start")));
+        var startInstant = startTime != null ? Instant.ofEpochMilli(startTime) : Instant.now();
+        var zonedDateTime = ZonedDateTime.ofInstant(startInstant, ZoneOffset.UTC);
 
-            var result = new ArrayList<>(singleEvents);
-            result.addAll(recurringEvents);
-            return result;
-        }
-        return gamingEventRepository.findByGameGroupId(gameGroupId, PageRequest.of(0, number, Sort.by("start")));
+        // It's a bit difficult to exactly return the number of requested events if we always want to include recurring events.
+        // I think it's good enough for now to just return more, but this needs to be fixed at some point.
+        var recurringEvents= gamingEventRepository.findByGameGroupIdAndScheduleIn(gameGroupId, Arrays.asList(Schedule.MONTHLY, Schedule.WEEKLY));
+        var singleEvents = gamingEventRepository.findByGameGroupIdAndScheduleAndStartAfter(gameGroupId, Schedule.ONCE, zonedDateTime, PageRequest.of(0, number, Sort.by("start")));
+
+        var result = new ArrayList<>(singleEvents);
+        result.addAll(recurringEvents);
+        return result;
     }
 
     private static void update(GamingEventModel model, GamingEventEntity entity) {

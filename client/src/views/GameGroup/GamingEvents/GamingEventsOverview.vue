@@ -3,7 +3,7 @@
     <h1>Group {{ gameGroup?.name }}</h1>
     <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId }}">To games</router-link>
     
-    <h2>Next events</h2>
+    <h2>Events</h2>
     <Button @click="showDialog = true" label="Create event" />
     <GamingEventsCollection
       v-if="gamingEvents.length > 0"
@@ -11,6 +11,15 @@
       :game-group-id="gameGroupId"
       />
 
+      <br/>
+      <Button @click="onClickPreviousEvents" variant="link">
+        Previous
+      </Button>
+
+      <Button @click="onClickNextEvents" variant="link">
+        Next
+      </Button>
+      
       <Dialog v-model:visible="showDialog" modal header="Create event"><div>
         <CreateGamingEventComponent :game-group-id="gameGroupId" @event-created="onEventCreated"/>
       </div>
@@ -28,7 +37,7 @@ import router from '@/router';
 import { loadGameGroup } from '@/services/api/GameGroupApiService';
 import { fetchNextGamingEvents } from '@/services/api/GamingEventsApiService';
 import { Button, Dialog } from 'primevue';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 
@@ -37,16 +46,28 @@ const route = useRoute()
 const gameGroup: Ref<GameGroup | null> = ref(null);
 const gamingEvents: Ref<GamingEvent[]> = ref([])
 const gameGroupId = Number(route.params.gameGroupId)
+let startTime = new Date();
 const showDialog = ref(false);
 
+
 onMounted(async () => {
+  startTime = route.query.startTime ? new Date(parseInt(route.query.startTime as string)) : new Date();
   loadGameGroup(gameGroupId).then((result) => {
     gameGroup.value = result
   })
-  fetchNextGamingEvents(gameGroupId).then((events) => {    
-    gamingEvents.value = filterDuplicateEvents(events.map(e => expand(e, increaseOneMonth(new Date()))).flat().sort((a, b) => a.start - b.start));
+  fetchNextGamingEvents(gameGroupId, startTime).then((events) => {    
+    gamingEvents.value = filterDuplicateEvents(events.map(e => expand(e)).flat().sort((a, b) => a.start - b.start));
   })
 });
+
+watch(() => route.query.startTime, (newValue) => {
+  if (newValue) {
+    startTime = new Date(parseInt(route.query.startTime as string))
+    fetchNextGamingEvents(gameGroupId, startTime).then((events) => {    
+      gamingEvents.value = filterDuplicateEvents(events.map(e => expand(e)).flat().sort((a, b) => a.start - b.start));
+    })
+  }
+})
 
 function filterDuplicateEvents(events: GamingEvent[]): GamingEvent[] {
   const uniqueEvents: GamingEvent[] = []
@@ -72,13 +93,19 @@ function filterDuplicateEvents(events: GamingEvent[]): GamingEvent[] {
   return uniqueEvents
 }
 
-function expand(event: GamingEvent, maxInclusiveDate: Date): GamingEvent[] {
+function expand(event: GamingEvent): GamingEvent[] {
+  const minInclusiveDate = startTime
+  const maxInclusiveDate = increaseOneMonth(startTime)
   if (event.schedule === 'ONCE') {
-    return [event];
+    if (event.start <= maxInclusiveDate.getTime() && event.start >= minInclusiveDate.getTime()) {
+      return [event];
+    } else {
+      return [];
+    }    
   } else {
     let events: GamingEvent[] = [];
-    let recurringDate = event.start
-    while (recurringDate <= maxInclusiveDate.getTime()) {
+    let recurringDate = determineScheduleStartDate(new Date(event.start), event.schedule).getTime()
+    while (recurringDate <= maxInclusiveDate.getTime() && recurringDate >= minInclusiveDate.getTime()) {
       const newEvent =  { ...event, start: recurringDate };
       
       if (event.schedule === 'WEEKLY') {
@@ -94,10 +121,31 @@ function expand(event: GamingEvent, maxInclusiveDate: Date): GamingEvent[] {
   }
 }
 
+function determineScheduleStartDate(scheduleBaseTime: Date, schedule: 'WEEKLY' | 'MONTHLY'): Date {
+  const minInclusiveDate = startTime;
+  const maxInclusiveDate = increaseOneMonth(startTime)
+  if (scheduleBaseTime >= startTime && scheduleBaseTime <= maxInclusiveDate) {
+    return scheduleBaseTime;
+  }
+  if (minInclusiveDate < scheduleBaseTime) {
+    return scheduleBaseTime
+  }
+  const scheduleInterval = schedule === 'WEEKLY' ? 6.048e+8 : 2.628e+9; // 1 week in ms or 1 month in ms
+  const numberOMissingSchedules = Math.floor(minInclusiveDate.getTime() - scheduleBaseTime.getTime()) / scheduleInterval
+  const firstInclusiveDate = scheduleBaseTime.getTime() + (numberOMissingSchedules + 1) * scheduleInterval;
+  return new Date(firstInclusiveDate)
+}
+
 function increaseOneMonth(date: Date): Date {
-  const newDate = new Date(date);
-  newDate.setFullYear(date.getMonth() >= 11 ? date.getFullYear() + 1 : date.getFullYear());
-  newDate.setMonth(date.getMonth() >= 11 ? 0 : date.getMonth() + 1);
+  const newDate = new Date(date);  
+  newDate.setMonth(date.getMonth() + 1);
+  return newDate
+}
+
+
+function decreaseOneMonth(date: Date): Date {
+  const newDate = new Date(date);  
+  newDate.setMonth(date.getMonth() - 1);
   return newDate
 }
 
@@ -110,6 +158,34 @@ function onEventCreated(gamingEvent: GamingEvent) {
     params: {
       gamingEventId: gamingEvent.id,
       gameGroupId: gameGroupId
+    }
+  });
+}
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "long", weekday: "long", year: "numeric" });
+}
+
+function onClickPreviousEvents() {
+  router.replace({
+    name: 'groupGamingEventsOverview',
+    params: {
+      gameGroupId: gameGroupId
+    },
+    query: {
+      startTime: decreaseOneMonth(startTime).getTime().toString()
+    }
+  });
+}
+
+function onClickNextEvents() {
+  router.replace({
+    name: 'groupGamingEventsOverview',
+    params: {
+      gameGroupId: gameGroupId
+    },
+    query: {
+      startTime: increaseOneMonth(startTime).getTime().toString()
     }
   });
 }
