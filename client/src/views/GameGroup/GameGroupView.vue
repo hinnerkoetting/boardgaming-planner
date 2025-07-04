@@ -60,13 +60,13 @@ import { getCurrentPlayerId } from '@/services/LoginService'
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue'
 import { EventMessage } from '@/model/internal/EventMessage'
 import type { TagModel } from '@/model/TagModel'
-import { fetchTags } from '@/services/api/TagApiService'
 import FilterGamesDialog from '@/components/Game/FilterGamesDialog.vue'
 import { FilterService } from '@/services/FilterService'
 import { subscribeToEventsOnGameGroup } from '@/services/ServerSentEvents'
 import { useToast } from 'primevue/usetoast'
 import type { ToastMessageOptions } from 'primevue'
 import type { GameGroupEvent } from '@/services/GameGroupEvent'
+import { loadTags } from '@/services/StoreApiService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
@@ -93,7 +93,7 @@ onMounted(async () => {
     displayedGames.value = new FilterService().filterWithStoredSettings(result)
     sortGames()
   })
-  fetchTags().then((response) => {
+  loadTags().then((response) => {
     tags.value = response
   })
   subscribeToEventsOnGameGroup(gameGroupId, (data) =>{    

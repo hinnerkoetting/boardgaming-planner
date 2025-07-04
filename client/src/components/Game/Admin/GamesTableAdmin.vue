@@ -45,9 +45,9 @@ import EditGameComponent from './EditGameComponent.vue'
 import Dialog from 'primevue/dialog'
 import EditTagsInGameComponent from './EditTagsInGameComponent.vue'
 import type { TagModel } from '@/model/TagModel'
-import { fetchTags } from '@/services/api/TagApiService'
 import { syncGameFromBgg } from '@/services/api/BggApiService'
 import Message from 'primevue/message'
+import { loadTags } from '@/services/StoreApiService'
 
 const props = defineProps({
   games: {
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 }>()
 
 onMounted(async () => {
-  tags.value = await fetchTags()
+  tags.value = await loadTags()
 })
 
 function onClickEdit(game: AdminGame) {

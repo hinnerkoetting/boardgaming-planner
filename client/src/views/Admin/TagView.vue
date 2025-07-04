@@ -11,15 +11,15 @@
 <script setup lang="ts">
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
-import { fetchTags } from '@/services/api/TagApiService'
 import type { TagModel } from '@/model/TagModel'
 import TagsTable from '@/components/tags/admin/TagsTable.vue'
 import CreateTagComponent from '@/components/tags/admin/CreateTagDialogComponent.vue'
+import { loadTags } from '@/services/StoreApiService'
 
 const tags: Ref<TagModel[]> = ref([] as TagModel[])
 
 onMounted(async () => {
-  tags.value = await fetchTags()
+  tags.value = await loadTags()
 })
 
 function onTagAdded(tag: TagModel) {

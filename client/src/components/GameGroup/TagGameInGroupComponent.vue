@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import type { GameGroupGame, TagInGameGroup } from '@/model/Game';
 import type { TagModel } from '@/model/TagModel';
-import { fetchTags } from '@/services/api/TagApiService';
+import { loadTags } from '@/services/StoreApiService';
 import { Button, Checkbox, Message } from 'primevue';
 import { onMounted, ref, type PropType, type Ref } from 'vue';
 
@@ -45,8 +45,8 @@ const game = ref(props.game)
 const allTags: Ref<TagModel[]> = ref([])
 const tags: Ref<TagSelection[]> = ref([])
 
-onMounted(async () => {
-  allTags.value =  await fetchTags()
+onMounted(async () => {  
+  allTags.value = await loadTags()
   
   tags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, isGameGroupTagSelected(t)))
 })
