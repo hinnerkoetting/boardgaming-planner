@@ -15,7 +15,7 @@ export class GamingEvent {
 export class Participation {
   constructor(
     readonly participant: Player,
-    readonly participationStatus: ParticipationStatus,
+    public participationStatus: ParticipationStatus,
     readonly comment: string | null = null
   ) {}
 }

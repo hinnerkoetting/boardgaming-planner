@@ -1,9 +1,13 @@
 package de.oetting.bgp.gamingevent.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.oetting.bgp.controller.IdWrapper;
+import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
+import de.oetting.bgp.gamingevent.GameEventStatus;
+import de.oetting.bgp.gamingevent.ParticipationStatus;
 import de.oetting.bgp.gamingevent.entity.*;
 import de.oetting.bgp.gamingevent.model.*;
 import de.oetting.bgp.player.PlayerRepository;
@@ -136,11 +140,57 @@ public class GamingEventController {
     @Transactional
     @DeleteMapping("/gamingEvents/{gamingEventId}/game/{gameId}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteGame(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("gameId") long gameId) {
+    public void removeGameFromEvent(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("gameId") long gameId) {
         GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
 
         gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
         gamingEventGameRepository.deleteByGamingEventIdAndGameId(gamingEventId, gameId);
+    }
+
+    @Transactional
+    @PutMapping("/gamingEvents/{gamingEventId}/game/{gameId}/status")
+    public void updateGameStatus(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("gameId") long gameId, @RequestBody JsonNode body) {
+        var status = body.findValue("status").asText();
+        var game = gamingEventGameRepository.findByGamingEventIdAndGameId(gamingEventId, gameId).orElseThrow();
+
+        game.setGameStatus(GameEventStatus.valueOf(status));
+    }
+
+    @Transactional
+    @PostMapping("/gamingEvents/{gamingEventId}/player/all")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public GamingEventModel addAllGroupPlayersToEvent(@PathVariable("gamingEventId") long gamingEventId) {
+        GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
+        gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
+
+        var allGroupPlayers = gamingEvent.getGameGroup().getPlayers();
+        allGroupPlayers.forEach(player -> {
+            addPlayerIfMissing(player, gamingEvent);
+        });
+        return map(gamingEvent);
+    }
+
+    @Transactional
+    @PutMapping("/gamingEvents/{gamingEventId}/player/{playerId}/status")
+    public void updateParticipationStatus(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("playerId") long playerId, @RequestBody JsonNode body) {
+        var status = body.findValue("status").asText();
+        var participant = gamingEventParticipantsRepository.findByGamingEventIdAndParticipantId(gamingEventId, playerId).orElseThrow();
+        gameGroupService.checkUserIsPartOfGroup(participant.getGamingEvent().getGameGroup().getId());
+
+        participant.setParticipationStatus(ParticipationStatus.valueOf(status));
+    }
+
+    private void addPlayerIfMissing(Player player, GamingEventEntity gamingEvent) {
+        boolean doesNotExistYet = gamingEvent.getParticipants().stream().noneMatch(participant -> participant.getParticipant().getId() == player.getId());
+
+        if (doesNotExistYet) {
+            var newParticipant = new GamingEventParticipantsEntity();
+            newParticipant.setGamingEvent(gamingEvent);
+            newParticipant.setParticipationStatus(ParticipationStatus.NOT_RESPONDED);
+            newParticipant.setParticipant(player);
+            gamingEventParticipantsRepository.save(newParticipant);
+            gamingEvent.getParticipants().add(newParticipant);
+        }
     }
 
     private List<GamingEventEntity> findGameEvents(long gameGroupId,

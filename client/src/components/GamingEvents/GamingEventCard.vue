@@ -55,5 +55,6 @@ function onClickCard() {
 <style lang="css" scoped>
 .clickable-card {
   cursor: pointer;
+  height: 100%;
 }
 </style>

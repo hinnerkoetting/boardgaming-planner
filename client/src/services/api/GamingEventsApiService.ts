@@ -1,4 +1,4 @@
-import type { GamingEvent } from "@/model/GamingEvent"
+import type { GameStatus, GamingEvent, ParticipationStatus } from "@/model/GamingEvent"
 import { authorizedFetch } from "./ApiService"
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from "@/model/api/Response"
 
@@ -35,4 +35,77 @@ export async function createGamingEvent(gameGroupId: Number, start: Date, end: D
     }
   })
   return wrapResponse(response)
+}
+
+export async function addAllGroupMembersToGamingEvent(gamingEventId: Number): Promise<ResponseWrapper<GamingEvent>> {
+  const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/player/all`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  return wrapResponse(response)
+}
+
+export async function updateParticipationStatus(
+  gamingEventId: number,
+  playerId: number,
+  participationStatus: ParticipationStatus
+): Promise<ResponseWrapper<boolean>> {
+  const body = {
+    status:participationStatus
+  }
+  const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/player/${playerId}/status`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  return wrapEmptySuccessResponse(response)
+}
+
+export async function addGameToEvent(gamingEventId: number, gameId: number): Promise<ResponseWrapper<boolean>> {
+  const body = {
+    gameId: gameId,
+    gameStatus: "SUGGESTED",
+    comment: null
+  }
+  const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/game`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  return wrapEmptySuccessResponse(response)
+}
+
+export async function updateGameStatus(
+  gamingEventId: number,
+  gameId: number,
+  gameStatus: GameStatus
+): Promise<ResponseWrapper<boolean>> {
+  const body = {
+    status:gameStatus
+  }
+  const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/game/${gameId}/status`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  return wrapEmptySuccessResponse(response)
+}
+
+export async function removeGameFromEvent(
+  gamingEventId: number,
+  gameId: number
+): Promise<ResponseWrapper<boolean>> {
+
+  const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/game/${gameId}`, {
+    method: "DELETE"
+  })
+  return wrapEmptySuccessResponse(response)
 }

@@ -11,6 +11,24 @@
           <Image :src="game.thumbnailUrl" />
           {{  gameComment }}
         </div>
+        <span class="gamestatus-buttons">
+          <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
+          <Button :disabled="gameStatus == 'PLAYED'" 
+                  label="Played"                 
+                  @click.stop="onPlayed(game.id!)" />
+          <Button :disabled="gameStatus == 'REJECTED'" 
+                  label="Reject" 
+                  severity="warn"
+                  @click.stop="onReject(game.id!)" />
+          <Button :disabled="gameStatus == 'SUGGESTED'" 
+                  label="Suggest" 
+                  severity="secondary"
+                  @click.stop="onSuggest(game.id!)" />     
+          <Button
+            label="Delete" 
+            severity="danger"
+            @click.stop="onDelete(game.id!)" />     
+      </span>
       </template>
     </Card>
     <Dialog
@@ -34,6 +52,8 @@ import type { Game } from '@/model/Game'
 import ShowGameDetailsComponent from '../Game/ShowGameDetailsComponent.vue'
 import type { GameStatus } from '@/model/GamingEvent'
 import 'primeicons/primeicons.css'
+import { removeGameFromEvent, updateGameStatus } from '@/services/api/GamingEventsApiService'
+import { Button, Message } from 'primevue'
 
 const props = defineProps({
   game: {
@@ -46,7 +66,7 @@ const props = defineProps({
   },
   gameComment: {
     type: String as PropType<string | null>,
-    required: true
+    required: false
   },
   withRateButton: {
     type: Boolean,
@@ -59,13 +79,21 @@ const props = defineProps({
   players: {
     type: Array as PropType<Player[]>,
     required: true
+  },
+  gamingEventId: {
+    type: Number,
+    required: true
   }
 })
 
+const emits = defineEmits<{
+  (e: 'game-removed', game: Game): void
+}>()
 
 const game = ref(props.game)
+const gameStatus = ref(props.gameStatus)
 const showGameDialog = ref(false)
-
+const errorMessage = ref('')
 
 function onClickCard() {
   showGameDialog.value = true
@@ -81,6 +109,42 @@ function gameStatusClass(gameStatus: GameStatus) {
       return 'pi pi-check maybe';
     default:
       return '';
+  }
+}
+
+async function onPlayed(gameId: number) {
+  const result = await updateGameStatus(props.gamingEventId, gameId, 'PLAYED')
+  if (result.success) {
+    gameStatus.value = 'PLAYED';    
+  } else {
+    errorMessage.value = result.error?.detail ?? "Error updating game status";
+  }
+}
+
+async function onReject(gameId: number) {
+  const result = await updateGameStatus(props.gamingEventId, gameId, 'REJECTED')
+  if (result.success) {
+    gameStatus.value = 'REJECTED';    
+  } else {
+    errorMessage.value = result.error?.detail ?? "Error updating game status";
+  }
+}
+
+async function onSuggest(gameId: number) {
+  const result = await updateGameStatus(props.gamingEventId, gameId, 'SUGGESTED')
+  if (result.success) {
+    gameStatus.value = 'SUGGESTED';    
+  } else {
+    errorMessage.value = result.error?.detail ?? "Error updating game status";
+  }
+}
+
+async function onDelete(gameId: number) {
+  const result = await removeGameFromEvent(props.gamingEventId, gameId)
+  if (!result.success) {    
+    errorMessage.value = result.error?.detail ?? "Error updating game status";
+  } else {
+    emits('game-removed', props.game);
   }
 }
 
@@ -144,5 +208,9 @@ function gameStatusClass(gameStatus: GameStatus) {
 
 .played {
   color: green;
+}
+
+.gamestatus-buttons > *{
+  margin-right: 4px;
 }
 </style>

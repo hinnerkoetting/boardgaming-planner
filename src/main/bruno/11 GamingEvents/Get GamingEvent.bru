@@ -1,18 +1,13 @@
 meta {
-  name: Get GamingEvents
+  name: Get GamingEvent
   type: http
-  seq: 1
+  seq: 4
 }
 
 get {
-  url: {{server}}/api/gameGroup/{{gameGroupId}}/gamingEvents?onlyNext=false&number=3
+  url: {{server}}/api/gamingEvents/{{gamingEventId}}
   body: none
   auth: inherit
-}
-
-params:query {
-  onlyNext: false
-  number: 3
 }
 
 headers {
@@ -20,7 +15,7 @@ headers {
 }
 
 vars:pre-request {
-  gameGroupId: 1
+  gamingEventId: 2
 }
 
 script:post-response {

@@ -7,12 +7,32 @@
     {{ event.description }}
     <h2>Participants:</h2>
     
-      <div v-for="(participant, index) in event.participants" :key="index">
-        {{ participant.participant.name }} <span :class="participicationStatusClass(participant.participationStatus)"/>
-      </div>
+    <div v-for="(participant, index) in event.participants" :key="index" class="participant">
+      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px;"/>
+      {{ participant.participant.name }} 
+      <span class="participant-buttons" v-if="isMe(participant.participant.id)">
+        <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
+        <Button :disabled="participant.participationStatus == 'CONFIRMED'" 
+                label="Confirm"                 
+                @click="onConfirmParticipation(participant.participant.id)" />
+        <Button :disabled="participant.participationStatus == 'DECLINED'" 
+                label="Decline" 
+                severity="warn"
+                @click="onDeclineParticipation(participant.participant.id)" />
+        <Button :disabled="participant.participationStatus == 'MAYBE'" 
+                label="Maybe" 
+                severity="secondary"
+                @click="onMaybeParticipation(participant.participant.id)" />     
+      </span>
+      
+    </div>
+    <Button label="Invite missing players" severity="secondary" 
+              @click="addMissingPlayers" style="margin-top: 16px"/>
 
     <h2>Games:</h2>
-      <div v-for="(game, index) in event.games" :key="index">
+      <h2 class="green">Add game</h2>
+      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent"  style="margin-bottom: 16px;"/>
+      <div v-for="(game, index) in event.games" :key="index" style="margin: 8px">
         <GameEventGameCard
           :game="game.game"
           :game-group-id="gameGroupId"
@@ -21,6 +41,8 @@
           :withRateButton="true"
           :with-tag-button="true"
           :players="event.participants.map(p => p.participant)"
+          :gaming-event-id="gamingEventId"
+          @game-removed="onGameRemoved"
           />
       </div>
   </div>
@@ -29,16 +51,21 @@
 <script lang="ts" setup>
 import GameEventGameCard from '@/components/GamingEvents/GameEventGameCard.vue';
 import type { GamingEvent, ParticipationStatus } from '@/model/GamingEvent';
-import { fetchGamingEvent } from '@/services/api/GamingEventsApiService';
+import { addAllGroupMembersToGamingEvent, addGameToEvent, fetchGamingEvent, updateParticipationStatus } from '@/services/api/GamingEventsApiService';
 import { onMounted, ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import 'primeicons/primeicons.css'
+import { Button, Message } from 'primevue';
+import { getCurrentPlayerId } from '@/services/LoginService';
+import type { Game } from '@/model/Game';
+import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue';
 
 
 const route = useRoute()
 
 const gameGroupId = Number(route.params.gameGroupId)
 const gamingEventId = Number(route.params.gamingEventId)
+const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
 
 onMounted(async () => {
@@ -68,6 +95,57 @@ function participicationStatusClass(participant: ParticipationStatus) {
       return '';
   }
 }
+
+async function onConfirmParticipation(participantId: number) {
+  await updateStatus(participantId, 'CONFIRMED');  
+}
+
+async function onDeclineParticipation(participantId: number) {
+  await updateStatus(participantId, 'DECLINED');
+}
+
+async function onMaybeParticipation(participantId: number) {
+  await updateStatus(participantId, 'MAYBE');
+}
+
+async function updateStatus(participantId: number, status: ParticipationStatus) {
+  errorMessage.value = '';
+  const result = await updateParticipationStatus(gamingEventId, participantId, 'CONFIRMED')
+  if (result.error) {
+    errorMessage.value = result.error.detail ?? 'Error';
+  } else {
+    event.value?.participants.filter(participant => participant.participant.id === participantId).forEach(participant => {
+      participant.participationStatus = status;
+    });
+  }
+}
+
+async function addMissingPlayers() {
+  const result = await addAllGroupMembersToGamingEvent(gamingEventId)
+  if (result.success) {
+    event.value = result.success;    
+  } else {
+    errorMessage.value = result.error?.detail ?? 'Error';
+  }
+}
+
+function isMe(playerId: number): boolean {
+  return getCurrentPlayerId() == playerId;
+}
+
+async function onGameAdded(game: Game) {
+  await addGameToEvent(gamingEventId, game.id!)
+  event.value?.games.push({
+    game,
+    gameStatus: "SUGGESTED",
+    comment: null
+  })
+}
+
+function onGameRemoved(game: Game) {
+  event.value?.games.splice(event.value?.games.findIndex(g => g.game.id !== game.id), 1);
+}
+
 </script>
 
 <style lang="css" scoped>
@@ -86,6 +164,21 @@ function participicationStatusClass(participant: ParticipationStatus) {
 
 .not-responded {
   color:gray;
+}
+
+.participant {  
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.participant-buttons {
+  width: 100%;  
+  display: flex;
+  align-items: end;
+  justify-content: end;
+  gap:4px;
 }
 
 </style>

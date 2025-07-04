@@ -48,25 +48,29 @@ watch(
 <style lang="css" scoped>
 
 .grid {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 8px;  
+  grid-template-rows: repeat(5, 1fr);  
 }
 
 .grid-card {
-  flex: 1 1 0px;
+  
   margin-bottom: auto;
-  align-self: stretch;
+  
   margin-top: 4px;
+  height: 100%;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 500px) {
   .grid {
-    display: block;
-  }
-  .grid-card {
-    flex: 0 0 100%;
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

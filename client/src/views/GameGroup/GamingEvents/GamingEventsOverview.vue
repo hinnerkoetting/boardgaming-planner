@@ -24,6 +24,7 @@ import CreateGamingEventComponent from '@/components/GamingEvents/CreateGamingEv
 import GamingEventsCollection from '@/components/GamingEvents/GamingEventsCollection.vue';
 import type { GameGroup } from '@/model/GameGroup';
 import type { GamingEvent } from '@/model/GamingEvent';
+import router from '@/router';
 import { loadGameGroup } from '@/services/api/GameGroupApiService';
 import { fetchNextGamingEvents } from '@/services/api/GamingEventsApiService';
 import { Button, Dialog } from 'primevue';
@@ -50,6 +51,14 @@ onMounted(async () => {
 function onEventCreated(gamingEvent: GamingEvent) {
   gamingEvents.value.push(gamingEvent)
   showDialog.value = false;
+
+  router.push({
+    name: 'groupGamingEvent',
+    params: {
+      gamingEventId: gamingEvent.id,
+      gameGroupId: gameGroupId
+    }
+  });
 }
 
 </script>

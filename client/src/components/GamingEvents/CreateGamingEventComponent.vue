@@ -31,7 +31,7 @@
 
 <script lang="ts" setup>
 import type { GamingEvent } from '@/model/GamingEvent';
-import { createGamingEvent } from '@/services/api/GamingEventsApiService';
+import { addAllGroupMembersToGamingEvent, createGamingEvent } from '@/services/api/GamingEventsApiService';
 import { Button, DatePicker, Message, Textarea } from 'primevue';
 import { ref } from 'vue';
 
@@ -56,7 +56,12 @@ async function onClickCreateEvent() {
   if (start.value) {
     const result = await createGamingEvent(props.gameGroupId, start.value, end.value, comment.value)
     if (result.success) {
-       emit('event-created', result.success);      
+      const addParticipantsResult = await addAllGroupMembersToGamingEvent(result.success.id);
+      if (addParticipantsResult.success) {
+         emit('event-created', addParticipantsResult.success);
+      } else {
+        errorMessage.value = addParticipantsResult.error?.detail ?? "Error";      
+      }
     } else {
       errorMessage.value = result.error?.detail ?? "Error";      
     }

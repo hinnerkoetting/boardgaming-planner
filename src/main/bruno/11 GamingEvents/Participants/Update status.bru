@@ -1,0 +1,30 @@
+meta {
+  name: Update status
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{server}}/api/gamingEvents/{{gamingEventId}}/player/{{playerId}}/status
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "status": "CONFIRMED"
+  }
+  
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}
+
+assert {
+  res.status: eq 200
+}

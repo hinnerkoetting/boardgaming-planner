@@ -1,0 +1,23 @@
+meta {
+  name: Add all articipants from group
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{server}}/api/gamingEvents/{{gamingEventId}}/player/all
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}
+
+assert {
+  res.status: eq 200
+}
