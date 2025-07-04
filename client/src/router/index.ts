@@ -72,11 +72,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.publicArea)) {
+if (to.matched.some((record) => record.meta.publicArea)) {
     next()
   } else {
     if (!isLoggedIn()) {
       console.log('User is not logged in, redirecting to home')
+      sessionStorage.setItem('redirectAfterLogin', to.fullPath);
+
       next({ name: 'home' })
     } else {
       next()

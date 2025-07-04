@@ -42,9 +42,14 @@ async function onStartLogin() {
   const loginResponse = await login(loginModel.value, passwordModel.value)
   if (isLoggedIn()) {
     emits('logged-in')
-    router.push('gameGroups')
-  } else {
-    errorMessage.value = loginResponse || 'Could not login'
+    const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+    if (redirectPath) {      
+      sessionStorage.removeItem('redirectAfterLogin')
+      
+      router.replace(redirectPath);    
+    } else {
+      router.push('gameGroups')
+    }
   }
 }
 </script>

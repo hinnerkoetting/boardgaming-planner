@@ -152,11 +152,11 @@ export class FilterService {
     return false;    
   }
 
-  private unratedDoesExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private unratedDoesExcludeGame(game: GameGroupGame, filter: FilterGamesSettings): boolean {
     if (!filter.notRatedYet) {
       return false;
     }
-    return game.rating.myRating;
+    return !!game.rating.myRating;
   }
 }
 
