@@ -41,6 +41,11 @@ const router = createRouter({
       name: 'groupGamingEvent',
       component: () => import('../views/GameGroup/GamingEvents/GamingEventView.vue')
     },
+        {
+      path: '/gameGroup/:gameGroupId/statistics',
+      name: 'gameGroupStatistics',
+      component: () => import('../views/GameGroup/GameGroupStatistics.vue')
+    },
     {
       path: '/account',
       name: 'account',

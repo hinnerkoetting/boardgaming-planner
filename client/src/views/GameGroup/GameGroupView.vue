@@ -3,8 +3,13 @@
     <h1>Group {{ gameGroup.name }}</h1>
     
 
+    <div>
+      <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Next events</router-link>
+      
+      &#183;
 
-    <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Next events</router-link>
+      <router-link :to="{ name: 'gameGroupStatistics', params: { gameGroupId: gameGroupId }}">Statistics</router-link>
+    </div>
 
     <h2>
       Games
