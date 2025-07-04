@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1>Group {{ gameGroup.name }}</h1>
+    
+
+
+    <router-link :to="{ name: 'groupGamingEvents', params: { gameGroupId: gameGroupId }}">Next events</router-link>
 
     <h2>
       Games

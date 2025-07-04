@@ -7,9 +7,13 @@ import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
 import de.oetting.bgp.gamingevent.model.GamingEventModel;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +30,15 @@ public class GamingEventController {
 
     @Transactional
     @GetMapping("/{gameGroupId}")
-    public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId){
-        var events = gamingEventRepository.findByGameGroupId(gameGroupId);
+    public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId,
+                                                   @RequestParam(name = "onlyNext", defaultValue = "false") boolean onlyNext,
+                                                   @RequestParam(name = "number", defaultValue = "5") int number){
+        var events = findGameEvents(gameGroupId, onlyNext, number);
 
         return events.stream().map(this::map).toList();
     }
+
+
 
     @Transactional
     @PostMapping("/{gameGroupId}")
@@ -65,6 +73,16 @@ public class GamingEventController {
         GamingEventEntity gamingEvent = gamingEventRepository.findById(model.getId()).orElseThrow();
         update(model, gamingEvent);
         return map(gamingEvent);
+    }
+
+
+    private List<GamingEventEntity> findGameEvents(long gameGroupId,
+                                                   boolean onlyNext,
+                                                   int number) {
+        if (onlyNext) {
+            return gamingEventRepository.findByGameGroupIdAndStartAfter(gameGroupId, ZonedDateTime.now(), PageRequest.of(0, number, Sort.by("start")));
+        }
+        return gamingEventRepository.findByGameGroupId(gameGroupId, PageRequest.of(0, number, Sort.by("start")));
     }
 
     private static void update(GamingEventModel model, GamingEventEntity gamingEvent) {
