@@ -19,7 +19,7 @@ public class RatedGameModel {
     private Integer playingTimeMinutes;
     private String url;
 
-    private List<TagModel> tags;
+    private TagWrapper tags;
     private Set<Integer> recommendedNumberOfPlayers;
     private Set<Integer> bestNumberOfPlayers;
 
@@ -103,11 +103,11 @@ public class RatedGameModel {
         this.url = url;
     }
 
-    public List<TagModel> getTags() {
+    public TagWrapper getTags() {
         return tags;
     }
 
-    public void setTags(List<TagModel> tags) {
+    public void setTags(TagWrapper tags) {
         this.tags = tags;
     }
 

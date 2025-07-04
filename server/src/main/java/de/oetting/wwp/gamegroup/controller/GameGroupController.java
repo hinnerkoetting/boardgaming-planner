@@ -9,6 +9,7 @@ import de.oetting.wwp.entities.GameGroup;
 import de.oetting.wwp.entities.Player;
 import de.oetting.wwp.entities.Rating;
 import de.oetting.wwp.game.model.TagModel;
+import de.oetting.wwp.game.model.TagWrapper;
 import de.oetting.wwp.game.repository.GameRepository;
 import de.oetting.wwp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.wwp.gamegroup.model.GameGroupModel;
@@ -154,11 +155,12 @@ public class GameGroupController {
         ratedGame.setMinPlayers(game.getMinPlayers());
         ratedGame.setUrl(game.getUrl());
         ratedGame.setPlayingTimeMinutes(game.getPlayingTimeMinutes());
-        var gameGroupTags = tags.stream()
+        var tagWrapper = new TagWrapper();
+        tagWrapper.setGlobal(game.getGlobalTags().stream().map(this::map).toList());
+        tagWrapper.setGroup(tags.stream()
                 .filter(gameGroupTag -> gameGroupTag.getGame().getId().equals(game.getId()))
-                .map(GameGroupTag::getTag).map(this::map);
-        var globalTags = game.getGlobalTags().stream().map(this::map);
-        ratedGame.setTags(Stream.concat(gameGroupTags, globalTags).collect(Collectors.toList()));
+                .map(GameGroupTag::getTag).map(this::map).toList());
+        ratedGame.setTags(tagWrapper);
         ratedGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
         ratedGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
         return ratedGame;

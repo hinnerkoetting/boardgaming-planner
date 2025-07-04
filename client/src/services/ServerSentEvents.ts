@@ -1,15 +1,24 @@
 import type { GameGroupEvent } from "./GameGroupEvent";
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
-let existingSource: EventSource | null = null
+const controller = new AbortController()
+let existingSubscription = false;
 
 export function subscribeToEventsOnGameGroup(gameGroupId: number, listener: (data: GameGroupEvent) => void) {
-  if (existingSource) {
-    existingSource.close();
+  if (existingSubscription) {
+    controller.abort()
   }
-  const source =new EventSource(`/api/sse/gameGroup/${gameGroupId}`)
-  source.addEventListener("GROUP_CHANGED", (event) => {   
-    const data = JSON.parse(event.data) as GameGroupEvent;
-    listener(data);
-  });
-  existingSource = source;
+  
+  fetchEventSource(`/api/sse/gameGroup/${gameGroupId}`, {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('access-token')
+    },
+    onmessage(event) {
+      const data = JSON.parse(event.data) as GameGroupEvent;
+      listener(data);
+    },
+    signal: controller.signal
+  })
+  existingSubscription = true;
+  
 }
