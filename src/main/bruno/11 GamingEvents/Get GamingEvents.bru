@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{server}}/api/gameGroup/{{gameGroupId}}/gamingEvents?onlyNext=false&number=3
+  url: {{server}}/api/gameGroup/{{gameGroupId}}/gamingEvents?onlyNext=true&number=3
   body: none
   auth: inherit
 }
 
 params:query {
-  onlyNext: false
+  onlyNext: true
   number: 3
 }
 

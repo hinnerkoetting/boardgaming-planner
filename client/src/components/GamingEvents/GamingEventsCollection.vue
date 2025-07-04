@@ -1,5 +1,5 @@
 <template>  
-  <DataView :value="gamingEvents" class="collection" dataKey="id">
+  <DataView :value="internGamingEvents" class="collection" dataKey="id">
     <template #empty> No events exist </template>
     <template #list="slotProps">
       <div class="grid">
@@ -19,11 +19,11 @@
 <script setup lang="ts">
 import type { GamingEvent } from '@/model/GamingEvent';
 import { DataView } from 'primevue';
-import type { PropType } from 'vue';
+import { ref, watch, type PropType } from 'vue';
 import GamingEventCard from './GamingEventCard.vue';
 
 
-defineProps({
+const props = defineProps({
   gamingEvents: {
     type: Array as PropType<GamingEvent[]>,
     required: true
@@ -33,6 +33,15 @@ defineProps({
     required: true
   }
 })
+
+const internGamingEvents = ref<GamingEvent[]>(props.gamingEvents)
+
+watch(
+  () => props.gamingEvents,
+  (gamingEvents: GamingEvent[]) => {
+    internGamingEvents.value = gamingEvents
+  }
+)
 
 </script>
 

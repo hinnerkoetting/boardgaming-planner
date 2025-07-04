@@ -65,7 +65,7 @@ public class GamingEventController {
         if (gameGroupId != model.getGameGroupId()) {
             throw new UnprocessableEntityException("GameGroupId must have same value in url and body");
         }
-        if (model.getEnd().isBefore(model.getStart())) {
+        if (model.getEnd() != null && model.getEnd().isBefore(model.getStart())) {
             throw new UnprocessableEntityException("Start must be before end");
         }
 

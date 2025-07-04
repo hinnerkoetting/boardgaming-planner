@@ -1,5 +1,5 @@
 <template>
-  <Card @click="onClickCard">
+  <Card @click="onClickCard" class="clickable-card">
     <template #title>
       <div class="title">
         {{ formatDate(new Date(event.start)) }}        
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import type { EventGame, GameStatus, GamingEvent, Participation } from '@/model/GamingEvent';
+import type { EventGame, GamingEvent, Participation } from '@/model/GamingEvent';
 import router from '@/router';
 import { Card } from 'primevue';
 import type { PropType } from 'vue';
@@ -51,3 +51,9 @@ function onClickCard() {
 
 
 </script>
+
+<style lang="css" scoped>
+.clickable-card {
+  cursor: pointer;
+}
+</style>

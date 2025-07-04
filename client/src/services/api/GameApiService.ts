@@ -13,7 +13,6 @@ export async function loadGame(gameId: number): Promise<Game> {
   return await response.json()
 }
 
-
 export async function deleteGame(id: Number) {
   await authorizedFetch(`/api/games/${id}`, { method: 'DELETE' })
 }
