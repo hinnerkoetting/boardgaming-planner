@@ -26,7 +26,7 @@
       :withRateButton="isPartOfGroup"
       :withTagButton="isPartOfGroup"
       @ratingOpened="onDialogOpened"
-      @game-rated="filterGames"
+      @game-rated="filterAndSort"
       :players="players"
     />
 
@@ -98,13 +98,11 @@ onMounted(async () => {
     if (isPartOfGroup.value) {
       subscribeToEvents()
     }
-    filterGames();
-    sortGames();
+    filterAndSort();
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
-    filterGames();
-    sortGames();
+    filterAndSort
   })
   loadTags().then((response) => {
     tags.value = response
@@ -213,6 +211,11 @@ function onUpdatedFilters(filteredGames: RatedGame[]) {
 
 function onDialogOpened() {
   addGameComponent.value?.reset()
+}
+
+function filterAndSort() {
+  filterGames();
+  sortGames();
 }
 
 function filterGames() {

@@ -13,9 +13,9 @@
     {{ event.description }}
     <h2>Participants:</h2>
     
-    <div v-for="(participant, index) in event.participants" :key="index" class="participant">
-      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px;"/>
+    <div v-for="(participant, index) in event.participants" :key="index" class="participant">      
       {{ participant.participant.name }} 
+      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px;"/>
       <span class="participant-buttons" v-if="isMe(participant.participant.id)">
         <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
         <Button :disabled="participant.participationStatus == 'CONFIRMED'" 
