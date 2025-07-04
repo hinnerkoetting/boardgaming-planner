@@ -1,7 +1,7 @@
 <template>
   <div v-if="event">
     <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Back to events</router-link><br/>
-    <h1>{{ formatDate(new Date(event.start)) }}</h1>
+    <h1>{{ startTime && formatDate(startTime) }}</h1>
     <div v-if="event.schedule == 'WEEKLY'">
       <i>Every week</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
     </div>
@@ -61,7 +61,7 @@ import GameEventGameCard from '@/components/GamingEvents/GameEventGameCard.vue';
 import type { GamingEvent, ParticipationStatus } from '@/model/GamingEvent';
 import { addAllGroupMembersToGamingEvent, addGameToEvent, cloneEvent, deleteEvent, fetchGamingEvent, updateEvent, updateParticipationStatus } from '@/services/api/GamingEventsApiService';
 import { onMounted, ref, type Ref } from 'vue';
-import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { onBeforeRouteUpdate, useRoute, type LocationQuery, type RouteParamsGeneric } from 'vue-router';
 import 'primeicons/primeicons.css'
 import { Button, Message } from 'primevue';
 import { getCurrentPlayerId } from '@/services/LoginService';
@@ -74,14 +74,14 @@ const route = useRoute()
 
 let gameGroupId: number;
 let gamingEventId: number;
-let startTime: string;
+let startTime: Date | null = null;
 const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
 
 onBeforeRouteUpdate(async (to, from, next) => {
   gameGroupId = Number(to.params.gameGroupId)
   gamingEventId = Number(to.params.gamingEventId)
-  startTime = to.params.startTime as string
+  startTime = parse(to.query)
   await loadData();
   next();
 })
@@ -89,16 +89,25 @@ onBeforeRouteUpdate(async (to, from, next) => {
 onMounted(async () => {
   gameGroupId = Number(route.params.gameGroupId)
   gamingEventId = Number(route.params.gamingEventId)
-  startTime = route.params.startTime as string
+  startTime = parse(route.query)
   await loadData();
 });
+
+function parse(params: LocationQuery): Date | null {
+  if (params.startTime) {
+    return new Date(parseInt(params.startTime as string));
+  }
+  return null;
+}
 
 async function loadData(){
 
   const result = await fetchGamingEvent(gamingEventId)
   if (result.success) {
     event.value = result.success;
-    console.log(event.value.schedule)
+    if (!startTime) {
+      startTime = new Date(event.value.start)
+    }
   } else {
     console.error('Error when loading event ' + gamingEventId)
   }
@@ -177,14 +186,17 @@ async function editSingleEvent() {
   const result = await cloneEvent(gameGroupId, gamingEventId)
   if (result.success) {
     
-    const newStartTime = getCurrentStartTime()
-    const updateResult = await updateEvent(gameGroupId, result.success.id, new Date(newStartTime), 'ONCE', event.value!.description)
+    const newStartTime = startTime ?? new Date()
+    const updateResult = await updateEvent(gameGroupId, result.success.id, newStartTime, 'ONCE', event.value!.description)
     if (updateResult.success) {
        router.push({
         name: 'groupGamingEvent',
         params: {
           gamingEventId: updateResult.success.id,
           gameGroupId: gameGroupId
+        },
+        query: {
+          startTime: newStartTime.getTime().toString()
         },
         replace: true
       });
@@ -208,13 +220,6 @@ async function onDeleteEvent() {
   
 }
 
-function getCurrentStartTime(): number {
-  if (startTime) {
-    return Number.parseInt(startTime);
-  } else {
-    return event.value!.start;
-  }
-}
 </script>
 
 <style lang="css" scoped>

@@ -2,13 +2,12 @@ package de.oetting.bgp.gamingevent.model;
 
 import de.oetting.bgp.gamingevent.entity.Schedule;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public class GamingEventModel {
 
     private Long id;
-    private ZonedDateTime start;
+    private long start;
     private long gameGroupId;
     private String description;
     private List<GamingEventGameModel> games;
@@ -23,11 +22,11 @@ public class GamingEventModel {
         this.id = id;
     }
 
-    public ZonedDateTime getStart() {
+    public long getStart() {
         return start;
     }
 
-    public void setStart(ZonedDateTime start) {
+    public void setStart(long start) {
         this.start = start;
     }
 

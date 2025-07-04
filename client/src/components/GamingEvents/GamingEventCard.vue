@@ -44,7 +44,10 @@ function onClickCard() {
     name: 'groupGamingEvent',
     params: {
       gamingEventId: props.event.id,
-      gameGroupId: props.gameGroupId
+      gameGroupId: props.gameGroupId     
+    },
+    query: {
+      startTime: props.event.start.toString()
     }
   });
 }

@@ -43,10 +43,63 @@ onMounted(async () => {
   loadGameGroup(gameGroupId).then((result) => {
     gameGroup.value = result
   })
-  fetchNextGamingEvents(gameGroupId).then((events) => {
-    gamingEvents.value = events
+  fetchNextGamingEvents(gameGroupId).then((events) => {    
+    gamingEvents.value = filterDuplicateEvents(events.map(e => expand(e, increaseOneMonth(new Date()))).flat().sort((a, b) => a.start - b.start));
   })
 });
+
+function filterDuplicateEvents(events: GamingEvent[]): GamingEvent[] {
+  const uniqueEvents: GamingEvent[] = []
+  
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    if (i === events.length - 1) {
+      uniqueEvents.push(event);      
+    } else {
+      if (event.start === events[i + 1].start) {
+        // Both events have same start time, we will include the non-recurring one. Which will probably not always work, but might be good enough for now.
+        if (event.schedule === 'ONCE') {
+          uniqueEvents.push(event);
+        } else {
+          uniqueEvents.push(events[i]);
+        }
+        i++;
+      } else { // non-duplicate
+        uniqueEvents.push(event);
+      }
+    }    
+  }
+  return uniqueEvents
+}
+
+function expand(event: GamingEvent, maxInclusiveDate: Date): GamingEvent[] {
+  if (event.schedule === 'ONCE') {
+    return [event];
+  } else {
+    let events: GamingEvent[] = [];
+    let recurringDate = event.start
+    while (recurringDate <= maxInclusiveDate.getTime()) {
+      const newEvent =  { ...event, start: recurringDate };
+      
+      if (event.schedule === 'WEEKLY') {
+        recurringDate = recurringDate + 6.048e+8;
+      } else if (event.schedule === 'MONTHLY') {
+        recurringDate = increaseOneMonth(new Date(recurringDate)).getTime()        
+      } else {
+        throw new Error(`Unknown schedule type: ${event.schedule}`);
+      }
+      events.push(newEvent);
+    }
+    return events;    
+  }
+}
+
+function increaseOneMonth(date: Date): Date {
+  const newDate = new Date(date);
+  newDate.setFullYear(date.getMonth() >= 11 ? date.getFullYear() + 1 : date.getFullYear());
+  newDate.setMonth(date.getMonth() >= 11 ? 0 : date.getMonth() + 1);
+  return newDate
+}
 
 function onEventCreated(gamingEvent: GamingEvent) {
   gamingEvents.value.push(gamingEvent)

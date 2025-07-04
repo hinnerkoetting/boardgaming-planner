@@ -53,6 +53,7 @@ onMounted(async () => {
 function onClickLoadButton() {
   fetchGameGroups().then((groups) => (gameGroups.value = removeMyGroupsFromOthers(groups)))
 }
+
 function removeMyGroupsFromOthers(gameGroups: GameGroup[]): GameGroup[] {
   const myGameGroupIds = myGameGroups.value.map((group) => group.id)
   return gameGroups.filter((group) => !myGameGroupIds.includes(group.id))

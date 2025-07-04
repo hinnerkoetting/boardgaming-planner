@@ -17,6 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -223,21 +226,28 @@ public class GamingEventController {
                                                    boolean onlyNext,
                                                    int number) {
         if (onlyNext) {
-            return gamingEventRepository.findByGameGroupIdAndStartAfter(gameGroupId, ZonedDateTime.now(), PageRequest.of(0, number, Sort.by("start")));
+            // It's a bit difficult to exactly return the number of requested events if we always want to include recurring events.
+            // I think it's good enough for now to just return more, but this needs to be fixed at some point.
+            var recurringEvents= gamingEventRepository.findByGameGroupIdAndScheduleIn(gameGroupId, Arrays.asList(Schedule.MONTHLY, Schedule.WEEKLY));
+            var singleEvents = gamingEventRepository.findByGameGroupIdAndScheduleAndStartAfter(gameGroupId, Schedule.ONCE, ZonedDateTime.now(), PageRequest.of(0, number, Sort.by("start")));
+
+            var result = new ArrayList<>(singleEvents);
+            result.addAll(recurringEvents);
+            return result;
         }
         return gamingEventRepository.findByGameGroupId(gameGroupId, PageRequest.of(0, number, Sort.by("start")));
     }
 
-    private static void update(GamingEventModel model, GamingEventEntity gamingEvent) {
-        gamingEvent.setStart(model.getStart());
-        gamingEvent.setDescription(model.getDescription());
-        gamingEvent.setSchedule(model.getSchedule());
+    private static void update(GamingEventModel model, GamingEventEntity entity) {
+        entity.setStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(model.getStart()), ZoneOffset.UTC));
+        entity.setDescription(model.getDescription());
+        entity.setSchedule(model.getSchedule());
     }
 
     private GamingEventModel map(GamingEventEntity entity) {
         var model = new GamingEventModel();
         model.setDescription(entity.getDescription());
-        model.setStart(entity.getStart());
+        model.setStart(entity.getStart().toInstant().toEpochMilli());
         model.setId(entity.getId());
         model.setGames(entity.getGames() == null ? Collections.emptyList() : entity.getGames().stream().map(this::map).toList());
         model.setParticipants(entity.getParticipants() == null ? Collections.emptyList() : entity.getParticipants().stream().map(this::map).toList());
@@ -264,7 +274,7 @@ public class GamingEventController {
     private GamingEventEntity map(GamingEventModel model) {
         var entity = new GamingEventEntity();
         entity.setDescription(model.getDescription());
-        entity.setStart(model.getStart());
+        entity.setStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(model.getStart()), ZoneOffset.UTC));
         entity.setGameGroup(gameGroupService.find(model.getGameGroupId()).orElseThrow());
         entity.setSchedule(model.getSchedule());
         return entity;

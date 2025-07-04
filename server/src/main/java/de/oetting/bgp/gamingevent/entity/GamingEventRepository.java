@@ -10,6 +10,8 @@ public interface GamingEventRepository extends CrudRepository<GamingEventEntity,
 
     List<GamingEventEntity> findByGameGroupId(long gameGroupId, Pageable pageable);
 
-    List<GamingEventEntity> findByGameGroupIdAndStartAfter(long gameGroupId, ZonedDateTime start, Pageable pageable);
+    List<GamingEventEntity> findByGameGroupIdAndScheduleAndStartAfter(long gameGroupId, Schedule schedule, ZonedDateTime start, Pageable pageable);
+
+    List<GamingEventEntity> findByGameGroupIdAndScheduleIn(long gameGroupId, List<Schedule> schedules);
 
 }
