@@ -11,6 +11,7 @@
                 @game-rating-selected="onClickRate"
                 @game-tag-selected="onClickTag"
                 :withRateButton="withRateButton"
+                :withTagButton="withTagButton"
                 :players="players"
               />
             </div>
@@ -59,6 +60,11 @@ const props = defineProps({
     required: true
   },
   withRateButton: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
+  withTagButton: {
     type: Boolean,
     required: true,
     default: true
