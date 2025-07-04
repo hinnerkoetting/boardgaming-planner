@@ -75,13 +75,13 @@
       </div>
     </div>
     <div class="filterOption">
-      <div class="filterContent">
+      <div class="filterContent tagFilterOption" >
         <div v-for="tag in tags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
             @click="onClickFilterWith(tag)"
             class="filterButton"
-            >{{ tag.description }}</Button
+            >Only {{ tag.description }}</Button
           >
           <Button
             :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
@@ -284,6 +284,10 @@ function onClickConfirm() {
   margin-top: 8px;
   margin-bottom: 8px;
   align-self: end;
+}
+
+.tagFilterOption {
+  width: 100%;
 }
 
 .durationContent {

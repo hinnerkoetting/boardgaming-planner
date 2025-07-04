@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <Button @click="onClickShowFilter">Filter</Button>
+    <Button @click="onClickShowFilter">{{ filterLabel() }}</Button>
     <Dialog v-model:visible="showDialog" modal :header="`Filter games (${numberOfVisibleGames})`">
       <FilterGamesComponent
         :allGames="allGames"
@@ -66,6 +66,16 @@ function onFilterUpdated(games: GameGroupGame[]) {
 
 function onClickClose() {
   showDialog.value = false
+}
+
+function filterLabel(): string {
+  const numberOfVisibleGames = props.visibleGames.length;
+  const numberOfAllGames = props.allGames.length;
+  if (numberOfAllGames === numberOfVisibleGames) {
+    return 'Filter';
+  }
+  
+  return `Filter ${numberOfVisibleGames} / ${numberOfAllGames}`;
 }
 </script>
 

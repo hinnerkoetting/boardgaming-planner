@@ -81,3 +81,32 @@ export async function addGameToGroup(
   })
   return wrapEmptySuccessResponse(response)
 }
+
+export async function addTagToGameInGroup(
+  gameGroupId: number,
+  gameId: number,
+  tagId: number
+): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: tagId })
+  })
+  return wrapEmptySuccessResponse(response)
+}
+
+export async function deleteTagFromGameInGroup(
+  gameGroupId: number,
+  gameId: number,
+  tagId: number
+): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag/${tagId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  return wrapEmptySuccessResponse(response)
+}

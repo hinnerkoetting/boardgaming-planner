@@ -1,5 +1,7 @@
 package de.oetting.wwp.controller;
 
+import de.oetting.wwp.infrastructure.CurrentUser;
+import de.oetting.wwp.repositories.GameGroupRepository;
 import de.oetting.wwp.service.events.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +15,14 @@ public class SseController {
     @Autowired
     private SseEmitterService sseEmitterService;
 
-    @GetMapping("api/sse/gameGroup/{gameGroupId}")
-    public SseEmitter subscribeToPing(@PathVariable("gameGroupId") int gameGroupId) {
+    @Autowired
+    private GameGroupRepository gameGroupRepository;
 
+    @GetMapping("api/sse/gameGroup/{gameGroupId}")
+    public SseEmitter subscribeToGameGroup(@PathVariable("gameGroupId") int gameGroupId) {
+        if (gameGroupRepository.playerAssignedToGameGroup(CurrentUser.getCurrentPlayerId(), gameGroupId).isEmpty()) {
+            return null;
+        }
         return sseEmitterService.createGameGroupEmitter(gameGroupId);
     }
 

@@ -117,7 +117,7 @@ export class FilterService {
     if (tagSelection.selected === 'DO_NOT_FILTER') {
       return false
     }
-    const gameContainsTag = !!game.tags.find((gameTag) => gameTag.id == tagSelection.id)
+    const gameContainsTag = !!game.tags.global.find((gameTag) => gameTag.id == tagSelection.id) || !!game.tags.group.find((gameTag) => gameTag.id == tagSelection.id)
     if (gameContainsTag && tagSelection.selected === 'FILTER_WITHOUT') {
       return true
     } else if (!gameContainsTag && tagSelection.selected === 'FILTER_WITH') {

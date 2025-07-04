@@ -88,7 +88,7 @@ onMounted(async () => {
     players.value = result
     isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
     if (isPartOfGroup.value) {
-      subscribeToEvents()
+      subscribeToEvents
     }
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
