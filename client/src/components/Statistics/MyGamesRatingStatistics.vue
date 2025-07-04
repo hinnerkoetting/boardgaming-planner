@@ -9,8 +9,8 @@ const props = defineProps({
   games: {
     type: Array as PropType<RatedGame[]>,
     required: true
+    }
   }
-}
 );
 
 const myRatings: Ref<Record<number, number>> = ref({});
@@ -55,13 +55,14 @@ onMounted(() => {
 
   groupGamesByRating(props.games)
   var myChart = init(chart.value);
-  var option;
+  
+  new ResizeObserver(() => myChart.resize()).observe(chart.value!);
 
-  option = {
+  const option = {
 
     xAxis: {
       type: 'category',
-      data: ['Not voted', 'Veto', 'Meh', 'Ok', 'Great', 'Awesome']
+      data: ['Not voted', '👎', '✋', '👍', '👍👍', '👍👍👍'],      
     },
     yAxis: {
       type: 'value'

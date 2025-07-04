@@ -33,12 +33,16 @@ onMounted(() => {
 
   groupGamesByRating(props.games)
   var myChart = init(chart.value);
-  var option;
 
-  option = {
+
+  new ResizeObserver(() => myChart.resize()).observe(chart.value!);
+
+  const option = {
     xAxis: {
       type: 'category',
-      data: Object.keys(average.value)
+      axisTick: {
+        alignWithLabel: true
+      }
     },
     yAxis: {
       type: 'value'
