@@ -11,24 +11,27 @@
           <Image :src="game.thumbnailUrl" />
           {{  gameComment }}
         </div>
-        <span class="gamestatus-buttons">
+        <span class="gamestatus-buttons" v-if="isPartOfGroup">
           <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
           <Button :disabled="gameStatus == 'PLAYED'" 
                   label="Played"                 
                   @click.stop="onPlayed(game.id!)" />
           <Button :disabled="gameStatus == 'REJECTED'" 
-                  label="Reject" 
+                  label="Rejected" 
                   severity="warn"
                   @click.stop="onReject(game.id!)" />
           <Button :disabled="gameStatus == 'SUGGESTED'" 
-                  label="Suggest" 
+                  label="Suggested" 
                   severity="secondary"
                   @click.stop="onSuggest(game.id!)" />     
           <Button
             label="Delete" 
             severity="danger"
             @click.stop="onDelete(game.id!)" />     
-      </span>
+        </span>
+        <span v-else>
+          {{ gameStatusName(gameStatus)}}
+        </span>
       </template>
     </Card>
     <Dialog
@@ -83,6 +86,10 @@ const props = defineProps({
   gamingEventId: {
     type: Number,
     required: true
+  },
+  isPartOfGroup: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -107,6 +114,19 @@ function gameStatusClass(gameStatus: GameStatus) {
       return 'pi pi-times declined';
     case 'PLAYED':
       return 'pi pi-check maybe';
+    default:
+      return '';
+  }
+}
+
+function gameStatusName(gameStatus: GameStatus): string {
+  switch (gameStatus) {
+    case 'SUGGESTED':
+      return 'Suggested';
+    case 'REJECTED':
+      return 'Rejected';
+    case 'PLAYED':
+      return 'Played';
     default:
       return '';
   }

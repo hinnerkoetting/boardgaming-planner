@@ -11,11 +11,11 @@
     </div>
 
     {{ event.description }}
+    <Button label="Edit" severity="secondary" @click="edit" v-if="isPartOfGroup"/>
     <h2>Participants:</h2>
     
     <div v-for="(participant, index) in event.participants" :key="index" class="participant">      
-      {{ participant.participant.name }} 
-      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px;"/>
+      {{ participant.participant.name }}       
       <span class="participant-buttons" v-if="isMe(participant.participant.id)">
         <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
         <Button :disabled="participant.participationStatus == 'CONFIRMED'" 
@@ -30,6 +30,7 @@
                 severity="secondary"
                 @click="onMaybeParticipation(participant.participant.id)" />     
       </span>
+      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px;"/>
       
     </div>
     <Button label="Invite missing players" severity="secondary" 
@@ -48,10 +49,15 @@
           :with-tag-button="true"
           :players="event.participants.map(p => p.participant)"
           :gaming-event-id="gamingEventId"
+          :is-part-of-group="isPartOfGroup"
           @game-removed="onGameRemoved"
           />
       </div>      
     <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px" v-if="isPartOfGroup"/>
+
+    <Dialog v-model:visible="editEventDialogVisible" modal header="Edit event">
+      <EditGamingEventComponent :game-group-id="gameGroupId" :gaming-event-id="gamingEventId" @event-updated="onEventUpdated"/>
+    </Dialog>
   </div>
 
   
@@ -64,12 +70,13 @@ import { addAllGroupMembersToGamingEvent, addGameToEvent, cloneEvent, deleteEven
 import { onMounted, ref, type Ref } from 'vue';
 import { onBeforeRouteUpdate, useRoute, type LocationQuery } from 'vue-router';
 import 'primeicons/primeicons.css'
-import { Button, Message } from 'primevue';
-import { getCurrentPlayerId, isLoggedIn } from '@/services/LoginService';
+import { Button, Dialog, Message } from 'primevue';
+import { getCurrentPlayerId } from '@/services/LoginService';
 import type { Game } from '@/model/Game';
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue';
 import router from '@/router';
 import { fetchPlayersInGroup } from '@/services/api/GameGroupApiService';
+import EditGamingEventComponent from '@/components/GamingEvents/EditGamingEventComponent.vue';
 
 
 const route = useRoute()
@@ -80,6 +87,7 @@ let startTime: Date | null = null;
 const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
 const isPartOfGroup = ref(false);
+const editEventDialogVisible = ref(false);
 
 onBeforeRouteUpdate(async (to, from, next) => {
   gameGroupId = Number(to.params.gameGroupId)
@@ -97,11 +105,20 @@ onMounted(async () => {
   await loadData();
 });
 
+function edit() {
+  editEventDialogVisible.value = true
+}
+
 function parse(params: LocationQuery): Date | null {
   if (params.startTime) {
     return new Date(parseInt(params.startTime as string));
   }
   return null;
+}
+
+function onEventUpdated(newEvent: GamingEvent) {
+  event.value = newEvent;  
+  editEventDialogVisible.value = false;
 }
 
 async function loadData(){

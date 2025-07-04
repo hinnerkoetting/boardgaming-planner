@@ -1,4 +1,4 @@
-import type { GameStatus, GamingEvent, ParticipationStatus, Schedule } from "@/model/GamingEvent"
+import { GamingEvent, type GameStatus, type ParticipationStatus, type Schedule } from "@/model/GamingEvent"
 import { authorizedFetch } from "./ApiService"
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from "@/model/api/Response"
 
@@ -29,6 +29,24 @@ export async function createGamingEvent(gameGroupId: Number, start: Date, schedu
   }
   const response = await authorizedFetch(`/api/gameGroup/${gameGroupId}/gamingEvents`, {
     method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  return wrapResponse(response)
+}
+
+export async function updateGamingEvent(gameGroupId: Number, gamingEventId: number, start: Date, schedule: Schedule, description: string): Promise<ResponseWrapper<GamingEvent>> {
+  const body = {
+    start: start.getTime(),
+    schedule,
+    description,
+    gameGroupId,
+    id: gamingEventId
+  }
+  const response = await authorizedFetch(`/api/gameGroup/${gameGroupId}/gamingEvents/${gamingEventId}`, {
+    method: "PUT",
     body: JSON.stringify(body),
     headers: {
       "Content-Type": "application/json"
