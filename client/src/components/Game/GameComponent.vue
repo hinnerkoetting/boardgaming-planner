@@ -65,7 +65,7 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Image from 'primevue/image'
 import Tag from 'primevue/tag'
-import { ref, type PropType } from 'vue'
+import { ref, watch, type PropType } from 'vue'
 import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
 import Dialog from 'primevue/dialog'
 import PlayerTagsListComponent from '../GameGroup/tags/PlayerTagsListComponent.vue'
@@ -97,6 +97,14 @@ defineEmits<{
 
 const game = ref(props.game)
 const showGameDialog = ref(false)
+
+watch(
+  () => props.game,
+  (newGameValue: GameGroupGame) => {
+    game.value = newGameValue
+  }
+)
+
 
 function onClickCard() {
   showGameDialog.value = true
