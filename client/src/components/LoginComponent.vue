@@ -39,7 +39,11 @@ const errorMessage = ref('')
 
 async function onStartLogin() {
   errorMessage.value = ''
-  const loginResponse = await login(loginModel.value, passwordModel.value)
+  const loginResponseError = await login(loginModel.value, passwordModel.value)
+  if (loginResponseError) {
+    errorMessage.value = loginResponseError
+    return
+  }
   if (isLoggedIn()) {
     emits('logged-in')
     const redirectPath = sessionStorage.getItem('redirectAfterLogin');

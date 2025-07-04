@@ -39,7 +39,7 @@ export async function login(name: string, password: string): Promise<undefined |
     EventBus.emit('login-status')
     return undefined
   } else if (response.error) {
-    console.info(`Login failed ${response}`)
+    console.info(`Login failed ${JSON.stringify(response)}`)
     return response.error.detail
   }
 }
