@@ -17,15 +17,15 @@ public class GamingEventEntity {
     @Column(nullable = false, name = "START_TS")
     private ZonedDateTime start;
 
-    @Column(nullable = false, name = "END_TS")
-    private ZonedDateTime end;
-
     @ManyToOne
     @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
     private GameGroup gameGroup;
 
     @Column
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private Schedule schedule;
 
     @ManyToMany(mappedBy = "gamingEvent")
     private List<GamingEventParticipantsEntity> participants;
@@ -49,14 +49,6 @@ public class GamingEventEntity {
         this.start = start;
     }
 
-    public ZonedDateTime getEnd() {
-        return end;
-    }
-
-    public void setEnd(ZonedDateTime end) {
-        this.end = end;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -73,6 +65,14 @@ public class GamingEventEntity {
         this.gameGroup = gameGroup;
     }
 
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
+
     public List<GamingEventParticipantsEntity> getParticipants() {
         return participants;
     }
@@ -80,7 +80,6 @@ public class GamingEventEntity {
     public void setParticipants(List<GamingEventParticipantsEntity> participants) {
         this.participants = participants;
     }
-
 
     public List<GamingEventGameEntity> getGames() {
         return games;

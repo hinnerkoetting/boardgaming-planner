@@ -2,7 +2,12 @@
   <div v-if="event">
     <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Back to events</router-link><br/>
     <h1>{{ formatDate(new Date(event.start)) }}</h1>
-   
+    <div v-if="event.schedule == 'WEEKLY'">
+      <i>Every week</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
+    </div>
+    <div v-if="event.schedule == 'MONTHLY'">
+      <i>Every month</i> <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"/>
+    </div>
 
     {{ event.description }}
     <h2>Participants:</h2>
@@ -44,38 +49,60 @@
           :gaming-event-id="gamingEventId"
           @game-removed="onGameRemoved"
           />
-      </div>
+      </div>      
+    <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px"/>
   </div>
+
+  
 </template>
 
 <script lang="ts" setup>
 import GameEventGameCard from '@/components/GamingEvents/GameEventGameCard.vue';
 import type { GamingEvent, ParticipationStatus } from '@/model/GamingEvent';
-import { addAllGroupMembersToGamingEvent, addGameToEvent, fetchGamingEvent, updateParticipationStatus } from '@/services/api/GamingEventsApiService';
+import { addAllGroupMembersToGamingEvent, addGameToEvent, cloneEvent, deleteEvent, fetchGamingEvent, updateEvent, updateParticipationStatus } from '@/services/api/GamingEventsApiService';
 import { onMounted, ref, type Ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import 'primeicons/primeicons.css'
 import { Button, Message } from 'primevue';
 import { getCurrentPlayerId } from '@/services/LoginService';
 import type { Game } from '@/model/Game';
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue';
+import router from '@/router';
 
 
 const route = useRoute()
 
-const gameGroupId = Number(route.params.gameGroupId)
-const gamingEventId = Number(route.params.gamingEventId)
+let gameGroupId: number;
+let gamingEventId: number;
+let startTime: string;
 const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
 
+onBeforeRouteUpdate(async (to, from, next) => {
+  gameGroupId = Number(to.params.gameGroupId)
+  gamingEventId = Number(to.params.gamingEventId)
+  startTime = to.params.startTime as string
+  await loadData();
+  next();
+})
+
 onMounted(async () => {
+  gameGroupId = Number(route.params.gameGroupId)
+  gamingEventId = Number(route.params.gamingEventId)
+  startTime = route.params.startTime as string
+  await loadData();
+});
+
+async function loadData(){
+
   const result = await fetchGamingEvent(gamingEventId)
   if (result.success) {
     event.value = result.success;
+    console.log(event.value.schedule)
   } else {
-    console.error('Error when loaing event ' + gamingEventId)
+    console.error('Error when loading event ' + gamingEventId)
   }
-});
+}
 
 function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, { day: "numeric", month: "long", weekday: "long" });
@@ -146,6 +173,48 @@ function onGameRemoved(game: Game) {
   event.value?.games.splice(event.value?.games.findIndex(g => g.game.id !== game.id), 1);
 }
 
+async function editSingleEvent() {
+  const result = await cloneEvent(gameGroupId, gamingEventId)
+  if (result.success) {
+    
+    const newStartTime = getCurrentStartTime()
+    const updateResult = await updateEvent(gameGroupId, result.success.id, new Date(newStartTime), 'ONCE', event.value!.description)
+    if (updateResult.success) {
+       router.push({
+        name: 'groupGamingEvent',
+        params: {
+          gamingEventId: updateResult.success.id,
+          gameGroupId: gameGroupId
+        },
+        replace: true
+      });
+    } else {
+      errorMessage.value = updateResult.error?.detail ?? 'Error';
+    }
+  } else {
+    errorMessage.value = result.error?.detail ?? 'Error';
+  }
+}
+
+async function onDeleteEvent() {
+  const result = await deleteEvent(gamingEventId)
+  if (result.success) {
+    router.push({
+      name: 'groupGamingEventsOverview'      
+    });
+  } else {
+    errorMessage.value = result.error?.detail ?? 'Error';
+  }
+  
+}
+
+function getCurrentStartTime(): number {
+  if (startTime) {
+    return Number.parseInt(startTime);
+  } else {
+    return event.value!.start;
+  }
+}
 </script>
 
 <style lang="css" scoped>

@@ -1,5 +1,7 @@
 package de.oetting.bgp.gamingevent.model;
 
+import de.oetting.bgp.gamingevent.entity.Schedule;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -7,11 +9,11 @@ public class GamingEventModel {
 
     private Long id;
     private ZonedDateTime start;
-    private ZonedDateTime end;
     private long gameGroupId;
     private String description;
     private List<GamingEventGameModel> games;
     private List<GamingEventParticipantsModel> participants;
+    private Schedule schedule;
 
     public Long getId() {
         return id;
@@ -27,14 +29,6 @@ public class GamingEventModel {
 
     public void setStart(ZonedDateTime start) {
         this.start = start;
-    }
-
-    public ZonedDateTime getEnd() {
-        return end;
-    }
-
-    public void setEnd(ZonedDateTime end) {
-        this.end = end;
     }
 
     public String getDescription() {
@@ -67,5 +61,13 @@ public class GamingEventModel {
 
     public void setParticipants(List<GamingEventParticipantsModel> participants) {
         this.participants = participants;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

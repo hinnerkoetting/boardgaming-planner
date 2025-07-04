@@ -6,7 +6,7 @@ export class GamingEvent {
     readonly id: number,
     public description: string,
     public start: number,
-    public end: number,
+    public schedule: Schedule,
     public participants: Participation[],
     public games: EventGame[]
   ) {}
@@ -31,3 +31,4 @@ export class EventGame {
 
 export type ParticipationStatus = 'CONFIRMED' | 'DECLINED' | 'MAYBE' | 'NOT_RESPONDED'
 export type GameStatus = 'SUGGESTED' | 'REJECTED' | 'PLAYED'
+export type Schedule = 'ONCE' | 'WEEKLY' | 'MONTHLY'

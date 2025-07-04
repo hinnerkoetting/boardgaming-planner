@@ -8,11 +8,21 @@
          <DatePicker id="datepicker-24h" v-model="start" showTime hourFormat="24" fluid />
       </div>
       <div>
-        End
+        <label for="regular">Regular event</label>
+               
       </div>
       <div>
-        <DatePicker id="datepicker-24h" v-model="end" showTime hourFormat="24" fluid />
-      </div>
+        <Checkbox  v-model="regular" label="Regular event" binary input-id="regular" style="margin-bottom: 4px"/>
+        <span v-if="regular" style="padding-top: 8px; margin-left: 16px;">
+          <RadioButtonGroup name="schedule" v-model="schedule">
+            <RadioButton value="WEEKLY" label="Weekly" input-id="weekly" class="radio" size="large"/>
+             <label for="weekly">Weekly</label>
+            <RadioButton value="MONTHLY" label="Monthly" input-id="monthly" class="radio" size="large"/>
+            <label for="monthly">Monthly</label>
+          </RadioButtonGroup>
+
+        </span>
+      </div>      
       <div>
         Comment
       </div>
@@ -30,13 +40,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { GamingEvent } from '@/model/GamingEvent';
+import type { GamingEvent, Schedule } from '@/model/GamingEvent';
 import { addAllGroupMembersToGamingEvent, createGamingEvent } from '@/services/api/GamingEventsApiService';
-import { Button, DatePicker, Message, Textarea } from 'primevue';
+import { Button, Checkbox, DatePicker, Message, RadioButton, RadioButtonGroup, Textarea } from 'primevue';
 import { ref } from 'vue';
 
 const start = ref(null);
-const end = ref(null);
+const regular = ref(false);
+const schedule = ref('WEEKLY');
 const comment = ref('');
 const errorMessage = ref('');
 
@@ -54,7 +65,8 @@ const emit = defineEmits<{
 async function onClickCreateEvent() {
   errorMessage.value = '';
   if (start.value) {
-    const result = await createGamingEvent(props.gameGroupId, start.value, end.value, comment.value)
+    const scheduleValue = regular.value ? schedule.value : 'ONCE';
+    const result = await createGamingEvent(props.gameGroupId, start.value, scheduleValue as Schedule, comment.value)
     if (result.success) {
       const addParticipantsResult = await addAllGroupMembersToGamingEvent(result.success.id);
       if (addParticipantsResult.success) {
@@ -83,9 +95,14 @@ input {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 0px;  
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 0.75fr);
   grid-column-gap: 0px;
   grid-row-gap: 4px; 
+}
+
+.radio {
+  margin-right: 4px;
+  margin-left: 8px;
 }
 
 

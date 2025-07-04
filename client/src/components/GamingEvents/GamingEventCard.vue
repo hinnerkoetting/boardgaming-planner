@@ -6,6 +6,7 @@
       </div>
     </template>
     <template #content>
+      <div v-if="event.schedule !== 'ONCE'"><i>{{ scheduleDescription(event.schedule) }}</i></div>
       <div>
         {{event.participants.map((participation: Participation) => participation.participant.name).join('&#183;')}}
       </div>
@@ -17,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import type { EventGame, GamingEvent, Participation } from '@/model/GamingEvent';
+import type { EventGame, GamingEvent, Participation, Schedule } from '@/model/GamingEvent';
 import router from '@/router';
 import { Card } from 'primevue';
 import type { PropType } from 'vue';
@@ -48,7 +49,16 @@ function onClickCard() {
   });
 }
 
-
+function scheduleDescription(schedule: Schedule): string {
+  switch (schedule) {
+    case 'WEEKLY':
+      return 'weekly';
+    case 'MONTHLY':
+      return 'monthly';    
+    default:
+      return '';
+  }
+}
 
 </script>
 

@@ -1,7 +1,6 @@
 package de.oetting.bgp.gamingevent.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.oetting.bgp.controller.IdWrapper;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
@@ -19,13 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/")
 public class GamingEventController {
-
 
     @Autowired
     private GamingEventRepository gamingEventRepository;
@@ -49,15 +46,17 @@ public class GamingEventController {
     @GetMapping("/gameGroup/{gameGroupId}/gamingEvents")
     public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId,
                                                    @RequestParam(name = "onlyNext", defaultValue = "false") boolean onlyNext,
-                                                   @RequestParam(name = "number", defaultValue = "5") int number){
+                                                   @RequestParam(name = "number", defaultValue = "5") int number) {
         var events = findGameEvents(gameGroupId, onlyNext, number);
 
-        return events.stream().map(this::map).toList();
+        return events.stream()
+                .map(this::map)
+                .toList();
     }
 
     @Transactional
     @GetMapping("/gamingEvents/{gamingEventId}")
-    public GamingEventModel getGamingEvent(@PathVariable("gamingEventId") long gamingEventId){
+    public GamingEventModel getGamingEvent(@PathVariable("gamingEventId") long gamingEventId) {
        return map(gamingEventRepository.findById(gamingEventId).orElseThrow());
     }
 
@@ -69,12 +68,38 @@ public class GamingEventController {
         if (gameGroupId != model.getGameGroupId()) {
             throw new UnprocessableEntityException("GameGroupId must have same value in url and body");
         }
-        if (model.getEnd() != null && model.getEnd().isBefore(model.getStart())) {
-            throw new UnprocessableEntityException("Start must be before end");
-        }
 
         var entity = map(model);
         GamingEventEntity savedEntity = gamingEventRepository.save(entity);
+        return map(savedEntity);
+    }
+
+    @Transactional
+    @DeleteMapping("/gamingEvents/{gamingEventId}")
+    public void deleteGamingEvent(@PathVariable("gamingEventId") long gamingEventId) {
+        var gamingEvent = gamingEventRepository.findById(gamingEventId);
+        var gameGroupId = gamingEvent.orElseThrow().getGameGroup().getId();
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
+
+        gamingEventParticipantsRepository.deleteByGamingEventId(gamingEventId);
+        gamingEventGameRepository.deleteByGamingEventId(gamingEventId);
+        gamingEventRepository.deleteById(gamingEventId);
+    }
+
+    @Transactional
+    @PostMapping("/gameGroup/{gameGroupId}/gamingEvents/{gamingEventId}/clone")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public GamingEventModel cloneEvent(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gamingEventId") long gamingEventId) {
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
+        var toBeCloned = gamingEventRepository.findById(gamingEventId).orElseThrow();
+
+        var newEntity = new GamingEventEntity();
+        newEntity.setSchedule(toBeCloned.getSchedule());
+        newEntity.setGames(toBeCloned.getGames() != null ? new ArrayList<>(toBeCloned.getGames()) : null);
+        newEntity.setStart(toBeCloned.getStart());
+        newEntity.setGameGroup(toBeCloned.getGameGroup());
+        newEntity.setParticipants(toBeCloned.getParticipants() != null ? new ArrayList<>(toBeCloned.getParticipants()) : null);
+        GamingEventEntity savedEntity = gamingEventRepository.save(newEntity);
         return map(savedEntity);
     }
 
@@ -86,12 +111,13 @@ public class GamingEventController {
                                               @RequestBody GamingEventModel model) {
         gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         if (gamingEventId != model.getId()) {
-            throw new UnprocessableEntityException("GameGroupId must have same value in url and body");
+            throw new UnprocessableEntityException("gamingEventId must have same value in url and body");
         }
-        if (model.getEnd().isBefore(model.getStart())) {
-            throw new UnprocessableEntityException("Start must be before end");
-        }
+
         GamingEventEntity gamingEvent = gamingEventRepository.findById(model.getId()).orElseThrow();
+        if (model.getGameGroupId() != gamingEvent.getGameGroup().getId()) {
+            throw new UnprocessableEntityException("GameGroupId cannot be changed");
+        }
         update(model, gamingEvent);
         return map(gamingEvent);
     }
@@ -181,7 +207,7 @@ public class GamingEventController {
     }
 
     private void addPlayerIfMissing(Player player, GamingEventEntity gamingEvent) {
-        boolean doesNotExistYet = gamingEvent.getParticipants().stream().noneMatch(participant -> participant.getParticipant().getId() == player.getId());
+        boolean doesNotExistYet = gamingEvent.getParticipants().stream().noneMatch(participant -> Objects.equals(participant.getParticipant().getId(), player.getId()));
 
         if (doesNotExistYet) {
             var newParticipant = new GamingEventParticipantsEntity();
@@ -203,19 +229,19 @@ public class GamingEventController {
     }
 
     private static void update(GamingEventModel model, GamingEventEntity gamingEvent) {
-        gamingEvent.setEnd(model.getEnd());
         gamingEvent.setStart(model.getStart());
         gamingEvent.setDescription(model.getDescription());
+        gamingEvent.setSchedule(model.getSchedule());
     }
 
     private GamingEventModel map(GamingEventEntity entity) {
         var model = new GamingEventModel();
         model.setDescription(entity.getDescription());
-        model.setEnd(entity.getEnd());
         model.setStart(entity.getStart());
         model.setId(entity.getId());
         model.setGames(entity.getGames() == null ? Collections.emptyList() : entity.getGames().stream().map(this::map).toList());
         model.setParticipants(entity.getParticipants() == null ? Collections.emptyList() : entity.getParticipants().stream().map(this::map).toList());
+        model.setSchedule(entity.getSchedule());
         return model;
     }
 
@@ -238,9 +264,9 @@ public class GamingEventController {
     private GamingEventEntity map(GamingEventModel model) {
         var entity = new GamingEventEntity();
         entity.setDescription(model.getDescription());
-        entity.setEnd(model.getEnd());
         entity.setStart(model.getStart());
         entity.setGameGroup(gameGroupService.find(model.getGameGroupId()).orElseThrow());
+        entity.setSchedule(model.getSchedule());
         return entity;
     }
 

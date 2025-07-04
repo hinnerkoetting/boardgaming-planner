@@ -9,6 +9,8 @@ public interface GamingEventGameRepository extends CrudRepository<GamingEventGam
 
     void deleteByGamingEventIdAndGameId(long gamingEventId, long gameId);
 
+    void deleteByGamingEventId(long gamingEventId);
+
     Optional<GamingEventGameEntity> findByGamingEventIdAndGameId(long gamingEventId, long gameId);
 
 }

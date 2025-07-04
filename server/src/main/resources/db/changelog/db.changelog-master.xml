@@ -474,6 +474,9 @@
             </column>
             <column name="END_TS"  type="timestamp with time zone"/>
             <column name="DESCRIPTION" type="VARCHAR2(4000)"/>
+            <column name="SCHEDULE" type="VARCHAR2(20)">
+                <constraints nullable="false"/>
+            </column>
             <column name="GAME_GROUP_ID" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
