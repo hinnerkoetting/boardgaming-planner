@@ -3,10 +3,11 @@
     <h1>Group {{ gameGroup?.name }}</h1>
     <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId }}">To games</router-link>
     
-    <h2>Next events</h2>
+    <h2>Next events</h2>    
     <GamingEventsCollection
       v-if="gamingEvents.length > 0"
       :gaming-events="gamingEvents"
+      :game-group-id="gameGroupId"
       />
 
    

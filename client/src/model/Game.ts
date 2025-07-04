@@ -48,7 +48,7 @@ export class AdminGame extends Game {
   }
 }
 
-export class GameGroupGame extends Game {
+export class RatedGame extends Game {
   constructor(
     readonly id: number | undefined,
     readonly name: string,

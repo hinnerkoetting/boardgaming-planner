@@ -60,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import { GameGroupGame } from '@/model/Game'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Image from 'primevue/image'
@@ -68,12 +67,12 @@ import Tag from 'primevue/tag'
 import { ref, watch, type PropType } from 'vue'
 import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
 import Dialog from 'primevue/dialog'
-import PlayerTagsListComponent from '../GameGroup/tags/PlayerTagsListComponent.vue'
 import type { Player } from '@/model/Player/Player'
+import type { RatedGame } from '@/model/Game'
 
 const props = defineProps({
   game: {
-    type: Object as PropType<GameGroupGame>,
+    type: Object as PropType<RatedGame>,
     required: true
   },
   withRateButton: {
@@ -91,8 +90,8 @@ const props = defineProps({
 })
 
 defineEmits<{
-  (e: 'game-rating-selected', game: GameGroupGame): void
-  (e: 'game-tag-selected', game: GameGroupGame): void
+  (e: 'game-rating-selected', game: RatedGame): void
+  (e: 'game-tag-selected', game: RatedGame): void
 }>()
 
 const game = ref(props.game)
@@ -100,7 +99,7 @@ const showGameDialog = ref(false)
 
 watch(
   () => props.game,
-  (newGameValue: GameGroupGame) => {
+  (newGameValue: RatedGame) => {
     game.value = newGameValue
   }
 )
@@ -118,6 +117,7 @@ function onClickCard() {
 
 .full-height {
   height: 100%;
+  cursor: pointer;
 }
 
 .center-horizontally {

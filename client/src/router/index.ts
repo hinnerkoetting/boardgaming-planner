@@ -33,8 +33,13 @@ const router = createRouter({
     },
     {
       path: '/gameGroup/:gameGroupId/gamingEvents',
-      name: 'groupGamingEvents',
-      component: () => import('../views/GameGroup/GamingEvents/GamingEventsView.vue')
+      name: 'groupGamingEventsOverview',
+      component: () => import('../views/GameGroup/GamingEvents/GamingEventsOverview.vue')
+    },
+    {
+      path: '/gameGroup/:gameGroupId/gamingEvents/:gamingEventId',
+      name: 'groupGamingEvent',
+      component: () => import('../views/GameGroup/GamingEvents/GamingEventView.vue')
     },
     {
       path: '/account',

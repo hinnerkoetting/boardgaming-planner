@@ -135,6 +135,16 @@ public class GameGroupController {
                 .toList();
     }
 
+    @GetMapping(path = "/{gameGroupId}/games/{gameId}")
+    public RatedGameModel getGame(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId) {
+        var game = gameRepository.findById(gameId).orElseThrow();
+        List<Rating> ratings = ratingRepository.findByGameGroupIdAndGameId(gameGroupId, gameId);
+        var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
+        var playerTags = playerTagRepository.findByGameGroupId(gameGroupId);
+
+        return map(ratings, game, gameGroupTags, playerTags);
+    }
+
     @Transactional
     @PostMapping(path = "/{gameGroupId}/{gameId}/gameGroupTag")
     @ResponseStatus(value = HttpStatus.CREATED)

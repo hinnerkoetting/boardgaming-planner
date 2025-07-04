@@ -1,25 +1,14 @@
-<template>
+<template>  
   <DataView :value="gamingEvents" class="collection" dataKey="id">
     <template #empty> No events exist </template>
     <template #list="slotProps">
-      <div v-for="(item, index) in slotProps.items" :key="index">
-        
-         <Card>
-            <template #title>
-              <div class="title">
-              {{ formatDate(new Date(item.start))  }}
-              </div>
-            </template>
-            <template #content>       
-              <div>
-                {{ item.participants.map((participation: Participation) => participation.participant.name).join('&#183;') }}
-              </div>               
-              <div>
-                {{ item.games.map((game: EventGame) => game.game.name).join('&#183;') }}
-              </div>
-            </template>
-          </Card>
-        
+      <div class="grid">
+        <div v-for="(item, index) in slotProps.items" :key="index">
+          <div class="grid-card">
+            <GamingEventCard :event="item" :gameGroupId="gameGroupId" />
+          </div>
+          
+        </div>
       </div>
     </template>
   </DataView>
@@ -28,21 +17,47 @@
 
 
 <script setup lang="ts">
-import type { EventGame, GamingEvent, Participation } from '@/model/GamingEvent';
-import { Card, DataView } from 'primevue';
+import type { GamingEvent } from '@/model/GamingEvent';
+import { DataView } from 'primevue';
 import type { PropType } from 'vue';
+import GamingEventCard from './GamingEventCard.vue';
 
 
 defineProps({
   gamingEvents: {
     type: Array as PropType<GamingEvent[]>,
     required: true
-  }  
+  },
+  gameGroupId: {
+    type: Number,
+    required: true
+  }
 })
 
-function formatDate(date: Date) {
+</script>
 
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "long", weekday: "long" });
+<style lang="css" scoped>
+
+.grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-</script>
+.grid-card {
+  flex: 1 1 0px;
+  margin-bottom: auto;
+  align-self: stretch;
+  margin-top: 4px;
+}
+
+@media (max-width: 500px) {
+  .grid {
+    display: block;
+  }
+  .grid-card {
+    flex: 0 0 100%;
+  }
+}
+</style>

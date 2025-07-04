@@ -8,14 +8,14 @@ export class GamingEvent {
     public start: number,
     public end: number,
     public participants: Participation[],
-    public games: Game[]
+    public games: EventGame[]
   ) {}
 }
 
 export class Participation {
   constructor(
     readonly participant: Player,
-    readonly participationStatus: 'ACCEPTED' | 'DECLINED' | 'MAYBE' | 'NOT_RESPONDED',
+    readonly participationStatus: ParticipationStatus,
     readonly comment: string | null = null
   ) {}
 }
@@ -23,7 +23,11 @@ export class Participation {
 export class EventGame {
   constructor(
     readonly game: Game,
-    readonly gameStatus: 'SUGGESTED' | 'REJECTED' | 'PLAYED',
+    readonly gameStatus: GameStatus,
     readonly comment: string | null = null
   ) {}
 }
+
+
+export type ParticipationStatus = 'CONFIRMED' | 'DECLINED' | 'MAYBE' | 'NOT_RESPONDED'
+export type GameStatus = 'SUGGESTED' | 'REJECTED' | 'PLAYED'

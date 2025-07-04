@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { PlayerTagInGameGroup, TagInGameGroup, type GameGroupGame } from '@/model/Game';
+import { PlayerTagInGameGroup, TagInGameGroup, type RatedGame } from '@/model/Game';
 import type { TagModel } from '@/model/TagModel';
 import { addTagToGameInGroup, addTagToPlayereInGroup, deleteTagFromGameInGroup, deleteTagFromPlayerInGroup } from '@/services/api/GameGroupApiService';
 import { getCurrentPlayerId } from '@/services/LoginService';
@@ -32,7 +32,7 @@ import { onMounted, ref, type PropType, type Ref } from 'vue';
 
 const props = defineProps({
   game: {
-    type: Object as PropType<GameGroupGame>,
+    type: Object as PropType<RatedGame>,
     required: true
   },
   gameGroupId: {

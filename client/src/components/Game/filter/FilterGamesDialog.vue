@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GameGroupGame } from '@/model/Game'
+import type { RatedGame } from '@/model/Game'
 import type { TagModel } from '@/model/TagModel'
 import FilterGamesComponent from './FilterGamesComponent.vue'
 import { ref, watch, type PropType } from 'vue'
@@ -29,11 +29,11 @@ const props = defineProps({
     required: true
   },
   allGames: {
-    type: Array as PropType<GameGroupGame[]>,
+    type: Array as PropType<RatedGame[]>,
     required: true
   },
   visibleGames: {
-    type: Array as PropType<GameGroupGame[]>,
+    type: Array as PropType<RatedGame[]>,
     required: true
   },
   numberOfPlayersInGroup: {
@@ -48,13 +48,13 @@ const props = defineProps({
 const numberOfVisibleGames = ref()
 
 const emit = defineEmits<{
-  (e: 'updated-filter', visibleGames: GameGroupGame[]): void,
+  (e: 'updated-filter', visibleGames: RatedGame[]): void,
   (e: 'opened'): void
 }>()
 
 watch(
   () => props.visibleGames,
-  (games: GameGroupGame[]) => {
+  (games: RatedGame[]) => {
     numberOfVisibleGames.value = games.length
   }
 )
@@ -66,7 +66,7 @@ function onClickShowFilter() {
   emit('opened')
 }
 
-function onFilterUpdated(games: GameGroupGame[]) {
+function onFilterUpdated(games: RatedGame[]) {
   emit('updated-filter', games)
 }
 

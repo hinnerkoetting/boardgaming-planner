@@ -52,6 +52,12 @@ public class GamingEventController {
     }
 
     @Transactional
+    @GetMapping("/gamingEvents/{gamingEventId}")
+    public GamingEventModel getGamingEvent(@PathVariable("gamingEventId") long gamingEventId){
+       return map(gamingEventRepository.findById(gamingEventId).orElseThrow());
+    }
+
+    @Transactional
     @PostMapping("/gameGroup/{gameGroupId}/gamingEvents")
     @ResponseStatus(value = HttpStatus.CREATED)
     public GamingEventModel createGamingEvent(@PathVariable("gameGroupId") long gameGroupId, @RequestBody GamingEventModel model) {

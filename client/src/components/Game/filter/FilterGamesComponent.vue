@@ -134,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GameGroupGame } from '@/model/Game'
+import type { RatedGame } from '@/model/Game'
 import type { Player } from '@/model/Player/Player'
 import { TagModel } from '@/model/TagModel'
 import { FilterService, TagSelection, PlayerTagSelection, type PlayerFilterType } from '@/services/FilterService'
@@ -151,7 +151,7 @@ const props = defineProps({
     required: true
   },
   allGames: {
-    type: Array as PropType<GameGroupGame[]>,
+    type: Array as PropType<RatedGame[]>,
     required: true
   },
   numberOfPlayersInGroup: {
@@ -164,7 +164,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (e: 'updated-filter', visibleGames: GameGroupGame[]): void
+  (e: 'updated-filter', visibleGames: RatedGame[]): void
   (e: 'close'): void
 }>()
 

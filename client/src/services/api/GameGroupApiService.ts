@@ -2,7 +2,7 @@ import type { GameGroup } from '@/model/GameGroup'
 import { authorizedFetch } from './ApiService'
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
 import type { Player } from '@/model/Player/Player'
-import type { GameGroupGame } from '@/model/Game'
+import type { RatedGame } from '@/model/Game'
 import { getCurrentPlayerId } from '../LoginService'
 
 export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
@@ -40,9 +40,14 @@ export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]
   return (await response.json()) as Player[]
 }
 
-export async function fetchGamesInGroup(gameGroupId: Number): Promise<GameGroupGame[]> {
+export async function fetchGamesInGroup(gameGroupId: Number): Promise<RatedGame[]> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`)
   return await response.json()
+}
+
+export async function fetchGameInGroup(gameGroupId: number, gameId: number): Promise<ResponseWrapper<RatedGame>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games/${gameId}`)
+  return wrapResponse(response)
 }
 
 export async function removePlayerFromGroup(gameGroupId: Number, playerId: Number) {

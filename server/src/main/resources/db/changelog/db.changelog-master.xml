@@ -472,9 +472,7 @@
             <column name="START_TS" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="END_TS"  type="timestamp with time zone">
-                <constraints nullable="false"/>
-            </column>
+            <column name="END_TS"  type="timestamp with time zone"/>
             <column name="DESCRIPTION" type="VARCHAR2(4000)"/>
             <column name="GAME_GROUP_ID" type="BIGINT">
                 <constraints nullable="false"/>

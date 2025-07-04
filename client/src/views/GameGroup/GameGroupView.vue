@@ -4,7 +4,7 @@
     
 
 
-    <router-link :to="{ name: 'groupGamingEvents', params: { gameGroupId: gameGroupId }}">Next events</router-link>
+    <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Next events</router-link>
 
     <h2>
       Games
@@ -51,7 +51,7 @@ import { ref } from 'vue'
 import { GameGroup } from '@/model/GameGroup'
 import { useRoute } from 'vue-router'
 import type { Player } from '@/model/Player/Player'
-import type { Game, GameGroupGame } from '@/model/Game'
+import type { Game, RatedGame } from '@/model/Game'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
 import {
@@ -77,8 +77,8 @@ import { loadTags } from '@/services/StoreApiService'
 
 const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
 const players: Ref<Player[]> = ref([])
-const allGames: Ref<GameGroupGame[]> = ref([])
-const displayedGames: Ref<GameGroupGame[]> = ref([])
+const allGames: Ref<RatedGame[]> = ref([])
+const displayedGames: Ref<RatedGame[]> = ref([])
 const tags: Ref<TagModel[]> = ref([])
 const isPartOfGroup = ref(false)
 
@@ -161,7 +161,7 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     callback(new EventMessage(response.error.detail, false))
     return
   }
-  const gameGroupGame: GameGroupGame = {
+  const gameGroupGame: RatedGame = {
     ...game,
     rating: {
       myRating: undefined,
@@ -206,7 +206,7 @@ async function onClickLeaveButton() {
   router.go(0) // not sure why this is necessary, otherwise the page will not be displayed
 }
 
-function onUpdatedFilters(filteredGames: GameGroupGame[]) {
+function onUpdatedFilters(filteredGames: RatedGame[]) {
   displayedGames.value = filteredGames
 }
 

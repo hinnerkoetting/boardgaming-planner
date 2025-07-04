@@ -7,6 +7,7 @@
             <div class="grid-card">
               <GameComponent
                 :game="item"
+                :game-group-id="gameGroupId"
                 @game-rating-selected="onClickRate"
                 @game-tag-selected="onClickTag"
                 :withRateButton="withRateButton"
@@ -44,13 +45,13 @@ import { ref, watch, type PropType, type Ref } from 'vue'
 import RatingComponent from '../GameGroup/RatingComponent.vue'
 import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
-import type { GameGroupGame } from '@/model/Game'
+import type { RatedGame } from '@/model/Game'
 import TagGameInGroupComponent from '../GameGroup/tags/TagGameInGroupComponent.vue'
 import type { Player } from '@/model/Player/Player'
 
 const props = defineProps({
   games: {
-    type: Array as PropType<GameGroupGame[]>,
+    type: Array as PropType<RatedGame[]>,
     required: true
   },
   gameGroupId: {
@@ -70,26 +71,26 @@ const props = defineProps({
 
 const emit = defineEmits(['ratingOpened', 'tagOpened', 'gameRated'])
 
-const games: Ref<GameGroupGame[]> = ref(props.games)
+const games: Ref<RatedGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
 const ratingWindowVisible = ref(false)
 const tagWindowVisible = ref(false)
-const selectedGame: Ref<GameGroupGame | undefined> = ref()
+const selectedGame: Ref<RatedGame | undefined> = ref()
 
 watch(
   () => props.games,
-  (newGames: GameGroupGame[]) => {
+  (newGames: RatedGame[]) => {
     games.value = newGames
   }
 )
 
-async function onClickRate(game: GameGroupGame) {
+async function onClickRate(game: RatedGame) {
   selectedGame.value = game
   ratingWindowVisible.value = true
   emit('ratingOpened')
 }
 
-async function onClickTag(game: GameGroupGame) {
+async function onClickTag(game: RatedGame) {
   selectedGame.value = game
   tagWindowVisible.value = true
   emit('tagOpened')

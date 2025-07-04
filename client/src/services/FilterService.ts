@@ -1,4 +1,4 @@
-import type { GameGroupGame } from '@/model/Game'
+import type { RatedGame } from '@/model/Game'
 import type { Player } from '@/model/Player/Player'
 
 export type PlayerFilterType = 'OFF' | 'PLAYABLE' | 'RECOMMENDED' | 'BEST'
@@ -22,7 +22,7 @@ export class FilterService {
     localStorage.setItem('filter-settings', JSON.stringify(settings))
   }
 
-  filterWithStoredSettings(allGames: GameGroupGame[], allPlayers: Player[]): GameGroupGame[] {
+  filterWithStoredSettings(allGames: RatedGame[], allPlayers: Player[]): RatedGame[] {
     const filter = this.loadFilterSettings()
     if (!filter) {
       return allGames
@@ -32,14 +32,14 @@ export class FilterService {
     })
   }
 
-  filterGames(allGames: GameGroupGame[], filter: FilterGamesSettings, allPlayers: Player[]): GameGroupGame[] {
+  filterGames(allGames: RatedGame[], filter: FilterGamesSettings, allPlayers: Player[]): RatedGame[] {
     this.saveFilterSettings(filter)
     return allGames.filter((game) => {
       return !this.excludesGame(game, filter, allPlayers)
     })
   }
 
-  private excludesGame(game: GameGroupGame, filter: FilterGamesSettings, allPlayers: Player[]): boolean {
+  private excludesGame(game: RatedGame, filter: FilterGamesSettings, allPlayers: Player[]): boolean {
     return (
       this.doesPlayerfilterTypeExcludeGame(game, filter) ||
       this.doesPlayingTimeExludeGame(game, filter) ||
@@ -49,17 +49,17 @@ export class FilterService {
     )
   }
 
-  private doNonPlayerTagsExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private doNonPlayerTagsExcludeGame(game: RatedGame, filter: FilterGamesSettings) {
     const tags: TagSelection[] = filter.nonPlayerTags
     return tags?.some((tag) => this.doesTagExcludeGame(game, tag))
   }
 
-  private doPlayerTagsExcludeGame(game: GameGroupGame, filter: FilterGamesSettings, allPlayers: Player[]) {
+  private doPlayerTagsExcludeGame(game: RatedGame, filter: FilterGamesSettings, allPlayers: Player[]) {
     const tags: PlayerTagSelection[] = filter.playerTags
     return tags?.some((tag) => this.doesPlayerTagExcludeGame(game, tag, allPlayers))
   }
 
-  private doesPlayingTimeExludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private doesPlayingTimeExludeGame(game: RatedGame, filter: FilterGamesSettings) {
     if (!game.playingTimeMinutes) {
       return false
     }
@@ -69,7 +69,7 @@ export class FilterService {
     )
   }
 
-  private doesPlayerfilterTypeExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private doesPlayerfilterTypeExcludeGame(game: RatedGame, filter: FilterGamesSettings) {
     switch (filter.playerFilterType) {
       case 'OFF':
         return false
@@ -86,7 +86,7 @@ export class FilterService {
   }
 
   private doesNumberOfRecommendedPlayersExcludeGame(
-    game: GameGroupGame,
+    game: RatedGame,
     filter: FilterGamesSettings
   ) {
     if (!filter.numberOfPlayers) {
@@ -97,7 +97,7 @@ export class FilterService {
     return !recommendedNumberOfPlayers.includes(numberOfPlayers)
   }
 
-  private doesNumberOfBestPlayersExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private doesNumberOfBestPlayersExcludeGame(game: RatedGame, filter: FilterGamesSettings) {
     if (!filter.numberOfPlayers) {
       return false
     }
@@ -106,7 +106,7 @@ export class FilterService {
     return !recommendedNumberOfPlayers.includes(numberOfPlayers)
   }
 
-  private doesNumberOfPlayersExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+  private doesNumberOfPlayersExcludeGame(game: RatedGame, filter: FilterGamesSettings) {
     if (!filter.numberOfPlayers) {
       return false
     }
@@ -122,7 +122,7 @@ export class FilterService {
     return false
   }
 
-  private doesTagExcludeGame(game: GameGroupGame, tagSelection: TagSelection): boolean {
+  private doesTagExcludeGame(game: RatedGame, tagSelection: TagSelection): boolean {
     if (tagSelection.selected === 'DO_NOT_FILTER') {
       return false
     }
@@ -135,7 +135,7 @@ export class FilterService {
     return false
   }
 
-  private doesPlayerTagExcludeGame(game: GameGroupGame, tagSelection: PlayerTagSelection, allPlayers: Player[]): boolean {
+  private doesPlayerTagExcludeGame(game: RatedGame, tagSelection: PlayerTagSelection, allPlayers: Player[]): boolean {
     if (tagSelection.selected === 'DO_NOT_FILTER') {
       return false
     }
@@ -152,7 +152,7 @@ export class FilterService {
     return false;    
   }
 
-  private unratedDoesExcludeGame(game: GameGroupGame, filter: FilterGamesSettings): boolean {
+  private unratedDoesExcludeGame(game: RatedGame, filter: FilterGamesSettings): boolean {
     if (!filter.notRatedYet) {
       return false;
     }
