@@ -98,13 +98,15 @@ public class GamingEventController {
 
         var newEntity = new GamingEventEntity();
         newEntity.setSchedule(toBeCloned.getSchedule());
-        newEntity.setGames(toBeCloned.getGames() != null ? toBeCloned.getGames().stream().map(g -> g.cloneTo(newEntity)).toList() : null);
         newEntity.setStart(toBeCloned.getStart());
         newEntity.setGameGroup(toBeCloned.getGameGroup());
-        newEntity.setParticipants(toBeCloned.getParticipants() != null ? toBeCloned.getParticipants().stream().map(p -> p.cloneTo(newEntity)).toList() : null);
         GamingEventEntity savedEntity = gamingEventRepository.save(newEntity);
+        savedEntity.setGames(clone(toBeCloned, savedEntity));
+        savedEntity.setParticipants(cloneParticipants(toBeCloned, savedEntity));
+
         return map(savedEntity);
     }
+
 
     @Transactional
     @PutMapping("/gameGroup/{gameGroupId}/gamingEvents/{gamingEventId}")
@@ -207,6 +209,14 @@ public class GamingEventController {
         gameGroupService.checkUserIsPartOfGroup(participant.getGamingEvent().getGameGroup().getId());
 
         participant.setParticipationStatus(ParticipationStatus.valueOf(status));
+    }
+
+    private List<GamingEventGameEntity> clone(GamingEventEntity toBeCloned, GamingEventEntity newEntity) {
+        return toBeCloned.getGames() != null ? toBeCloned.getGames().stream().map(g -> gamingEventGameRepository.save(g.cloneTo(newEntity))).toList() : null;
+    }
+
+    private List<GamingEventParticipantsEntity> cloneParticipants(GamingEventEntity toBeCloned, GamingEventEntity newEntity) {
+        return toBeCloned.getParticipants() != null ? toBeCloned.getParticipants().stream().map(p -> gamingEventParticipantsRepository.save(p.cloneTo(newEntity))).toList() : null;
     }
 
     private void addPlayerIfMissing(Player player, GamingEventEntity gamingEvent) {

@@ -47,7 +47,6 @@ const gameGroup: Ref<GameGroup | null> = ref(null);
 const gamingEvents: Ref<GamingEvent[]> = ref([])
 const gameGroupId = Number(route.params.gameGroupId)
 let startTime = new Date();
-startTime.setUTCHours(0,0,0,0);
 
 const showDialog = ref(false);
 
@@ -133,7 +132,7 @@ function determineScheduleStartDate(scheduleBaseTime: Date, schedule: 'WEEKLY' |
     return scheduleBaseTime
   }
   const scheduleInterval = schedule === 'WEEKLY' ? 6.048e+8 : 2.628e+9; // 1 week in ms or 1 month in ms
-  const numberOMissingSchedules = Math.floor(minInclusiveDate.getTime() - scheduleBaseTime.getTime()) / scheduleInterval
+  const numberOMissingSchedules = Math.floor((minInclusiveDate.getTime() - scheduleBaseTime.getTime()) / scheduleInterval)
   const firstInclusiveDate = scheduleBaseTime.getTime() + (numberOMissingSchedules + 1) * scheduleInterval;
   return new Date(firstInclusiveDate)
 }

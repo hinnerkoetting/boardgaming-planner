@@ -83,6 +83,7 @@ onBeforeRouteUpdate(async (to, from, next) => {
   gameGroupId = Number(to.params.gameGroupId)
   gamingEventId = Number(to.params.gamingEventId)
   startTime = parse(to.query)
+  event.value = null;
   await loadData();
   next();
 })
@@ -109,7 +110,7 @@ async function loadData(){
     if (!startTime) {
       startTime = new Date(event.value.start)
     }
-  } else {
+  } else {    
     console.error('Error when loading event ' + gamingEventId)
   }
 }
