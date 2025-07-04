@@ -15,7 +15,7 @@
             </div>
             <div
               v-if="!!game.rating?.averageRating || !!game.rating?.myRating"
-              class="center-horizontally"
+              class="center-horizontally rating"
             >
               Rating: &Oslash; {{ game.rating?.averageRating || '?' }} &#183; Me
               {{ game.rating?.myRating || '?' }} &#183;
@@ -132,7 +132,7 @@ function onClickCard() {
   overflow: hidden;
   white-space: nowrap;
   text-align: center;
-  max-width: 320px;
+  max-width: 200px;
 }
 
 .content {
@@ -145,9 +145,15 @@ function onClickCard() {
 .fullWidth {
   width: 100%;
 }
-</style>
 
-<style>
+.rating {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  max-width: 200px;
+}
+
 .p-dialog {
   --p-dialog-background: var(--color-background);
 }

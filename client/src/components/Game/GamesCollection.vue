@@ -120,7 +120,7 @@ function onGameRated(rating: Rating) {
 }
 
 .grid-card {
-  flex: 0 0 250px;
+  flex: 1 1 0px;
   margin-bottom: auto;
   align-self: stretch;
   margin-top: 4px;
