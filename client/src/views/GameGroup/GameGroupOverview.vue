@@ -18,9 +18,10 @@
         action-button-text="Join"
         @onRowClick="onClickOpenGroup"
         @onClickActionButton="onClickJoinGroup"
-        empty-text=""
+        empty-text="No groups found..."
         class="gameGroupCollection"
       />
+      <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
 
       <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
     </div>
@@ -42,16 +43,30 @@ import {
 } from '@/services/api/GameGroupApiService'
 import GameGroupCollection from '@/components/GameGroup/GameGroupCollection.vue'
 import Button from 'primevue/button'
+import { Message } from 'primevue'
 
 const myGameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
+const errorMessage: Ref<string> = ref('')
 
 onMounted(async () => {
-  myGameGroups.value = await fetchMyGameGroups()
+  errorMessage.value = '';
+  const result = await fetchMyGameGroups()
+  if (result.success) {  
+    myGameGroups.value = result.success
+  } else {
+    errorMessage.value = result.error?.detail || 'Error fetching game groups';    
+  }  
 })
 
-function onClickLoadButton() {
-  fetchGameGroups().then((groups) => (gameGroups.value = removeMyGroupsFromOthers(groups)))
+async function onClickLoadButton() {
+  errorMessage.value = '';
+  const result = await fetchGameGroups();  
+  if (result.success) {  
+    gameGroups.value = result.success
+  } else {
+    errorMessage.value = result.error?.detail || 'Error fetching game groups';    
+  }  
 }
 
 function removeMyGroupsFromOthers(gameGroups: GameGroup[]): GameGroup[] {

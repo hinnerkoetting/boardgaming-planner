@@ -39,7 +39,13 @@ import { deleteGameGroup, fetchGameGroups } from '@/services/api/GameGroupApiSer
 const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 
 onMounted(async () => {
-  gameGroups.value = await fetchGameGroups()
+  const result = await fetchGameGroups()
+  if (result.success) {
+    gameGroups.value = result.success    
+  } else {
+    console.error('Error fetching game groups:', result.error)
+    return
+  }  
 })
 
 function onClickDelete(id: Number) {
