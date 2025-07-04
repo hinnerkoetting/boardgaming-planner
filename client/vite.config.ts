@@ -8,23 +8,30 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import path from 'node:path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [vue(), vueJsx(), vueDevTools()],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        secure: false
+export default defineConfig(({ command }) => {
+  const config = {
+    plugins: [vue(), vueJsx(), vueDevTools()],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      }
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          secure: false
+        }
       }
     }
+  };
+  if (command === 'serve') { // development
+    config.plugins.push(fixSourceMaps())
   }
+  return config;
 })
+
 
 function fixSourceMaps(): Plugin {
   let currentInterval: any = null
