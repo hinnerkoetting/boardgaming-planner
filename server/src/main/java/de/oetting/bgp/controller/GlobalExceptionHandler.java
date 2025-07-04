@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -142,6 +143,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NumberFormatException.class)
     public void numberFormatException(NumberFormatException e) {
         LOG.info("NumberFormatException {}", e.getMessage());
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public void methodArgumentTypeMismatchException(NumberFormatException e) {
+        LOG.info("MethodArgumentTypeMismatchException {}", e.getMessage());
     }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)

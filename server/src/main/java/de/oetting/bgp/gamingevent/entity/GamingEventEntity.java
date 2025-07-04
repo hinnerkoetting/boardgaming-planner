@@ -4,6 +4,7 @@ import de.oetting.bgp.gamegroup.entity.GameGroup;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "GAMING_EVENT")
@@ -25,6 +26,12 @@ public class GamingEventEntity {
 
     @Column
     private String description;
+
+    @ManyToMany(mappedBy = "gamingEvent")
+    private List<GamingEventParticipantsEntity> participants;
+
+    @ManyToMany(mappedBy = "gamingEvent")
+    private List<GamingEventGameEntity> games;
 
     public Long getId() {
         return id;
@@ -64,5 +71,22 @@ public class GamingEventEntity {
 
     public void setGameGroup(GameGroup gameGroup) {
         this.gameGroup = gameGroup;
+    }
+
+    public List<GamingEventParticipantsEntity> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<GamingEventParticipantsEntity> participants) {
+        this.participants = participants;
+    }
+
+
+    public List<GamingEventGameEntity> getGames() {
+        return games;
+    }
+
+    public void setGames(List<GamingEventGameEntity> games) {
+        this.games = games;
     }
 }

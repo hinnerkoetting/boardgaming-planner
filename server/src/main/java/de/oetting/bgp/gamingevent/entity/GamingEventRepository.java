@@ -1,6 +1,5 @@
-package de.oetting.bgp.gamingevent;
+package de.oetting.bgp.gamingevent.entity;
 
-import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 

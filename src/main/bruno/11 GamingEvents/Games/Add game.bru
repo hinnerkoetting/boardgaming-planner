@@ -1,0 +1,31 @@
+meta {
+  name: Add game
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{server}}/api/gamingEvents/{{gamingEventId}}/game
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+body:json {
+  {
+    "gameId": {{gameId}},
+    "gameStatus": "SUGGESTED",
+    "comment": "This is the best game in the world"
+  }
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}
+
+assert {
+  res.status: eq 200
+}

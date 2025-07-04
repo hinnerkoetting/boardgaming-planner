@@ -4,10 +4,22 @@
     <template #list="slotProps">
       <div v-for="(item, index) in slotProps.items" :key="index">
         
-        <div class="row" >
-          {{ item.description }}
-          {{  formatDate(new Date(item.start)) }}
-        </div>
+         <Card>
+            <template #title>
+              <div class="title">
+              {{ formatDate(new Date(item.start))  }}
+              </div>
+            </template>
+            <template #content>       
+              <div>
+                {{ item.participants.map((participation: Participation) => participation.participant.name).join('&#183;') }}
+              </div>               
+              <div>
+                {{ item.games.map((game: EventGame) => game.game.name).join('&#183;') }}
+              </div>
+            </template>
+          </Card>
+        
       </div>
     </template>
   </DataView>
@@ -16,8 +28,8 @@
 
 
 <script setup lang="ts">
-import type { GamingEvent } from '@/model/GamingEvent';
-import { DataView } from 'primevue';
+import type { EventGame, GamingEvent, Participation } from '@/model/GamingEvent';
+import { Card, DataView } from 'primevue';
 import type { PropType } from 'vue';
 
 
@@ -30,7 +42,7 @@ defineProps({
 
 function formatDate(date: Date) {
 
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "long", weekday: "long" });
 }
 
 </script>

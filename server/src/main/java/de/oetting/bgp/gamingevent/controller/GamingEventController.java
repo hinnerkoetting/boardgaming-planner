@@ -1,24 +1,25 @@
 package de.oetting.bgp.gamingevent.controller;
 
+import de.oetting.bgp.controller.IdWrapper;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
+import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
-import de.oetting.bgp.gamingevent.GamingEventRepository;
-import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
-import de.oetting.bgp.gamingevent.model.GamingEventModel;
+import de.oetting.bgp.gamingevent.entity.*;
+import de.oetting.bgp.gamingevent.model.*;
+import de.oetting.bgp.player.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "api/gamingEvents")
+@RequestMapping(path = "api/")
 public class GamingEventController {
 
 
@@ -28,8 +29,20 @@ public class GamingEventController {
     @Autowired
     private GameGroupService gameGroupService;
 
+    @Autowired
+    private GamingEventGameRepository gamingEventGameRepository;
+
+    @Autowired
+    private GamingEventParticipantsRepository gamingEventParticipantsRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
+
     @Transactional
-    @GetMapping("/{gameGroupId}")
+    @GetMapping("/gameGroup/{gameGroupId}/gamingEvents")
     public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId,
                                                    @RequestParam(name = "onlyNext", defaultValue = "false") boolean onlyNext,
                                                    @RequestParam(name = "number", defaultValue = "5") int number){
@@ -38,10 +51,8 @@ public class GamingEventController {
         return events.stream().map(this::map).toList();
     }
 
-
-
     @Transactional
-    @PostMapping("/{gameGroupId}")
+    @PostMapping("/gameGroup/{gameGroupId}/gamingEvents")
     @ResponseStatus(value = HttpStatus.CREATED)
     public GamingEventModel createGamingEvent(@PathVariable("gameGroupId") long gameGroupId, @RequestBody GamingEventModel model) {
         gameGroupService.checkUserIsPartOfGroup(gameGroupId);
@@ -58,7 +69,7 @@ public class GamingEventController {
     }
 
     @Transactional
-    @PutMapping("/{gameGroupId}/{gamingEventId}")
+    @PutMapping("/gameGroup/{gameGroupId}/gamingEvents/{gamingEventId}")
     @ResponseStatus(value = HttpStatus.OK)
     public GamingEventModel updateGamingEvent(@PathVariable("gameGroupId") long gameGroupId,
                                               @PathVariable("gamingEventId") long gamingEventId,
@@ -75,6 +86,56 @@ public class GamingEventController {
         return map(gamingEvent);
     }
 
+    @Transactional
+    @PostMapping("/gamingEvents/{gamingEventId}/player")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addPlayer(@PathVariable("gamingEventId") long gamingEventId, @RequestBody AddPlayerToEventRequest request) {
+        GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
+        var player = playerRepository.findById(request.getPlayerId()).orElseThrow();
+        gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
+
+        var participant = new GamingEventParticipantsEntity();
+        participant.setGamingEvent(gamingEvent);
+        participant.setParticipationStatus(request.getParticipationStatus());
+        participant.setParticipant(player);
+        gamingEventParticipantsRepository.save(participant);
+    }
+
+    @Transactional
+    @DeleteMapping("/gamingEvents/{gamingEventId}/player/{playerId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deletePlayer(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("playerId") long playerId) {
+        GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
+
+        gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
+        gamingEventParticipantsRepository.deleteByGamingEventIdAndParticipantId(gamingEventId, playerId);
+    }
+
+    @Transactional
+    @PostMapping("/gamingEvents/{gamingEventId}/game")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addGame(@PathVariable("gamingEventId") long gamingEventId, @RequestBody AddGameToEventRequest request) {
+        GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
+        var game = gameRepository.findById(request.getGameId()).orElseThrow();
+        gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
+
+        var gamingEventGame = new GamingEventGameEntity();
+        gamingEventGame.setGamingEvent(gamingEvent);
+        gamingEventGame.setGameStatus(request.getGameStatus());
+        gamingEventGame.setGame(game);
+        gamingEventGame.setComment(request.getComment());
+        gamingEventGameRepository.save(gamingEventGame);
+    }
+
+    @Transactional
+    @DeleteMapping("/gamingEvents/{gamingEventId}/game/{gameId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteGame(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("gameId") long gameId) {
+        GamingEventEntity gamingEvent = gamingEventRepository.findById(gamingEventId).orElseThrow();
+
+        gameGroupService.checkUserIsPartOfGroup(gamingEvent.getGameGroup().getId());
+        gamingEventGameRepository.deleteByGamingEventIdAndGameId(gamingEventId, gameId);
+    }
 
     private List<GamingEventEntity> findGameEvents(long gameGroupId,
                                                    boolean onlyNext,
@@ -91,12 +152,30 @@ public class GamingEventController {
         gamingEvent.setDescription(model.getDescription());
     }
 
-    private GamingEventModel map(GamingEventEntity gamingEventEntity) {
+    private GamingEventModel map(GamingEventEntity entity) {
         var model = new GamingEventModel();
-        model.setDescription(gamingEventEntity.getDescription());
-        model.setEnd(gamingEventEntity.getEnd());
-        model.setStart(gamingEventEntity.getStart());
-        model.setId(gamingEventEntity.getId());
+        model.setDescription(entity.getDescription());
+        model.setEnd(entity.getEnd());
+        model.setStart(entity.getStart());
+        model.setId(entity.getId());
+        model.setGames(entity.getGames() == null ? Collections.emptyList() : entity.getGames().stream().map(this::map).toList());
+        model.setParticipants(entity.getParticipants() == null ? Collections.emptyList() : entity.getParticipants().stream().map(this::map).toList());
+        return model;
+    }
+
+    private GamingEventGameModel map(GamingEventGameEntity gamingEventGameEntity) {
+        var model = new GamingEventGameModel();
+        model.setGame(gamingEventGameEntity.getGame());
+        model.setComment(gamingEventGameEntity.getComment());
+        model.setGameStatus(gamingEventGameEntity.getGameStatus());
+        return model;
+    }
+
+    private GamingEventParticipantsModel map(GamingEventParticipantsEntity entity) {
+        var model = new GamingEventParticipantsModel();
+        model.setParticipant(entity.getParticipant());
+        model.setParticipationStatus(entity.getParticipationStatus());
+        model.setComment(entity.getComment());
         return model;
     }
 

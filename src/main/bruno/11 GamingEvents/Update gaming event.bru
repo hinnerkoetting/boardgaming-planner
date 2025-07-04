@@ -1,11 +1,11 @@
 meta {
   name: Update gaming event
   type: http
-  seq: 6
+  seq: 3
 }
 
 put {
-  url: {{server}}/api/gamingEvents/{{gameGroupId}}/{{gamingEventId}}
+  url: {{server}}/api/gameGroup/{{gameGroupId}}/gamingEvents/{{gamingEventId}}
   body: json
   auth: none
 }

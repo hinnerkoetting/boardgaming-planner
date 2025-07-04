@@ -1,0 +1,23 @@
+meta {
+  name: Delete game
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{server}}/api/gamingEvents/{{gamingEventId}}/game/{{gameId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  gameGroupId: 1
+}
+
+assert {
+  res.status: eq 200
+}
