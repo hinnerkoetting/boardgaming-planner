@@ -45,7 +45,7 @@ const errorMessage = ref('')
 const description = ref(props.tag?.description || '')
 const sourceName = ref(props.tag?.importedSourceName || '')
 const type = ref(props.tag?.type || 'GLOBAL')
-const options = ['GLOBAL', 'GAME_GROUP']
+const options = ['GLOBAL', 'GAME_GROUP', 'PLAYER']
 
 async function onClickSubmit() {
   const response = await createOrUpdate()

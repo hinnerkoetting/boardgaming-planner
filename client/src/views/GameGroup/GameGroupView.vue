@@ -8,6 +8,7 @@
         :allTags="tags"
         :allGames="allGames"
         :visibleGames="displayedGames"
+        :allPlayers="players"
         :numberOfPlayersInGroup="players.length"
         @updatedFilter="onUpdatedFilters"
         @opened="onDialogOpened"
@@ -60,7 +61,7 @@ import { getCurrentPlayerId } from '@/services/LoginService'
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue'
 import { EventMessage } from '@/model/internal/EventMessage'
 import type { TagModel } from '@/model/TagModel'
-import FilterGamesDialog from '@/components/Game/FilterGamesDialog.vue'
+import FilterGamesDialog from '@/components/Game/filter/FilterGamesDialog.vue'
 import { FilterService } from '@/services/FilterService'
 import { subscribeToEventsOnGameGroup } from '@/services/ServerSentEvents'
 import { useToast } from 'primevue/usetoast'
@@ -90,10 +91,12 @@ onMounted(async () => {
     if (isPartOfGroup.value) {
       subscribeToEvents
     }
+    displayedGames.value = new FilterService().filterWithStoredSettings(allGames.value, players.value)
+    sortGames()
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
-    displayedGames.value = new FilterService().filterWithStoredSettings(result)
+    displayedGames.value = new FilterService().filterWithStoredSettings(result, players.value)
     sortGames()
   })
   loadTags().then((response) => {

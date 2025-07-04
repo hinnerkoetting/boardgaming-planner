@@ -44,7 +44,7 @@ import RatingComponent from '../GameGroup/RatingComponent.vue'
 import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
 import type { GameGroupGame } from '@/model/Game'
-import TagGameInGroupComponent from '../GameGroup/TagGameInGroupComponent.vue'
+import TagGameInGroupComponent from '../GameGroup/tags/TagGameInGroupComponent.vue'
 
 const props = defineProps({
   games: {

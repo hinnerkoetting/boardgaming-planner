@@ -78,7 +78,7 @@ const emit = defineEmits<{
 }>()
 
 onMounted(async () => {
-  tags.value = await loadTags()
+  tags.value = await loadTags(true)
 })
 
 function onClickEdit(game: AdminGame) {

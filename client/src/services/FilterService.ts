@@ -1,8 +1,10 @@
 import type { GameGroupGame } from '@/model/Game'
+import type { Player } from '@/model/Player/Player'
 
 export type PlayerFilterType = 'OFF' | 'PLAYABLE' | 'RECOMMENDED' | 'BEST'
 
 export class FilterService {
+
   loadFilterSettings(): FilterGamesSettings | undefined {
     const item = localStorage.getItem('filter-settings')
     if (!item) {
@@ -20,34 +22,40 @@ export class FilterService {
     localStorage.setItem('filter-settings', JSON.stringify(settings))
   }
 
-  filterWithStoredSettings(allGames: GameGroupGame[]): GameGroupGame[] {
+  filterWithStoredSettings(allGames: GameGroupGame[], allPlayers: Player[]): GameGroupGame[] {
     const filter = this.loadFilterSettings()
     if (!filter) {
       return allGames
     }
     return allGames.filter((game) => {
-      return !this.excludesGame(game, filter)
+      return !this.excludesGame(game, filter, allPlayers)
     })
   }
 
-  filterGames(allGames: GameGroupGame[], filter: FilterGamesSettings): GameGroupGame[] {
+  filterGames(allGames: GameGroupGame[], filter: FilterGamesSettings, allPlayers: Player[]): GameGroupGame[] {
     this.saveFilterSettings(filter)
     return allGames.filter((game) => {
-      return !this.excludesGame(game, filter)
+      return !this.excludesGame(game, filter, allPlayers)
     })
   }
 
-  private excludesGame(game: GameGroupGame, filter: FilterGamesSettings): boolean {
+  private excludesGame(game: GameGroupGame, filter: FilterGamesSettings, allPlayers: Player[]): boolean {
     return (
       this.doesPlayerfilterTypeExcludeGame(game, filter) ||
       this.doesPlayingTimeExludeGame(game, filter) ||
-      this.doTagsExcludeGame(game, filter)
+      this.doNonPlayerTagsExcludeGame(game, filter) ||
+      this.doPlayerTagsExcludeGame(game, filter, allPlayers)
     )
   }
 
-  private doTagsExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
-    const tags: TagSelection[] = filter.tags
-    return tags.some((tag) => this.doesTagExcludeGame(game, tag))
+  private doNonPlayerTagsExcludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
+    const tags: TagSelection[] = filter.nonPlayerTags
+    return tags?.some((tag) => this.doesTagExcludeGame(game, tag))
+  }
+
+  private doPlayerTagsExcludeGame(game: GameGroupGame, filter: FilterGamesSettings, allPlayers: Player[]) {
+    const tags: PlayerTagSelection[] = filter.playerTags
+    return tags?.some((tag) => this.doesPlayerTagExcludeGame(game, tag, allPlayers))
   }
 
   private doesPlayingTimeExludeGame(game: GameGroupGame, filter: FilterGamesSettings) {
@@ -117,7 +125,7 @@ export class FilterService {
     if (tagSelection.selected === 'DO_NOT_FILTER') {
       return false
     }
-    const gameContainsTag = !!game.tags.global.find((gameTag) => gameTag.id == tagSelection.id) || !!game.tags.group.find((gameTag) => gameTag.id == tagSelection.id)
+    const gameContainsTag: boolean = game.tags.global.some((gameTag) => gameTag.id == tagSelection.id) || game.tags.group.some((gameTag) => gameTag.id == tagSelection.id)
     if (gameContainsTag && tagSelection.selected === 'FILTER_WITHOUT') {
       return true
     } else if (!gameContainsTag && tagSelection.selected === 'FILTER_WITH') {
@@ -125,9 +133,27 @@ export class FilterService {
     }
     return false
   }
+
+  private doesPlayerTagExcludeGame(game: GameGroupGame, tagSelection: PlayerTagSelection, allPlayers: Player[]): boolean {
+    if (tagSelection.selected === 'DO_NOT_FILTER') {
+      return false
+    }
+    if (tagSelection.selected === 'FILTER_ANYONE') {
+      return !game.tags.player.find((gameTag) => gameTag.id == tagSelection.id)
+    } else if (tagSelection.selected === 'FILTER_EVERYONE') {
+      const allStoredPlayerTagsForThisGame = game.tags.player.filter(t => t.id === tagSelection.id)
+      // This should probably be enough, might lead to sync issues, but it's probably good enough to not compare all player ids.    
+      return allStoredPlayerTagsForThisGame.length < allPlayers.length;
+    } else if (tagSelection.selected == 'FILTER_NOBODY') {
+      const allStoredPlayerTagsForThisGame = game.tags.player.filter(t => t.id === tagSelection.id)
+      return allStoredPlayerTagsForThisGame.length > 0;
+    }
+    return false;    
+  }
 }
 
 export type SelectionType = 'FILTER_WITH' | 'FILTER_WITHOUT' | 'DO_NOT_FILTER'
+export type PlayerSelectionType = 'FILTER_EVERYONE' | 'FILTER_ANYONE' | 'FILTER_NOBODY' | 'DO_NOT_FILTER'
 
 export class TagSelection {
   constructor(
@@ -137,9 +163,18 @@ export class TagSelection {
   ) {}
 }
 
+export class PlayerTagSelection {
+  constructor(
+    readonly description: string,
+    readonly id: number,
+    public selected: PlayerSelectionType
+  ) {}
+}
+
 export class FilterGamesSettings {
   constructor(
-    readonly tags: TagSelection[],
+    readonly nonPlayerTags: TagSelection[],
+    readonly playerTags: PlayerTagSelection[],
     readonly numberOfPlayers: number | undefined,
     readonly minPlayingTime: number,
     readonly maxPlayingTime: number,

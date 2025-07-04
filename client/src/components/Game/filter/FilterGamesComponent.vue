@@ -74,9 +74,10 @@
         />
       </div>
     </div>
+    <!-- Global and group tags-->
     <div class="filterOption">
       <div class="filterContent tagFilterOption" >
-        <div v-for="tag in tags" :key="tag.id" class="one-filter">
+        <div v-for="tag in nonPlayerTags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
             @click="onClickFilterWith(tag)"
@@ -93,6 +94,32 @@
       </div>
     </div>
 
+    <!-- Player Tags -->
+    <div class="filterOption">
+      <div class="filterContent tagFilterOption" >
+        <div v-for="tag in playerTags" :key="tag.id" class="one-filter">
+          <Button
+            :severity="tag.selected === 'FILTER_EVERYONE' ? 'primary' : 'secondary'"
+            @click="onClickFilterEveryone(tag)"
+            class="filterButton"
+            >Everyone {{ tag.description }}</Button
+          >
+          <Button
+            :severity="tag.selected === 'FILTER_ANYONE' ? 'primary' : 'secondary'"
+            @click="onClickFilterAnyone(tag)"
+            class="filterButton"
+            >Anyone {{ tag.description }}</Button
+          >
+          <Button
+            :severity="tag.selected === 'FILTER_NOBODY' ? 'primary' : 'secondary'"
+            @click="onClickFilterNobody(tag)"
+            class="filterButton"
+            >Nobody {{ tag.description }}</Button
+          >
+        </div>
+      </div>
+    </div>
+
     <div class="buttonWrapper">
       <Button severity="primary" class="confirmButton" @click="onClickConfirm">Confirm</Button>
       <Button severity="danger" class="resetButton" @click="onClickReset">Reset</Button>
@@ -102,8 +129,9 @@
 
 <script setup lang="ts">
 import type { GameGroupGame } from '@/model/Game'
+import type { Player } from '@/model/Player/Player'
 import { TagModel } from '@/model/TagModel'
-import { FilterService, TagSelection, type PlayerFilterType } from '@/services/FilterService'
+import { FilterService, TagSelection, PlayerTagSelection, type PlayerFilterType } from '@/services/FilterService'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import RadioButton from 'primevue/radiobutton'
@@ -121,6 +149,10 @@ const props = defineProps({
   },
   numberOfPlayersInGroup: {
     type: Number
+  },
+  allPlayers: {
+    type: Array as PropType<Player[]>,
+    required: true
   }
 })
 
@@ -129,7 +161,8 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const tags: Ref<TagSelection[]> = ref([])
+const nonPlayerTags: Ref<TagSelection[]> = ref([])
+const playerTags: Ref<PlayerTagSelection[]> = ref([])
 const numberOfPlayers: Ref<number | undefined> = ref(props.numberOfPlayersInGroup)
 const duration: Ref<number[]> = ref([10, 300])
 const playerFilterType: Ref<PlayerFilterType> = ref('PLAYABLE')
@@ -139,24 +172,28 @@ const filterService = new FilterService()
 watch(
   () => props.allTags,
   (allTags: TagModel[]) => {
-    tags.value = updateTagsFromSettings(allTags)
+    nonPlayerTags.value = updateTagsFromSettings(allTags)
+    playerTags.value = updatePlayerTagsFromSettings(allTags)
   }
 )
+
 
 onMounted(async () => {
   const settings = filterService.loadFilterSettings()
   if (settings) {
-    tags.value = updateTagsFromSettings(props.allTags)
+    nonPlayerTags.value = updateTagsFromSettings(props.allTags)
+    playerTags.value = updatePlayerTagsFromSettings(props.allTags)
     numberOfPlayers.value = settings.numberOfPlayers
     duration.value = [settings.minPlayingTime, settings.maxPlayingTime]
     playerFilterType.value = settings.playerFilterType || 'OFF'
   } else {
-    tags.value = createTagSelection(props.allTags)
+    nonPlayerTags.value = createInitialTagSelection(props.allTags)
+    playerTags.value = createInitialPlayerTagSelection(props.allTags)
   }
 })
 
 function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
-  const tagSettings = filterService.loadFilterSettings()?.tags
+  const tagSettings = filterService.loadFilterSettings()?.nonPlayerTags
   if (tagSettings) {
     return allTags.filter(t => t.type !== 'PLAYER').map((tag) => {
       const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
@@ -170,8 +207,27 @@ function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
   return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
-function createTagSelection(allTags: TagModel[]): TagSelection[] {
-  return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+function updatePlayerTagsFromSettings(allTags: TagModel[]): PlayerTagSelection[] {
+  const tagSettings = filterService.loadFilterSettings()?.playerTags
+  if (tagSettings) {
+    return allTags.filter(t => t.type === 'PLAYER').map((tag) => {
+      const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
+      if (currentSelection) {
+        return new PlayerTagSelection(tag.description, tag.id, currentSelection.selected)
+      } else {
+        return new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
+      }
+    })
+  }
+  return allTags.map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+}
+
+function createInitialTagSelection(allTags: TagModel[]): TagSelection[] {
+  return allTags.filter(t => t.type === 'GLOBAL' || t.type === 'GAME_GROUP').map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+}
+
+function createInitialPlayerTagSelection(allTags: TagModel[]): PlayerTagSelection[] {
+  return allTags.filter(t => t.type === 'PLAYER').map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
 async function onClickFilterWith(tag: TagSelection) {
@@ -192,20 +248,51 @@ async function onClickFilterWithout(tag: TagSelection) {
   filter()
 }
 
+async function onClickFilterEveryone(tag: PlayerTagSelection) {
+  if (tag.selected === 'FILTER_EVERYONE') {
+    tag.selected = 'DO_NOT_FILTER'
+  } else {
+    tag.selected = 'FILTER_EVERYONE'
+  }
+  filter()
+}
+
+async function onClickFilterAnyone(tag: PlayerTagSelection) {
+  if (tag.selected === 'FILTER_ANYONE') {
+    tag.selected = 'DO_NOT_FILTER'
+  } else {
+    tag.selected = 'FILTER_ANYONE'
+  }
+  filter()
+}
+
+async function onClickFilterNobody(tag: PlayerTagSelection) {
+  if (tag.selected === 'FILTER_NOBODY') {
+    tag.selected = 'DO_NOT_FILTER'
+  } else {
+    tag.selected = 'FILTER_NOBODY'
+  }
+  filter()
+}
+
 function filter() {
   const filterSettings = {
-    tags: tags.value,
+    nonPlayerTags: nonPlayerTags.value,
+    playerTags: playerTags.value,
     numberOfPlayers: numberOfPlayers.value,
     minPlayingTime: duration.value[0],
     maxPlayingTime: duration.value[1],
     playerFilterType: playerFilterType.value
   }
-  const filteredGames = filterService.filterGames(props.allGames, filterSettings)
+  const filteredGames = filterService.filterGames(props.allGames, filterSettings, props.allPlayers)
   emit('updated-filter', filteredGames)
 }
 
 function onClickReset() {
-  tags.value.forEach((tag) => {
+  nonPlayerTags.value.forEach((tag) => {
+    tag.selected = 'DO_NOT_FILTER'
+  })
+  playerTags.value.forEach((tag) => {
     tag.selected = 'DO_NOT_FILTER'
   })
   duration.value[0] = 10
@@ -232,7 +319,7 @@ function onClickConfirm() {
 
 .filterButton {
   flex: 1;
-  width: 150px;
+  flex-grow: 1;
 }
 
 .numberOfPlayersInput {

@@ -59,7 +59,7 @@ onMounted(async () => {
   allTags.value = await loadTags()
   
   groupTags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, isGameGroupTagSelected(t)))
-  myPlayerTags.value = allTags.value.filter(t => t.type === 'PLAYER').map(t => new TagSelection(t.description, t.id, isPlayerTagSelected(t)))
+  myPlayerTags.value = allTags.value.filter(t => t.type === 'PLAYER').map(t => new TagSelection(t.description, t.id, isPlayerTagSelected(t)))  
 })
 
 const errorMessage: Ref<string> = ref('')

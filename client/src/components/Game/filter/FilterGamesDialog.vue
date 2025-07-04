@@ -6,6 +6,7 @@
         :allGames="allGames"
         :allTags="allTags"
         :numberOfPlayersInGroup="numberOfPlayersInGroup"
+        :allPlayers="allPlayers"
         @updated-filter="onFilterUpdated"
         @close="onClickClose"
       />
@@ -20,6 +21,7 @@ import FilterGamesComponent from './FilterGamesComponent.vue'
 import { ref, watch, type PropType } from 'vue'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import type { Player } from '@/model/Player/Player'
 
 const props = defineProps({
   allTags: {
@@ -36,6 +38,10 @@ const props = defineProps({
   },
   numberOfPlayersInGroup: {
     type: Number
+  },
+  allPlayers: {
+    type: Array as PropType<Player[]>,
+    required: true
   }
 })
 
