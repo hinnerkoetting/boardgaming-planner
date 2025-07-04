@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface PlayerRepository extends PagingAndSortingRepository<Player, Long>, CrudRepository<Player,Long> {
 
     Optional<Player> findByName(String name);
-
 }

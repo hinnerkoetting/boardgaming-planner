@@ -21,6 +21,7 @@
       :game-group-id="gameGroupId"
       :with-rate-button="isPartOfGroup"
       @ratingOpened="onDialogOpened"
+      :players="players"
     />
 
     <template v-if="isPartOfGroup">

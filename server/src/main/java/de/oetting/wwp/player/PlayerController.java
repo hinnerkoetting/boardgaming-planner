@@ -32,9 +32,6 @@ public class PlayerController {
     private UserDetailsManager userDetailsService;
 
     @Autowired
-    private RatingRepository ratingRepository;
-
-    @Autowired
     private PlayerService playerService;
     @DeleteMapping(path = "/{playerId}")
     @ResponseStatus(value = HttpStatus.OK)

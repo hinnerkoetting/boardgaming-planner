@@ -10,6 +10,7 @@
                 @game-rating-selected="onClickRate"
                 @game-tag-selected="onClickTag"
                 :withRateButton="withRateButton"
+                :players="players"
               />
             </div>
           </template>
@@ -45,6 +46,7 @@ import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
 import type { GameGroupGame } from '@/model/Game'
 import TagGameInGroupComponent from '../GameGroup/tags/TagGameInGroupComponent.vue'
+import type { Player } from '@/model/Player/Player'
 
 const props = defineProps({
   games: {
@@ -59,6 +61,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
     default: true
+  },
+  players: {
+    type: Array as PropType<Player[]>,
+    required: true
   }
 })
 

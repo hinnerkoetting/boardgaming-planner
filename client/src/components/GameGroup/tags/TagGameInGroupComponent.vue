@@ -11,7 +11,7 @@
     <h3>Me</h3>
     <div v-for="tag in myPlayerTags" :key="tag.id" class="one-filter">
       <Checkbox v-model="tag.selected" binary :inputId="'tag_' + tag.id" @value-change="togglePlayerTagSelection(tag)"></Checkbox>
-      <label :for="'tag_' + tag.id">{{ tag.description }}</label>      
+      <label :for="'tag_' + tag.id">{{ tag.description }}</label>            
     </div>
 
     <Button 
@@ -110,8 +110,9 @@ async function onClickRemovePlayerTag(tag: TagSelection) {
   await deleteTagFromPlayerInGroup(props.gameGroupId, props.game.id!, getCurrentPlayerId(), tag.id)
 }
 
-function isPlayerTagSelected(tag: TagModel): boolean {
-  return !!game.value.tags.player.find(playerTag => playerTag.id === tag.id)
+function isPlayerTagSelected(tag: TagModel): boolean {  
+  const currentPlayerId = getCurrentPlayerId()
+  return game.value.tags.player.some(playerTag => playerTag.id === tag.id && currentPlayerId === playerTag.playerId)
 }
 
 </script>

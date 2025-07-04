@@ -34,6 +34,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.StreamSupport;
@@ -112,7 +113,7 @@ public class GameGroupController {
 
     @GetMapping(path = "/{gameGroupId}/players")
     public Collection<Player> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
-        return gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayers();
+        return gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayers().stream().sorted(Comparator.comparing(Player::getName)).toList();
     }
 
     @Transactional
@@ -187,7 +188,7 @@ public class GameGroupController {
             @PathVariable("tagId") long tagId,
             @PathVariable("playerId") long playerId
     ) {
-        gameGroupService.checkUserIsPartOfGroup(playerId);
+        gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         playerService.checkCurrentPlayerId(playerId);
         playerTagRepository.findByGameGroupIdAndGameIdAndTagIdAndPlayerId(gameGroupId, gameId, tagId, playerId)
                 .ifPresent(playerTagRepository::delete);

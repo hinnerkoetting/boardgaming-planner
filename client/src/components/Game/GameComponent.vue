@@ -42,6 +42,9 @@
                 >Update</Button>
             </div>
           </div>
+          <!-- <div class="center-horizontally" style="margin-top: 8px;">
+              <PlayerTagsListComponent :player-tags="game.tags.player" :players="players"/>
+            </div> -->
         </div>
       </template>
     </Card>
@@ -65,6 +68,8 @@ import Tag from 'primevue/tag'
 import { ref, type PropType } from 'vue'
 import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
 import Dialog from 'primevue/dialog'
+import PlayerTagsListComponent from '../GameGroup/tags/PlayerTagsListComponent.vue'
+import type { Player } from '@/model/Player/Player'
 
 const props = defineProps({
   game: {
@@ -78,6 +83,10 @@ const props = defineProps({
   withTagButton: {
     type: Boolean,
     default: true
+  },
+  players: {
+    type: Array as PropType<Player[]>,
+    required: true
   }
 })
 
