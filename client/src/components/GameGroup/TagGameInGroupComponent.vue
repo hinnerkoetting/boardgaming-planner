@@ -48,7 +48,7 @@ const tags: Ref<TagSelection[]> = ref([])
 onMounted(async () => {
   allTags.value =  await fetchTags()
   
-  tags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, true))
+  tags.value = allTags.value.filter(t => t.type === 'GAME_GROUP').map(t => new TagSelection(t.description, t.id, isGameGroupTagSelected(t)))
 })
 
 const errorMessage: Ref<string> = ref('')
@@ -61,8 +61,8 @@ function onClickRemoveTag(tag: TagSelection) {
 
 }
 
-function findTag(tag: TagInGameGroup): TagModel | undefined {
-  return allTags.value.find(t => t.id == tag.id)
+function isGameGroupTagSelected(tag: TagModel): boolean {
+  return !!game.value.tags.group.find(gameGroupTag => gameGroupTag.id === tag.id)
 }
 </script>
 

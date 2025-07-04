@@ -59,7 +59,7 @@ export class GameGroupGame extends Game {
     readonly maxPlayers: number | undefined,
     readonly playingTimeMinutes: number | undefined,
     readonly url: string | undefined,
-    readonly tags: TagInGameGroup[],
+    readonly tags: TagWrapper,
     public rating: Rating,
     readonly recommendedNumberOfPlayers: number[],
     readonly bestNumberOfPlayers: number[]
@@ -78,6 +78,13 @@ export class GameGroupGame extends Game {
       bestNumberOfPlayers
     )
   }
+}
+
+export class TagWrapper {
+  constructor(
+    readonly global: TagInGameGroup[],
+    readonly group: TagInGameGroup[]
+  ) {}
 }
 
 export class TagInGameGroup {

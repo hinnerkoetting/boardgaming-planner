@@ -48,9 +48,7 @@
     <Dialog
       v-model:visible="showGameDialog"
       modal
-      :header="game.name"
-      class="fullWidth"
-      :style="{ width: '100%' }"
+      :header="game.name"      
     >
       <ShowGameDetailsComponent :game="game" />
     </Dialog>
