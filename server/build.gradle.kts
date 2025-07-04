@@ -9,6 +9,11 @@ val clientOutput by configurations.creating {
     isCanBeResolved = true
 }
 
+val h2Database by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = true
+}
+
 group = "de.oetting"
 version = "0.0.1-SNAPSHOT"
 
@@ -24,6 +29,7 @@ repositories {
 
 dependencies {
     clientOutput(project(":client", "clientOutput"))
+    h2Database("com.h2database:h2:2.3.232")
 
     implementation("com.github.marcioos:bgg-client:1.0")
 
@@ -64,4 +70,12 @@ tasks.processResources {
 
 java.sourceSets["main"].resources {
     srcDir("build/client")
+}
+
+tasks.register<JavaExec>("h2_server_mode") {
+    group = "Execution"
+    description = "Run the h2-database with servermode"
+    classpath(h2Database)
+    mainClass = "org.h2.tools.Server"
+    args("-tcp", "-tcpPort", "9092");
 }

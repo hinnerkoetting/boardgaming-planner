@@ -47,3 +47,19 @@ java -jar server.jar --spring.profiles.active=ssl
 Required environment variables:
 - SSL_KEYSTORE_FILE
 - SSL_KEYSTORE_PASSWORD
+
+# Backup h2-database
+Copy your h2*.jar to the application folder. 
+Then Execute the following command:
+```shell
+java -cp application/h2-2.3.232.jar org.h2.tools.Script -url jdbc:h2:/app/data/h2_db -user sa -password sa -script backup.zip -options compression zip
+```
+See also: https://www.h2database.com/html/tutorial.html#upgrade_backup_restore
+
+# Restore h2-database
+Copy your h2*.jar to the application folder.
+Then Execute the following command:
+```shell
+java -cp application/h2-2.3.232.jar  org.h2.tools.RunScript -url jdbc:h2:/app/data/h2_db -user sa -password sa -script backup.zip -options compression zip
+```
+See also: https://www.h2database.com/html/tutorial.html#upgrade_backup_restore
