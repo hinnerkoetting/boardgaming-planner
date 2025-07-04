@@ -8,6 +8,7 @@
               <GameComponent
                 :game="item"
                 @game-rating-selected="onClickRate"
+                @game-tag-selected="onClickTag"
                 :withRateButton="withRateButton"
               />
             </div>
@@ -24,6 +25,14 @@
         @game-rating-deleted="onGameRatingDeleted"
       />
     </Dialog>
+    <Dialog v-model:visible="tagWindowVisible" modal :header="selectedGame?.name">
+      <TagGameInGroupComponent
+        :game="selectedGame!"
+        :game-group-id="gameGroupId"
+        @close="tagWindowVisible = false"    
+      />
+    </Dialog>
+    
   </div>
 </template>
 
@@ -31,10 +40,11 @@
 import type { Rating } from '@/model/Rating'
 import Dialog from 'primevue/dialog'
 import { ref, watch, type PropType, type Ref } from 'vue'
-import RatingComponent from '../RatingComponent.vue'
+import RatingComponent from '../GameGroup/RatingComponent.vue'
 import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
 import type { GameGroupGame } from '@/model/Game'
+import TagGameInGroupComponent from '../GameGroup/TagGameInGroupComponent.vue'
 
 const props = defineProps({
   games: {
@@ -52,11 +62,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['ratingOpened'])
+const emit = defineEmits(['ratingOpened', 'tagOpened'])
 
 const games: Ref<GameGroupGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
 const ratingWindowVisible = ref(false)
+const tagWindowVisible = ref(false)
 const selectedGame: Ref<GameGroupGame | undefined> = ref()
 
 watch(
@@ -70,6 +81,12 @@ async function onClickRate(game: GameGroupGame) {
   selectedGame.value = game
   ratingWindowVisible.value = true
   emit('ratingOpened')
+}
+
+async function onClickTag(game: GameGroupGame) {
+  selectedGame.value = game
+  tagWindowVisible.value = true
+  emit('tagOpened')
 }
 
 async function onGameRatingDeleted(rating: Rating) {

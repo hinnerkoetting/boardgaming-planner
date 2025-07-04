@@ -23,17 +23,24 @@
             </div>
             <div
               v-if="!game.rating?.averageRating && !game.rating?.myRating"
-              class="center-horizontally"
-            >
+              class="center-horizontally">
               Not rated yet
             </div>
-            <Button
-              v-if="withRateButton"
-              severity="secondary"
-              @click.stop="$emit('game-rating-selected', game)"
-              class="center-horizontally"
-              >Rate</Button
-            >
+            <div class="center-horizontally" style="margin-top: 8px;">
+              <Button
+                style="float: left"
+                v-if="withRateButton"
+                severity="secondary"
+                @click.stop="$emit('game-rating-selected', game)"                
+                >Rate</Button>
+                
+              <Button
+                style="float: right"
+                v-if="withTagButton"
+                severity="secondary"
+                @click.stop="$emit('game-tag-selected', game)"                             
+                >Update</Button>
+            </div>
           </div>
         </div>
       </template>
@@ -68,11 +75,16 @@ const props = defineProps({
   withRateButton: {
     type: Boolean,
     default: true
+  },
+  withTagButton: {
+    type: Boolean,
+    default: true
   }
 })
 
 defineEmits<{
   (e: 'game-rating-selected', game: GameGroupGame): void
+  (e: 'game-tag-selected', game: GameGroupGame): void
 }>()
 
 const game = ref(props.game)

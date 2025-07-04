@@ -134,6 +134,14 @@ public class GameGroupController {
         gameGroup.addGameGroupTag(gameGroupTagRepository.save(gameGroupTag));
     }
 
+    @Transactional
+    @DeleteMapping(path = "/{gameGroupId}/{gameId}/gameGroupTag/{tagId}")
+    @PreAuthorize(Role.HAS_ROLE_ADMIN)
+    public void removeGameGroupTagById(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId, @PathVariable("tagId") long tagId) {
+        gameGroupTagRepository.findByGameGroupIdAndGameIdAndTagId(gameGroupId, gameId, tagId)
+                .ifPresent(gameGroupTagRepository::delete);
+    }
+
     private RatedGameModel map(List<Rating> ratings, Game game, List<GameGroupTag> tags) {
         RatedGameModel ratedGame =new RatedGameModel();
         ratedGame.setDescription(game.getDescription());

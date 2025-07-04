@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Want to play game next time?</h1>
+    <h1>Play {{ game.name }} next time?</h1>
     <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
     <div id="ratingButtons">
       <Button @click="onClickRating(10)">&#128077;&#128077;&#128077; Absolutely</Button>
@@ -12,7 +12,7 @@
         Veto</Button
       >
 
-      <Button severity="secondary" @click="oncClickDeleteRating()" class="delete"
+      <Button severity="secondary" @click="onClickDeleteRating()" class="delete"
         >Forget rating</Button
       >
     </div>
@@ -61,7 +61,7 @@ async function onClickRating(rating: number) {
   }
 }
 
-async function oncClickDeleteRating() {
+async function onClickDeleteRating() {
   const response = await deleteInterest({
     gameId: game.value.id!,
     playerId: getCurrentPlayerId(),

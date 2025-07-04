@@ -1,6 +1,7 @@
 package de.oetting.wwp.game.model;
 
 public class TagModel {
+
     private long id;
     private String description;
 
