@@ -91,6 +91,7 @@ public class GameGroupController {
     }
 
     @GetMapping
+    @Transactional
     public List<GameGroupModel> getGameGroups(){
         return StreamSupport.stream(gameGroupRepository.findAll().spliterator(), false)
                 .map(this::map)
@@ -98,6 +99,7 @@ public class GameGroupController {
     }
 
     @GetMapping(path = "/{gameGroupId}")
+    @Transactional
     public GameGroupModel getGameGroup(@PathVariable("gameGroupId") long gameGroupId){
        return gameGroupRepository.findById(gameGroupId)
                .map(this::map)
@@ -112,6 +114,7 @@ public class GameGroupController {
     }
 
     @GetMapping(path = "/{gameGroupId}/players")
+    @Transactional
     public Collection<Player> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayers().stream().sorted(Comparator.comparing(Player::getName)).toList();
     }
@@ -124,6 +127,7 @@ public class GameGroupController {
     }
 
     @GetMapping(path = "/{gameGroupId}/games")
+    @Transactional
     public Collection<RatedGameModel> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
         Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
@@ -136,6 +140,7 @@ public class GameGroupController {
     }
 
     @GetMapping(path = "/{gameGroupId}/games/{gameId}")
+    @Transactional
     public RatedGameModel getGame(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId) {
         var game = gameRepository.findById(gameId).orElseThrow();
         List<Rating> ratings = ratingRepository.findByGameGroupIdAndGameId(gameGroupId, gameId);

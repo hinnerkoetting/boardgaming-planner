@@ -50,6 +50,7 @@ public class MeController {
     private PlayerService playerService;
 
     @GetMapping
+    @Transactional
     public MeModel getInformationAboutMe() {
         var player = findMyPlayer();
 
@@ -60,6 +61,7 @@ public class MeController {
     }
 
     @GetMapping(path = "/gameGroups")
+    @Transactional
     public Collection<GameGroupModel> findMyGroups() {
         var player = findMyPlayer();
         return player.getGameGroups().stream().map(this::map).toList();

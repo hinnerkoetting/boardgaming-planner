@@ -3,6 +3,8 @@ package de.oetting.bgp.service.events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
@@ -15,6 +17,7 @@ public class SseEmitterService {
     private static final Logger LOG = LoggerFactory.getLogger(SseEmitterService.class);
     private final Map<UUID, EventListener> listeners = new ConcurrentHashMap<>();
 
+    @Transactional(propagation = Propagation.NEVER) // will leak a connection if transaction is open
     public SseEmitter createGameGroupEmitter(int gameGroupId) {
         LOG.debug("Subscribing to events on gameGroup {}", gameGroupId);
         UUID uuid = UUID.randomUUID();

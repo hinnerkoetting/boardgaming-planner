@@ -5,9 +5,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: false # Prevent connection leakage in SsoController
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 security:
   ignored: '/assets/**'
-

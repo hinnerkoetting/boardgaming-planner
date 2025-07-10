@@ -8,3 +8,9 @@ spring:
     username: 'sa'
     password: ''
     driver-class-name: 'org.h2.Driver'
+
+# Enable to debug connection leak issues
+#    hikari:
+#      leak-detection-threshold: 20000
+#      idle-timeout: 10000
+#      max-lifetime: 30000
