@@ -107,7 +107,7 @@ onMounted(async () => {
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
-    filterAndSort
+    filterAndSort();
   })
   loadTags().then((response) => {
     tags.value = response
@@ -212,6 +212,7 @@ async function onClickLeaveButton() {
 
 function onUpdatedFilters(filteredGames: RatedGame[]) {
   displayedGames.value = filteredGames
+  filterAndSort();
 }
 
 function onDialogOpened() {
