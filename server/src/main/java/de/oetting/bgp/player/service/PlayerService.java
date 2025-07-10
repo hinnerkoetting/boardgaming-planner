@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Service
 public class PlayerService {
 
@@ -29,7 +31,8 @@ public class PlayerService {
             throw new ForbiddenException("Owner cannot be deleted");
         }
         ratingRepository.deleteByPlayerId(player.getId());
-        player.getGameGroups().forEach(gameGroup -> gameGroup.deletePlayer(player));
+        var gameGroups = new ArrayList<>(player.getGameGroups());
+        gameGroups.forEach(gameGroup -> gameGroup.deletePlayer(player));
 
         playerRepository.delete(player);
 

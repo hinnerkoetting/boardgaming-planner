@@ -2,6 +2,7 @@ package de.oetting.bgp.controller;
 
 import de.oetting.bgp.exceptions.HTTPException;
 import de.oetting.bgp.infrastructure.HttpErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.simpleframework.xml.transform.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,7 @@ public class GlobalExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     public static final String CLIENT_ERROR = "CLIENT_ERROR";
+    public static final String SERVER_ERROR = "SERVER_ERROR";
 
     @ResponseStatus(value= HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
@@ -122,13 +126,24 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageConversionException.class)
-    public HttpErrorResponse controllerNotFound(HttpMessageConversionException e) {
-        LOG.info("Request could not be parsed: {}", e.getMessage());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public HttpErrorResponse controllerNotFound(HttpMessageNotReadableException e, HttpServletRequest request) {
+        LOG.info("HttpMessageNotReadableException: {} - {}", e.getMessage(), request.getRequestURI());
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.BAD_REQUEST.getReasonPhrase());
         problem.setType(CLIENT_ERROR);
         problem.setDetail("Request could not be parsed");
+        return problem;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotWritableException.class)
+    public HttpErrorResponse messageNotWritable(HttpMessageNotWritableException e, HttpServletRequest request) {
+        LOG.error("Request could not be parsed: {} - {}", e.getMessage(), request.getRequestURI());
+        HttpErrorResponse problem = new HttpErrorResponse();
+        problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        problem.setType(SERVER_ERROR);
+        problem.setDetail("Response could not be written");
         return problem;
     }
 

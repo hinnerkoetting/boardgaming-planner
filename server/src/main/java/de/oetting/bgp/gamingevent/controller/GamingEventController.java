@@ -3,6 +3,7 @@ package de.oetting.bgp.gamingevent.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
+import de.oetting.bgp.game.model.GameConverter;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.gamingevent.GameEventStatus;
@@ -266,7 +267,7 @@ public class GamingEventController {
 
     private GamingEventGameModel map(GamingEventGameEntity gamingEventGameEntity) {
         var model = new GamingEventGameModel();
-        model.setGame(gamingEventGameEntity.getGame());
+        model.setGame(GameConverter.convert(gamingEventGameEntity.getGame()));
         model.setComment(gamingEventGameEntity.getComment());
         model.setGameStatus(gamingEventGameEntity.getGameStatus());
         return model;

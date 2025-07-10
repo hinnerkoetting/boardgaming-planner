@@ -3,6 +3,8 @@ package de.oetting.bgp.game.controller;
 import de.oetting.bgp.controller.IdWrapper;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.exceptions.ConflictException;
+import de.oetting.bgp.game.model.GameConverter;
+import de.oetting.bgp.game.model.GameModel;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
@@ -16,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "api/games")
@@ -31,8 +34,11 @@ public class GameController {
     private TagRepository tagRepository;
 
     @GetMapping
-    public Iterable<Game> findAll() {
-        return gameRepository.findAll();
+    @Transactional
+    public List<GameModel> findAll() {
+        return StreamSupport.stream(gameRepository.findAll().spliterator(), false)
+                .map(GameConverter::convert)
+                .toList();
     }
 
     @GetMapping(path="/{gameId}")
@@ -80,8 +86,11 @@ public class GameController {
     }
 
     @GetMapping("/search/{searchTerm}")
-    public List<Game> searchGames(@PathVariable("searchTerm") String searchTerm) {
-        return gameRepository.findByNameContaining(searchTerm);
+    @Transactional
+    public List<GameModel> searchGames(@PathVariable("searchTerm") String searchTerm) {
+        return gameRepository.findByNameContaining(searchTerm)
+                .stream().map(GameConverter::convert)
+                .toList();
     }
 
     @Transactional

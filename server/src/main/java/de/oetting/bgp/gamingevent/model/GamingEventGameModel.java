@@ -1,21 +1,19 @@
 package de.oetting.bgp.gamingevent.model;
 
-import de.oetting.bgp.game.entity.Game;
+import de.oetting.bgp.game.model.GameModel;
 import de.oetting.bgp.gamingevent.GameEventStatus;
-import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
-import jakarta.persistence.*;
 
 public class GamingEventGameModel {
 
-    private Game game;
+    private GameModel game;
     private GameEventStatus gameStatus;
     private String comment;
 
-    public Game getGame() {
+    public GameModel getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(GameModel game) {
         this.game = game;
     }
 
