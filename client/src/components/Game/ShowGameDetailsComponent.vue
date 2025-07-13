@@ -39,6 +39,9 @@
       <div class="row" v-if="game.url">
         <a :href="game.url" target="_blank">Further information</a>
       </div>
+      <div class="row" v-if="game.url">
+        <RouterLink :to="{ name: 'gameStatistics', params: { gameId: game.id } }">Statistics</RouterLink>
+      </div>
     </div>
   </div>
 </template>

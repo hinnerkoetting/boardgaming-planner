@@ -1,6 +1,7 @@
 import type { AdminGame, Game } from '@/model/Game'
 import { authorizedFetch } from './ApiService'
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
+import type { GameStatistics } from '@/model/GameStatistics'
 
 export async function fetchGames(): Promise<AdminGame[]> {
   const response = await authorizedFetch('/api/games')
@@ -11,6 +12,12 @@ export async function fetchGames(): Promise<AdminGame[]> {
 export async function loadGame(gameId: number): Promise<Game> {
   const response = await authorizedFetch(`/api/games/${gameId}`)
   return await response.json()
+}
+
+
+export async function loadGameStatistics(gameId: number): Promise<ResponseWrapper<GameStatistics>> {
+  const response = await authorizedFetch(`/api/games/${gameId}/statistics`)
+  return await wrapResponse(response)
 }
 
 export async function deleteGame(id: Number) {

@@ -21,6 +21,7 @@ const router = createRouter({
         publicArea: true
       }
     },
+    //Game groups
     {
       path: '/gameGroups',
       name: 'gameGroups',
@@ -46,15 +47,24 @@ const router = createRouter({
       name: 'gameGroupStatistics',
       component: () => import('../views/GameGroup/GameGroupStatistics.vue')
     },
+
+    // Account
     {
       path: '/account',
       name: 'account',
       component: () => import('../views/AccountView.vue')
     },
+    
+    // Game
     {
       path: '/game/:gameId',
       name: 'game',
       component: () => import('../views/GameView.vue')
+    },
+    {
+      path: '/game/:gameId/statistics',
+      name: 'gameStatistics',
+      component: () => import('../views/Game/GameStatistics.vue')
     },
 
     // Admin

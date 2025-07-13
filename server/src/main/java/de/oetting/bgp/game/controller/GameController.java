@@ -42,8 +42,8 @@ public class GameController {
     }
 
     @GetMapping(path="/{gameId}")
-    public Game loadGame(@PathVariable("gameId") long gameId) {
-        return gameRepository.findById(gameId).orElseThrow();
+    public GameModel loadGame(@PathVariable("gameId") long gameId) {
+        return GameConverter.convert(gameRepository.findById(gameId).orElseThrow());
     }
 
     @Transactional
