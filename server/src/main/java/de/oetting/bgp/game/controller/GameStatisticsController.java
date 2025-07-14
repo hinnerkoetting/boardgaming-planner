@@ -1,7 +1,10 @@
 package de.oetting.bgp.game.controller;
 
 import de.oetting.bgp.game.model.GameStatisticsModel;
+import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
 import de.oetting.bgp.gamingevent.entity.GamingEventGameRepository;
+import de.oetting.bgp.gamingevent.entity.GamingEventRepository;
+import de.oetting.bgp.infrastructure.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,14 +20,18 @@ public class GameStatisticsController {
     @Autowired
     private GamingEventGameRepository gamingEventGameRepository;
 
+    @Autowired
+    private GamingEventRepository gamingEventRepository;
+
     @GetMapping(path="/statistics")
     public GameStatisticsModel loadGameStatistics(@PathVariable("gameId") long gameId) {
+        var currentPlayerId = CurrentUser.getCurrentPlayerId();
         var model = new GameStatisticsModel();
-        Optional<Long> lastPlayDate = gamingEventGameRepository.findByGameIdAndLastByOrderByGamingEventStart(gameId)
+        Optional<Long> lastPlayDate = gamingEventGameRepository.findByGameIdAndLastByOrderByGamingEventStart(gameId, currentPlayerId)
                 .map(eventGame -> eventGame.getGamingEvent().getStart().toInstant().toEpochMilli());
         model.setLastPlayed(lastPlayDate.orElse(null));
-        model.setPlayedNumberOfTimes(gamingEventGameRepository.countByGameId(gameId));
-
+        model.setPlayedNumberOfTimes(gamingEventGameRepository.countByGameId(gameId, currentPlayerId));
+        model.setPlayDates(gamingEventRepository.findGamingEventsWithGame(gameId, currentPlayerId).stream().map(event -> event.getStart().toInstant().toEpochMilli()).toList());
         return model;
     }
 }

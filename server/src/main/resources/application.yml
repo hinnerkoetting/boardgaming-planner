@@ -11,3 +11,4 @@ spring:
     enabled: true
 security:
   ignored: '/assets/**'
+

@@ -1,8 +1,5 @@
 # H2
 spring:
-  h2:
-    console:
-      enabled: false
   datasource:
     url: jdbc:h2:tcp://localhost:9092/~/bgp
     username: 'sa'

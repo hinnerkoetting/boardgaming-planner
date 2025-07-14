@@ -3,6 +3,7 @@ export class GameStatistics {
     readonly lastPlayed: number | undefined,
     readonly playedNumberOfTimes: number,
     readonly numberOfTimesPlayedByPlayers: Map<number, number>,
+    readonly playDates: number[]
   ) {    
   }
 }

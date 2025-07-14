@@ -10,11 +10,15 @@
       <div>Plays</div>
       <div>{{ gameStatistics?.playedNumberOfTimes || 0 }}</div>
     </div>
+    <div class="row">      
+      <GamesStatisticsPlayDates v-if="gameStatistics" :gameStatistics="gameStatistics" />
+    </div>
   </div>
 </template>
 
 
 <script setup lang="ts">
+import GamesStatisticsPlayDates from '@/components/Game/Statistics/GamesStatisticsPlayDates.vue'
 import type { Game } from '@/model/Game'
 import type { GameStatistics } from '@/model/GameStatistics'
 import { loadGame, loadGameStatistics } from '@/services/api/GameApiService'

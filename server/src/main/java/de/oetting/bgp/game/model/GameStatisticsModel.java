@@ -1,5 +1,6 @@
 package de.oetting.bgp.game.model;
 
+import java.util.List;
 import java.util.Map;
 
 public class GameStatisticsModel {
@@ -7,6 +8,7 @@ public class GameStatisticsModel {
     private Long lastPlayed;
     private long playedNumberOfTimes;
     private Map<Long, Integer> numberOfTimesPlayedByPlayers;
+    private List<Long> playDates;
 
     public Long getLastPlayed() {
         return lastPlayed;
@@ -30,5 +32,13 @@ public class GameStatisticsModel {
 
     public void setNumberOfTimesPlayedByPlayers(Map<Long, Integer> numberOfTimesPlayedByPlayers) {
         this.numberOfTimesPlayedByPlayers = numberOfTimesPlayedByPlayers;
+    }
+
+    public List<Long> getPlayDates() {
+        return playDates;
+    }
+
+    public void setPlayDates(List<Long> playDates) {
+        this.playDates = playDates;
     }
 }

@@ -41,7 +41,7 @@
 
 <script lang="ts" setup>
 import { GamingEvent, type Schedule } from '@/model/GamingEvent';
-import { addAllGroupMembersToGamingEvent, createGamingEvent, fetchGamingEvent, updateGamingEvent } from '@/services/api/GamingEventsApiService';
+import { fetchGamingEvent, updateGamingEvent } from '@/services/api/GamingEventsApiService';
 import { Button, Checkbox, DatePicker, Message, RadioButton, RadioButtonGroup, Textarea } from 'primevue';
 import { onMounted, ref, type Ref } from 'vue';
 
