@@ -7,24 +7,38 @@
     <GamesRatingStatistics :games="games" v-if="games.length > 0"/>
     <MyGamesRatingStatistics :games="games" v-if="games.length > 0"/>
     <GamesTagsStatistics :games="games" v-if="games.length > 0"/>
+    <GamesStatisticsPlayDates v-if="gameGroupStatistics" :gameGroupStatistics="gameGroupStatistics" />
+
+    <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
   </div>
 </template>
 
 <script setup lang="ts">
-import GamesRatingStatistics from '@/components/Statistics/GamesRatingStatistics.vue';
-import GamesTagsStatistics from '@/components/Statistics/GamesTagsStatistics.vue';
-import MyGamesRatingStatistics from '@/components/Statistics/MyGamesRatingStatistics.vue';
+import GamesRatingStatistics from '@/components/GameGroup/Statistics/GamesRatingStatistics.vue';
+import GamesStatisticsPlayDates from '@/components/GameGroup/Statistics/GamesStatisticsPlayDates.vue';
+import GamesTagsStatistics from '@/components/GameGroup/Statistics/GamesTagsStatistics.vue';
+import MyGamesRatingStatistics from '@/components/GameGroup/Statistics/MyGamesRatingStatistics.vue';
 import type { RatedGame } from '@/model/Game';
-import { fetchGamesInGroup } from '@/services/api/GameGroupApiService';
-import { onMounted, ref } from 'vue';
+import type { GameGroupStatistics } from '@/model/GameGroupStatistics';
+import { fetchGameGrouptStatistics, fetchGamesInGroup } from '@/services/api/GameGroupApiService';
+import { onMounted, ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const games = ref<RatedGame[]>([]);
+const gameGroupStatistics: Ref<GameGroupStatistics | null> = ref(null);
 const route = useRoute()
 const gameGroupId = route.params.gameGroupId
+const errorMessage = ref('');
 
 onMounted(async () => {  
   games.value = await fetchGamesInGroup(Number(gameGroupId));
+
+  const statisticsResponse = await fetchGameGrouptStatistics(Number(gameGroupId))
+  if (statisticsResponse.success) {
+    gameGroupStatistics.value = statisticsResponse.success;
+  } else {
+    errorMessage.value = statisticsResponse.error?.detail || 'Failed to load game group statistics';
+  }
 }); 
 </script>
 

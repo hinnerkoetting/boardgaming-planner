@@ -4,6 +4,7 @@ import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/
 import type { Player } from '@/model/Player/Player'
 import type { RatedGame } from '@/model/Game'
 import { getCurrentPlayerId } from '../LoginService'
+import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
 
 export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
   const response = await authorizedFetch('/api/gameGroups', {
@@ -43,6 +44,12 @@ export async function fetchPlayersInGroup(gameGroupId: Number): Promise<Player[]
 export async function fetchGamesInGroup(gameGroupId: Number): Promise<RatedGame[]> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`)
   return await response.json()
+}
+
+
+export async function fetchGameGrouptStatistics(gameGroupId: Number): Promise<ResponseWrapper<GameGroupStatistics>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/statistics`)
+  return await wrapResponse(response)
 }
 
 export async function fetchGameInGroup(gameGroupId: number, gameId: number): Promise<ResponseWrapper<RatedGame>> {

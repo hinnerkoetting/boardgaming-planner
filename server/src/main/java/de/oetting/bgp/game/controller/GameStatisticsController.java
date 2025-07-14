@@ -1,7 +1,6 @@
 package de.oetting.bgp.game.controller;
 
 import de.oetting.bgp.game.model.GameStatisticsModel;
-import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
 import de.oetting.bgp.gamingevent.entity.GamingEventGameRepository;
 import de.oetting.bgp.gamingevent.entity.GamingEventRepository;
 import de.oetting.bgp.infrastructure.CurrentUser;

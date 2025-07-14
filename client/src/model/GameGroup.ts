@@ -4,3 +4,9 @@ export class GameGroup {
     readonly name: string
   ) {}
 }
+
+export class GameGroupStatistics {
+  constructor(
+    readonly playDates: number[]
+  ) {}
+}

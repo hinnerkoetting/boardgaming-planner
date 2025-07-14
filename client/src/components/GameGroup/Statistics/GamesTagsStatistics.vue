@@ -2,7 +2,7 @@
 import { RatedGame } from '@/model/Game';
 import { init } from 'echarts';
 import { onMounted, ref, useTemplateRef, type PropType, type Ref } from 'vue';
-import { loadTags } from '../../services/StoreApiService';
+import { loadTags } from '../../../services/StoreApiService';
 
 const chart = useTemplateRef("chart")
 
