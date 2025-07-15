@@ -7,7 +7,7 @@ public class GameStatisticsModel {
 
     private Long lastPlayed;
     private long playedNumberOfTimes;
-    private Map<Long, Integer> numberOfTimesPlayedByPlayers;
+    private Map<String, Long> numberOfTimesPlayedByPlayers;
     private List<Long> playDates;
 
     public Long getLastPlayed() {
@@ -18,7 +18,7 @@ public class GameStatisticsModel {
         return playedNumberOfTimes;
     }
 
-    public Map<Long, Integer> getNumberOfTimesPlayedByPlayers() {
+    public Map<String, Long> getNumberOfTimesPlayedByPlayers() {
         return numberOfTimesPlayedByPlayers;
     }
 
@@ -30,7 +30,7 @@ public class GameStatisticsModel {
         this.playedNumberOfTimes = playedNumberOfTimes;
     }
 
-    public void setNumberOfTimesPlayedByPlayers(Map<Long, Integer> numberOfTimesPlayedByPlayers) {
+    public void setNumberOfTimesPlayedByPlayers(Map<String, Long> numberOfTimesPlayedByPlayers) {
         this.numberOfTimesPlayedByPlayers = numberOfTimesPlayedByPlayers;
     }
 

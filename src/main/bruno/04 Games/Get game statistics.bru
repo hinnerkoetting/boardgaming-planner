@@ -1,0 +1,23 @@
+meta {
+  name: Get game statistics
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{server}}/api/games/{{gameId}}/statistics
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  gameId: 62
+}
+
+assert {
+  res.status: eq 200
+}

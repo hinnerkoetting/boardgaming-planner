@@ -12,6 +12,7 @@
     </div>
     <div class="row">      
       <GamesStatisticsPlayDates v-if="gameStatistics" :gameStatistics="gameStatistics" />
+      <GamesStatisticsPlayers v-if="gameStatistics" :gameStatistics="gameStatistics" />
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
 
 <script setup lang="ts">
 import GamesStatisticsPlayDates from '@/components/Game/Statistics/GamesStatisticsPlayDates.vue'
+import GamesStatisticsPlayers from '@/components/Game/Statistics/GamesStatisticsPlayers.vue'
 import type { Game } from '@/model/Game'
 import type { GameStatistics } from '@/model/GameStatistics'
 import { loadGame, loadGameStatistics } from '@/services/api/GameApiService'
