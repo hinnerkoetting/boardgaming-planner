@@ -2,8 +2,11 @@
   <div class="full-height">
     <Card @click="onClickCard">
       <template #title>
-        <div class="title">
-          {{ game.name }}
+        <div class="title-wrapper">
+          <div class="title">
+            {{ game.name }} 
+          </div>                            
+          <span v-if="isNew" class="pi pi-star-fill" style="font-size: 1rem; color: gold; margin-left: 4px;" title="NEW"></span>
         </div>
       </template>
       <template #content>
@@ -69,6 +72,7 @@ import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
 import Dialog from 'primevue/dialog'
 import type { Player } from '@/model/Player/Player'
 import type { RatedGame } from '@/model/Game'
+import 'primeicons/primeicons.css'
 
 const props = defineProps({
   game: {
@@ -86,7 +90,11 @@ const props = defineProps({
   players: {
     type: Array as PropType<Player[]>,
     required: true
-  }
+  },
+  isNew: {
+    type: Boolean,
+    default: false
+  },
 })
 
 defineEmits<{
@@ -158,5 +166,8 @@ function onClickCard() {
   --p-dialog-background: var(--color-background);
 }
 
-
+.title-wrapper {
+  display: flex;
+  align-items: center;
+}
 </style>

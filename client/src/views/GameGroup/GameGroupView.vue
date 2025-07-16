@@ -23,7 +23,7 @@
         @opened="onDialogOpened"
       />
     </h2>
-
+    
     <GamesCollection
       v-if="displayedGames.length > 0"
       :games="displayedGames"
@@ -33,6 +33,7 @@
       @ratingOpened="onDialogOpened"
       @game-rated="filterAndSort"
       :players="players"
+      :lastVisitedGameGroup="lastVisitedGameGroup"
     />
 
     <template v-if="isPartOfGroup">
@@ -92,8 +93,11 @@ const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)
 const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined)
 const toast = useToast()
+const lastVisitedGameGroupStored = localStorage.getItem('gameGroup_visited_' + gameGroupId)
+const lastVisitedGameGroup = ref(lastVisitedGameGroupStored && Number(lastVisitedGameGroupStored) || 0)
 
-onMounted(async () => {
+onMounted(async () => {  
+  localStorage.setItem('gameGroup_visited_' + gameGroupId, new Date().getTime().toString())
   loadGameGroup(gameGroupId).then((result) => {
     gameGroup.value = result
   })

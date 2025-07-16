@@ -13,7 +13,8 @@ export class Game {
     readonly playingTimeMinutes: number | undefined,
     readonly url: string | undefined,
     readonly recommendedNumberOfPlayers: number[],
-    readonly bestNumberOfPlayers: number[]
+    readonly bestNumberOfPlayers: number[],
+    readonly addedToGameGroupDate: number | undefined
   ) {}
 }
 

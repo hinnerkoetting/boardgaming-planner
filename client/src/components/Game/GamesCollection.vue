@@ -4,7 +4,7 @@
       <template #list="slotProps">
         <div class="grid">
           <template v-for="(item, index) in slotProps.items" :key="index">
-            <div class="grid-card">
+            <div class="grid-card">                  
               <GameComponent
                 :game="item"
                 :game-group-id="gameGroupId"
@@ -13,6 +13,7 @@
                 :withRateButton="withRateButton"
                 :withTagButton="withTagButton"
                 :players="players"
+                :isNew="lastVisitedGameGroup < item.addedToGameGroupDate"
               />
             </div>
           </template>
@@ -71,6 +72,10 @@ const props = defineProps({
   },
   players: {
     type: Array as PropType<Player[]>,
+    required: true
+  },
+  lastVisitedGameGroup: {
+    type: Number,
     required: true
   }
 })
