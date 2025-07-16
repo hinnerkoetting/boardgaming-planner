@@ -1,6 +1,6 @@
 package de.oetting.bgp.gamingevent.entity;
 
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;

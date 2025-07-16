@@ -1,7 +1,8 @@
 package de.oetting.bgp.gamegroup.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.game.model.PlayerTagModel;
 import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
@@ -18,7 +19,7 @@ import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.rating.controller.RatingService;
-import de.oetting.bgp.gamegroup.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
@@ -87,7 +88,7 @@ public class GameGroupController {
     @DeleteMapping(path = "/{gameGroupId}")
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public void deleteGameGroup(@PathVariable("gameGroupId") long gameGroupId){
-        gameGroupRepository.deleteById(gameGroupId);
+        gameGroupService.deleteGameGroup(gameGroupId);
     }
 
     @GetMapping
@@ -129,7 +130,7 @@ public class GameGroupController {
     @GetMapping(path = "/{gameGroupId}/games")
     @Transactional
     public Collection<RatedGameModel> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
-        Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
+        Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames().stream().map(Game2GameGroupRelation::getGame).toList();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
         var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
         var playerTags = playerTagRepository.findByGameGroupId(gameGroupId);

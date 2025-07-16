@@ -1,11 +1,9 @@
-package de.oetting.bgp.gamegroup;
+package de.oetting.bgp.gamegroup.persistence;
 
-import de.oetting.bgp.gamegroup.entity.GameGroup;
 import de.oetting.bgp.entities.Player;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

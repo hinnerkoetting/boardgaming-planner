@@ -1,4 +1,4 @@
-package de.oetting.bgp.gamegroup.entity;
+package de.oetting.bgp.gamegroup.persistence;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
@@ -16,8 +16,8 @@ public class GameGroup {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @ManyToMany
-    private Set<Game> games;
+    @OneToMany(mappedBy = "gameGroup")
+    private Set<Game2GameGroupRelation> games;
 
     @ManyToMany
     private Set<Player> players;
@@ -40,11 +40,11 @@ public class GameGroup {
         this.id = id;
     }
 
-    public Set<Game> getGames() {
+    public Set<Game2GameGroupRelation> getGames() {
         return games;
     }
 
-    public void setGames(Set<Game> games) {
+    public void setGames(Set<Game2GameGroupRelation> games) {
         this.games = games;
     }
 
@@ -70,8 +70,11 @@ public class GameGroup {
     }
 
     public void addGame(Game game) {
-        this.games.add(game);
-        game.addGameGroup(this);
+        var relation = new Game2GameGroupRelation();
+        relation.setGameGroup(this);
+        relation.setGame(game);
+        this.games.add(relation);
+        game.addGameGroup(relation);
     }
 
     public void deleteGame(Game g) {

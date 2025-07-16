@@ -1,13 +1,15 @@
 package de.oetting.bgp.gamegroup.service;
 
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.player.PlayerRepository;
-import de.oetting.bgp.gamegroup.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,12 @@ public class GameGroupService {
 
     @Autowired
     private GameGroupEventService gameGroupEventService;
+
+    @Autowired
+    private Game2GameGroupRepository game2GameGroupRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     public GameGroup createGameGroup(CreateGameGroupRequest request){
         if (gameGroupRepository.existsByName(request.getName())) {
@@ -68,6 +76,12 @@ public class GameGroupService {
 
     public Optional<GameGroup> find(long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId);
+    }
+
+    public void deleteGameGroup(long gameGroupId) {
+        game2GameGroupRepository.deleteByGameGroupId(gameGroupId);
+        ratingRepository.deleteByGameGroupId(gameGroupId);
+        gameGroupRepository.deleteById(gameGroupId);
     }
 
     private Player findMyPlayer() {

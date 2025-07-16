@@ -6,6 +6,7 @@ import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.game.model.GameConverter;
 import de.oetting.bgp.game.model.GameModel;
 import de.oetting.bgp.game.repository.GameRepository;
+import de.oetting.bgp.game.service.GameService;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
 import de.oetting.bgp.tags.entity.TagEntity;
@@ -32,6 +33,9 @@ public class GameController {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private GameService gameService;
 
     @GetMapping
     @Transactional
@@ -78,11 +82,7 @@ public class GameController {
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     @Transactional
     public void deleteGameById(@PathVariable("gameId") long gameId) {
-        ratingRepository.deleteByGameId(gameId);
-        Game game = gameRepository.findById(gameId).orElseThrow();
-        game.getGameGroups().forEach(gameGroup -> gameGroup.deleteGame(game));
-
-        gameRepository.delete(game);
+        gameService.deleteByGameId(gameId);
     }
 
     @GetMapping("/search/{searchTerm}")

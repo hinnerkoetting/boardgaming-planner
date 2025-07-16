@@ -2,7 +2,8 @@ package de.oetting.bgp.game.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.tags.entity.TagEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -53,9 +54,9 @@ public class Game {
     @Column
     private String bestNumberOfPlayers;
 
-    @ManyToMany(mappedBy = "games")
+    @OneToMany(mappedBy = "game")
     @JsonBackReference
-    private Set<GameGroup> gameGroups;
+    private Set<Game2GameGroupRelation> gameGroups;
 
     @ManyToMany
     @JoinTable(name="GAMES_2_TAGS",
@@ -77,11 +78,11 @@ public class Game {
         this.name = name;
     }
 
-    public Set<GameGroup> getGameGroups() {
+    public Set<Game2GameGroupRelation> getGameGroups() {
         return gameGroups;
     }
 
-    public void setGameGroups(Set<GameGroup> gameGroups) {
+    public void setGameGroups(Set<Game2GameGroupRelation> gameGroups) {
         this.gameGroups = gameGroups;
     }
 
@@ -109,12 +110,12 @@ public class Game {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public void addGameGroup(GameGroup gameGroup) {
+    public void addGameGroup(Game2GameGroupRelation gameGroup) {
         this.gameGroups.add(gameGroup);
     }
 
     public void deleteGameGroup(GameGroup gameGroup) {
-        this.gameGroups.remove(gameGroup);
+        this.gameGroups.removeIf(g -> Objects.equals(g.getGameGroup().getId(), gameGroup.getId()));
     }
 
     public Set<TagEntity> getGlobalTags() {

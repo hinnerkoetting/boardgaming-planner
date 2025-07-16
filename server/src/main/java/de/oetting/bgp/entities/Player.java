@@ -1,7 +1,7 @@
 package de.oetting.bgp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 

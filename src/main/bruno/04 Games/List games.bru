@@ -14,6 +14,10 @@ headers {
   Authorization: Bearer {{access_token}}
 }
 
+vars:post-response {
+  gameId: res.body[0].id
+}
+
 assert {
   res.status: eq 200
 }

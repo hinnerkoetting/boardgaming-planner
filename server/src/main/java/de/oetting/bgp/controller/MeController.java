@@ -1,7 +1,7 @@
 package de.oetting.bgp.controller;
 
 import de.oetting.bgp.controller.model.MeModel;
-import de.oetting.bgp.gamegroup.entity.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;

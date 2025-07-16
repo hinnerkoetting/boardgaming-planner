@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
     @ExceptionHandler(AuthorizationDeniedException.class)
     public HttpErrorResponse authorizationDenied(AuthorizationDeniedException e) {
         LOG.info("authorizationDenied: {}", e.getMessage());

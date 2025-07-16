@@ -13,4 +13,7 @@ public interface GameGroupTagRepository extends CrudRepository<GameGroupTagEntit
     List<GameGroupTagEntity> findByGameGroupId(long gameGroupId);
 
     Optional<GameGroupTagEntity> findByGameGroupIdAndGameIdAndTagId(long gameGroupId, long gameId, long tagId);
+
+    void deleteByGameId(long gameId);
+
 }

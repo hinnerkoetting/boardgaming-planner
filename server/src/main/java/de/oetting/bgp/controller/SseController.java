@@ -1,13 +1,11 @@
 package de.oetting.bgp.controller;
 
 import de.oetting.bgp.infrastructure.CurrentUser;
-import de.oetting.bgp.gamegroup.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.service.events.SseEmitterService;
-import okhttp3.internal.platform.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
