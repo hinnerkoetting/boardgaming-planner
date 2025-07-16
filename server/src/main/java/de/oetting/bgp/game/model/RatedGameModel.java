@@ -21,6 +21,7 @@ public class RatedGameModel {
     private TagWrapper tags;
     private Set<Integer> recommendedNumberOfPlayers;
     private Set<Integer> bestNumberOfPlayers;
+    private Long addedToGameGroupDate;
 
     public String getImageUrl() {
         return imageUrl;
@@ -124,5 +125,13 @@ public class RatedGameModel {
 
     public void setBestNumberOfPlayers(Set<Integer> bestNumberOfPlayers) {
         this.bestNumberOfPlayers = bestNumberOfPlayers;
+    }
+
+    public Long getAddedToGameGroupDate() {
+        return addedToGameGroupDate;
+    }
+
+    public void setAddedToGameGroupDate(Long addedToGameGroupDate) {
+        this.addedToGameGroupDate = addedToGameGroupDate;
     }
 }

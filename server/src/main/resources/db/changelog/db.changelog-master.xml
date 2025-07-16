@@ -607,4 +607,10 @@
                 validate="true"/>
 
     </changeSet>
+    
+    <changeSet id="game_group_games_added_date" author="Hinnerk">
+        <addColumn tableName="GAME_GROUP_GAMES">
+            <column name="ADDED_DT" type="date"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

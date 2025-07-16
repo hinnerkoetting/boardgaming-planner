@@ -1,8 +1,7 @@
 package de.oetting.bgp.gamegroup.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.*;
 import de.oetting.bgp.game.model.PlayerTagModel;
 import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
@@ -19,7 +18,6 @@ import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.rating.controller.RatingService;
-import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
@@ -34,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -74,6 +73,8 @@ public class GameGroupController {
     @Autowired
     private PlayerService playerService;
 
+    @Autowired
+    private Game2GameGroupRepository game2GameGroupRepository;
 
     @Transactional
     @PostMapping
@@ -123,14 +124,14 @@ public class GameGroupController {
     @Transactional
     @PostMapping(path = "/{gameGroupId}/games")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void addPlayedGameById(@RequestBody IdWrapper gameId, @PathVariable("gameGroupId") long gameGroupId) {
+    public void addGameById(@RequestBody IdWrapper gameId, @PathVariable("gameGroupId") long gameGroupId) {
         gameGroupService.addPlayedGameById(gameId.getId(), gameGroupId);
     }
 
     @GetMapping(path = "/{gameGroupId}/games")
     @Transactional
-    public Collection<RatedGameModel> listPlayedGames(@PathVariable("gameGroupId") long gameGroupId) {
-        Collection<Game> playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames().stream().map(Game2GameGroupRelation::getGame).toList();
+    public Collection<RatedGameModel> listGamesInGroup(@PathVariable("gameGroupId") long gameGroupId) {
+        var playedGames = gameGroupRepository.findById(gameGroupId).orElseThrow().getGames();
         List<Rating> ratings = ratingRepository.findByGameGroupId(gameGroupId);
         var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
         var playerTags = playerTagRepository.findByGameGroupId(gameGroupId);
@@ -143,7 +144,7 @@ public class GameGroupController {
     @GetMapping(path = "/{gameGroupId}/games/{gameId}")
     @Transactional
     public RatedGameModel getGame(@PathVariable("gameGroupId") long gameGroupId, @PathVariable("gameId") long gameId) {
-        var game = gameRepository.findById(gameId).orElseThrow();
+        var game = game2GameGroupRepository.findById(new Game2GameGroupId(gameId, gameGroupId)).orElseThrow();
         List<Rating> ratings = ratingRepository.findByGameGroupIdAndGameId(gameGroupId, gameId);
         var gameGroupTags = gameGroupTagRepository.findByGameGroupId(gameGroupId);
         var playerTags = playerTagRepository.findByGameGroupId(gameGroupId);
@@ -210,7 +211,8 @@ public class GameGroupController {
                 .ifPresent(playerTagRepository::delete);
     }
 
-    private RatedGameModel map(List<Rating> ratings, Game game, List<GameGroupTagEntity> gameGroupTags, List<PlayerTagEntity> playerTags) {
+    private RatedGameModel map(List<Rating> ratings, Game2GameGroupRelation game2GameGroupRelation, List<GameGroupTagEntity> gameGroupTags, List<PlayerTagEntity> playerTags) {
+        var game = game2GameGroupRelation.getGame();
         RatedGameModel ratedGame =new RatedGameModel();
         ratedGame.setDescription(game.getDescription());
         ratedGame.setThumbnailUrl(game.getThumbnailUrl());
@@ -233,6 +235,7 @@ public class GameGroupController {
         ratedGame.setTags(tagWrapper);
         ratedGame.setRecommendedNumberOfPlayers(game.getRecommendedNumberOfPlayers());
         ratedGame.setBestNumberOfPlayers(game.getBestNumberOfPlayers());
+        ratedGame.setAddedToGameGroupDate(game2GameGroupRelation.getAddedToGroupTime() != null ? game2GameGroupRelation.getAddedToGroupTime().toInstant(ZoneOffset.UTC).toEpochMilli() : null);
         return ratedGame;
     }
 

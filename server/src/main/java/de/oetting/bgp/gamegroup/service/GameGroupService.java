@@ -1,5 +1,6 @@
 package de.oetting.bgp.gamegroup.service;
 
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -62,7 +64,12 @@ public class GameGroupService {
     public void addPlayedGameById(long gameId, long gameGroupId) {
         var game = gameRepository.findById(gameId).orElseThrow();
         var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
-        gameGroup.addGame(game);
+        var relation = new Game2GameGroupRelation(gameId, gameGroupId);
+        relation.setGameGroup(gameGroup);
+        relation.setGame(game);
+        relation.setAddedToGroupTime(LocalDateTime.now());
+        var savedRelation = game2GameGroupRepository.save(relation);
+        gameGroup.addGame(savedRelation);
 
         gameGroupEventService.gameAdded(gameGroupId, game);
     }

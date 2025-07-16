@@ -6,6 +6,7 @@ import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -69,12 +70,9 @@ public class GameGroup {
         player.addGameGroup(this);
     }
 
-    public void addGame(Game game) {
-        var relation = new Game2GameGroupRelation();
-        relation.setGameGroup(this);
-        relation.setGame(game);
-        this.games.add(relation);
-        game.addGameGroup(relation);
+    public void addGame(Game2GameGroupRelation gameRelation) {
+        this.games.add(gameRelation);
+        gameRelation.getGame().addGameGroup(gameRelation);
     }
 
     public void deleteGame(Game g) {
