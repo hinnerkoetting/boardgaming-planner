@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game,Long> {
 
-    List<Game> findByNameContaining(String name);
+    List<Game> findByNameContainingIgnoreCase(String name);
 
 }

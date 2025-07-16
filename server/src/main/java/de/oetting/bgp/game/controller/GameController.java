@@ -88,7 +88,7 @@ public class GameController {
     @GetMapping("/search/{searchTerm}")
     @Transactional
     public List<GameModel> searchGames(@PathVariable("searchTerm") String searchTerm) {
-        return gameRepository.findByNameContaining(searchTerm)
+        return gameRepository.findByNameContainingIgnoreCase(searchTerm)
                 .stream().map(GameConverter::convert)
                 .toList();
     }
