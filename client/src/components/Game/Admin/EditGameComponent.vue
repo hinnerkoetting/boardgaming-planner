@@ -54,7 +54,8 @@ async function createOrUpdateGame(): Promise<ResponseWrapper<Game>> {
     url: url.value || undefined,
     playingTimeMinutes: Number(playingTimeMinutes.value) || undefined,
     recommendedNumberOfPlayers: recommendedPlayers.value.split(',').map((it) => +it),
-    bestNumberOfPlayers: bestPlayers.value.split('').map((it) => +it)
+    bestNumberOfPlayers: bestPlayers.value.split('').map((it) => +it),
+    addedToGameGroupDate: new Date().getTime()
   }
   if (props.mode === 'CREATE') {
     return await addGame(game)
