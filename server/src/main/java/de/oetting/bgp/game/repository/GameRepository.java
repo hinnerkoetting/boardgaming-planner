@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game,Long> {
+public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game, Long> {
 
     List<Game> findByNameContainingIgnoreCase(String name);
 

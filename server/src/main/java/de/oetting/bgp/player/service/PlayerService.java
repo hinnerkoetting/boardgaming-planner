@@ -43,7 +43,7 @@ public class PlayerService {
         return userDetails.getAuthorities().stream().anyMatch(authority -> Role.OWNER.getName().equals(authority.getAuthority()));
     }
 
-    public void checkCurrentPlayerId(long playerId){
+    public void checkCurrentPlayerId(long playerId) {
         if (CurrentUser.getCurrentPlayerId() != playerId) {
             throw new ForbiddenException("Not allowed");
         }

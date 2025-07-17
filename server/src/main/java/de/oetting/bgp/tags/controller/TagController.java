@@ -30,7 +30,7 @@ public class TagController {
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     public TagEntity create(@RequestBody CreateTagRequest tag) {
-        TagEntity entity= new TagEntity();
+        TagEntity entity = new TagEntity();
         entity.setDescription(tag.getDescription());
         entity.setType(tag.getType());
         entity.setImportedSourceName(tag.getImportedSourceName());

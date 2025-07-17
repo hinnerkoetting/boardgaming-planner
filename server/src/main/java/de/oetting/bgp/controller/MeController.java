@@ -1,10 +1,10 @@
 package de.oetting.bgp.controller;
 
 import de.oetting.bgp.controller.model.MeModel;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.security.JwtUtil;

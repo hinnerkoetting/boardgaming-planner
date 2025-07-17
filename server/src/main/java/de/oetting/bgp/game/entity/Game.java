@@ -18,7 +18,7 @@ public class Game {
 
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)
@@ -59,11 +59,11 @@ public class Game {
     private Set<Game2GameGroupRelation> gameGroups;
 
     @ManyToMany
-    @JoinTable(name="GAMES_2_TAGS",
-            joinColumns=
-            @JoinColumn(name="GAME_ID", referencedColumnName="ID"),
-            inverseJoinColumns=
-            @JoinColumn(name="TAG_ID", referencedColumnName="ID"))
+    @JoinTable(name = "GAMES_2_TAGS",
+            joinColumns =
+            @JoinColumn(name = "GAME_ID", referencedColumnName = "ID"),
+            inverseJoinColumns =
+            @JoinColumn(name = "TAG_ID", referencedColumnName = "ID"))
     private Set<TagEntity> globalTags = new HashSet<>();
 
     public Long getId() {

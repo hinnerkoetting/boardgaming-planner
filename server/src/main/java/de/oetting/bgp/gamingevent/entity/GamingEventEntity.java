@@ -11,14 +11,14 @@ import java.util.List;
 public class GamingEventEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, name = "START_TS")
     private ZonedDateTime start;
 
     @ManyToOne
-    @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAME_GROUP_ID", nullable = false, updatable = false)
     private GameGroup gameGroup;
 
     @Column

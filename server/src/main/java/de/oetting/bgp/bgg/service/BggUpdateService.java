@@ -115,7 +115,7 @@ public class BggUpdateService {
             FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
             try {
                 return Optional.of(updateGameFromBgg(game, firstItem, globalTags));
-            } catch (Exception e){
+            } catch (Exception e) {
                 LOG.error("Could not update item", e);
             }
         } catch (FetchException e) {
@@ -131,7 +131,7 @@ public class BggUpdateService {
             return Optional.empty();
         }
         if (searchOutput.getItems().size() == 1) {
-            return Optional.of( searchOutput.getItems().get(0));
+            return Optional.of(searchOutput.getItems().get(0));
         }
         return searchOutput.getItems().stream()
                 .filter(item -> item.getName().getValue().equals(game.getName()))
@@ -176,7 +176,7 @@ public class BggUpdateService {
     private static int parseNumberOfPlayers(Poll.Results results) {
         String numPlayers = results.getNumPlayers();
         if (numPlayers.contains("+")) {
-            return Integer.parseInt( numPlayers.substring(0, numPlayers.indexOf("+"))) + 1;
+            return Integer.parseInt(numPlayers.substring(0, numPlayers.indexOf("+"))) + 1;
         }
         return Integer.parseInt(numPlayers);
     }
@@ -185,7 +185,7 @@ public class BggUpdateService {
         int numberOfBest = getNumberOfVotesForBest(pollResults);
         int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
         int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
-        var sum = numberOfBest +  numberOfRecommended + numberOfNotRecommended;
+        var sum = numberOfBest + numberOfRecommended + numberOfNotRecommended;
         return numberOfBest * 2 < sum && (numberOfBest + numberOfRecommended) > numberOfNotRecommended;
     }
 
@@ -193,7 +193,7 @@ public class BggUpdateService {
         int numberOfBest = getNumberOfVotesForBest(pollResults);
         int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
         int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
-        var sum = numberOfBest +  numberOfRecommended + numberOfNotRecommended;
+        var sum = numberOfBest + numberOfRecommended + numberOfNotRecommended;
         return numberOfBest * 2 >= sum;
     }
 

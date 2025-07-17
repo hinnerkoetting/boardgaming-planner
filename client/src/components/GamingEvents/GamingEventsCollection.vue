@@ -1,4 +1,4 @@
-<template>  
+<template>
   <DataView :value="internGamingEvents" class="collection" dataKey="id">
     <template #empty> No events exist </template>
     <template #list="slotProps">
@@ -7,21 +7,17 @@
           <div class="grid-card">
             <GamingEventCard :event="item" :gameGroupId="gameGroupId" />
           </div>
-          
         </div>
       </div>
     </template>
   </DataView>
-
 </template>
 
-
 <script setup lang="ts">
-import type { GamingEvent } from '@/model/GamingEvent';
-import { DataView } from 'primevue';
-import { ref, watch, type PropType } from 'vue';
-import GamingEventCard from './GamingEventCard.vue';
-
+import type { GamingEvent } from '@/model/GamingEvent'
+import { DataView } from 'primevue'
+import { ref, watch, type PropType } from 'vue'
+import GamingEventCard from './GamingEventCard.vue'
 
 const props = defineProps({
   gamingEvents: {
@@ -42,22 +38,19 @@ watch(
     internGamingEvents.value = gamingEvents
   }
 )
-
 </script>
 
 <style lang="css" scoped>
-
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-gap: 8px;  
-  grid-template-rows: repeat(3, 1fr);  
+  grid-gap: 8px;
+  grid-template-rows: repeat(3, 1fr);
 }
 
 .grid-card {
-  
   margin-bottom: auto;
-  
+
   margin-top: 4px;
   height: 100%;
 }

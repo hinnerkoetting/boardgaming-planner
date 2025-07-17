@@ -1,55 +1,76 @@
 <template>
   <div>
     <div class="grid">
+      <div>Start*</div>
       <div>
-        Start*
-      </div>
-      <div>
-         <DatePicker id="datepicker-24h" v-model="start" showTime hourFormat="24" fluid />
+        <DatePicker id="datepicker-24h" v-model="start" showTime hourFormat="24" fluid />
       </div>
       <div>
         <label for="regular">Regular event</label>
-               
       </div>
       <div>
-        <Checkbox  v-model="regular" label="Regular event" binary input-id="regular" style="margin-bottom: 4px"/>
-        <span v-if="regular" style="padding-top: 8px; margin-left: 16px;">
+        <Checkbox
+          v-model="regular"
+          label="Regular event"
+          binary
+          input-id="regular"
+          style="margin-bottom: 4px"
+        />
+        <span v-if="regular" style="padding-top: 8px; margin-left: 16px">
           <RadioButtonGroup name="schedule" v-model="schedule">
-            <RadioButton value="WEEKLY" label="Weekly" input-id="weekly" class="radio" size="large"/>
-             <label for="weekly">Weekly</label>
-            <RadioButton value="MONTHLY" label="Monthly" input-id="monthly" class="radio" size="large"/>
+            <RadioButton
+              value="WEEKLY"
+              label="Weekly"
+              input-id="weekly"
+              class="radio"
+              size="large"
+            />
+            <label for="weekly">Weekly</label>
+            <RadioButton
+              value="MONTHLY"
+              label="Monthly"
+              input-id="monthly"
+              class="radio"
+              size="large"
+            />
             <label for="monthly">Monthly</label>
           </RadioButtonGroup>
-
         </span>
-      </div>      
-      <div>
-        Comment
       </div>
+      <div>Comment</div>
       <div>
-        <Textarea v-model:model-value="comment"/> 
+        <Textarea v-model:model-value="comment" />
       </div>
-      <div/>
-      <div>
-        
-      </div>
+      <div />
+      <div></div>
     </div>
     <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
-    <Button label="Create event" @click="onClickCreateEvent"/>
+    <Button label="Create event" @click="onClickCreateEvent" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { GamingEvent, Schedule } from '@/model/GamingEvent';
-import { addAllGroupMembersToGamingEvent, createGamingEvent } from '@/services/api/GamingEventsApiService';
-import { Button, Checkbox, DatePicker, Message, RadioButton, RadioButtonGroup, Textarea } from 'primevue';
-import { ref } from 'vue';
+import type { GamingEvent, Schedule } from '@/model/GamingEvent'
+import {
+  addAllGroupMembersToGamingEvent,
+  createGamingEvent
+} from '@/services/api/GamingEventsApiService'
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Message,
+  RadioButton,
+  RadioButtonGroup,
+  Textarea
+} from 'primevue'
+import { ref } from 'vue'
 
-const start = ref(null);
-const regular = ref(false);
-const schedule = ref('WEEKLY');
-const comment = ref('');
-const errorMessage = ref('');
+const start = ref(null)
+const regular = ref(false)
+const schedule = ref('WEEKLY')
+const comment = ref('')
+const errorMessage = ref('')
 
 const props = defineProps({
   gameGroupId: {
@@ -60,32 +81,35 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'event-created', gamingEvent: GamingEvent): void
-}>();
+}>()
 
 async function onClickCreateEvent() {
-  errorMessage.value = '';
+  errorMessage.value = ''
   if (start.value) {
-    const scheduleValue = regular.value ? schedule.value : 'ONCE';
-    const result = await createGamingEvent(props.gameGroupId, start.value, scheduleValue as Schedule, comment.value)
+    const scheduleValue = regular.value ? schedule.value : 'ONCE'
+    const result = await createGamingEvent(
+      props.gameGroupId,
+      start.value,
+      scheduleValue as Schedule,
+      comment.value
+    )
     if (result.success) {
-      const addParticipantsResult = await addAllGroupMembersToGamingEvent(result.success.id);
+      const addParticipantsResult = await addAllGroupMembersToGamingEvent(result.success.id)
       if (addParticipantsResult.success) {
-         emit('event-created', addParticipantsResult.success);
+        emit('event-created', addParticipantsResult.success)
       } else {
-        errorMessage.value = addParticipantsResult.error?.detail ?? "Error";      
+        errorMessage.value = addParticipantsResult.error?.detail ?? 'Error'
       }
     } else {
-      errorMessage.value = result.error?.detail ?? "Error";      
+      errorMessage.value = result.error?.detail ?? 'Error'
     }
   } else {
-    errorMessage.value = 'Please enter a start date.';
+    errorMessage.value = 'Please enter a start date.'
   }
 }
-
 </script>
 
 <style lang="css" scoped>
-
 input {
   line-height: 28px;
   margin: 4px;
@@ -94,16 +118,14 @@ input {
 .grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 0px;  
+  gap: 0px;
   grid-template-rows: repeat(5, 0.75fr);
   grid-column-gap: 0px;
-  grid-row-gap: 4px; 
+  grid-row-gap: 4px;
 }
 
 .radio {
   margin-right: 4px;
   margin-left: 8px;
 }
-
-
 </style>

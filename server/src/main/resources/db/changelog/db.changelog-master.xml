@@ -1,5 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <!-- First automatically generated changeSets by JPA -->
     <changeSet author="Hinnerk" id="1728113142202-1">
         <createSequence sequenceName="GAME_GROUP_SEQ" incrementBy="50"/>
@@ -205,34 +207,64 @@
         </createIndex>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-30">
-        <addForeignKeyConstraint baseColumnNames="PLAYERS_ID" baseTableName="GAME_GROUP_PLAYERS" constraintName="FK4HWGA5T5H36G9K9ER2YYLU5C2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="PLAYERS_ID" baseTableName="GAME_GROUP_PLAYERS"
+                                 constraintName="FK4HWGA5T5H36G9K9ER2YYLU5C2" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-31">
-        <addForeignKeyConstraint baseColumnNames="GAMES_ID" baseTableName="GAME_GROUP_GAMES" constraintName="FK5YCWUUP9LN1JV9RL2RJUNUWLD" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GAMES_ID" baseTableName="GAME_GROUP_GAMES"
+                                 constraintName="FK5YCWUUP9LN1JV9RL2RJUNUWLD" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-32">
-        <addForeignKeyConstraint baseColumnNames="GAME_ID" baseTableName="RATING" constraintName="FKHOTXGRGTRIN4XCTO6N1J4A946" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GAME_ID" baseTableName="RATING"
+                                 constraintName="FKHOTXGRGTRIN4XCTO6N1J4A946" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-33">
-        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_PLAYERS" constraintName="FKLGM1SY5V8Y6JAQQXTCHWUY5LG" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_PLAYERS"
+                                 constraintName="FKLGM1SY5V8Y6JAQQXTCHWUY5LG" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-34">
-        <addForeignKeyConstraint baseColumnNames="PLAYER_ID" baseTableName="RATING" constraintName="FKM361NCR6JHVM89499BGO8J563" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="PLAYER_ID" baseTableName="RATING"
+                                 constraintName="FKM361NCR6JHVM89499BGO8J563" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="PLAYER" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-35">
-        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_GAMES" constraintName="FKP59G4XIM7HXKRKVGBTFAKT56T" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUPS_ID" baseTableName="GAME_GROUP_GAMES"
+                                 constraintName="FKP59G4XIM7HXKRKVGBTFAKT56T" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-36">
-        <addForeignKeyConstraint baseColumnNames="GAME_GROUP_ID" baseTableName="RATING" constraintName="FKQL19UEHAWNBBFCRQBNIWK3POH" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUP_ID" baseTableName="RATING"
+                                 constraintName="FKQL19UEHAWNBBFCRQBNIWK3POH" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-37">
-        <addForeignKeyConstraint baseColumnNames="USERNAME" baseTableName="AUTHORITIES" constraintName="FK_AUTHORITIES_USERS" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="USERNAME" referencedTableName="USERS" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="USERNAME" baseTableName="AUTHORITIES"
+                                 constraintName="FK_AUTHORITIES_USERS" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="USERNAME"
+                                 referencedTableName="USERS" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-38">
-        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_AUTHORITIES" constraintName="FK_GROUP_AUTHORITIES_GROUP" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_AUTHORITIES"
+                                 constraintName="FK_GROUP_AUTHORITIES_GROUP" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
     </changeSet>
     <changeSet author="Hinnerk" id="1728113142202-39">
-        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_MEMBERS" constraintName="FK_GROUP_MEMBERS_GROUP" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="GROUPS" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="GROUP_ID" baseTableName="GROUP_MEMBERS"
+                                 constraintName="FK_GROUP_MEMBERS_GROUP" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+                                 referencedTableName="GROUPS" validate="true"/>
     </changeSet>
 
     <!-- Manually created starting here -->
@@ -472,7 +504,7 @@
             <column name="START_TS" type="timestamp with time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="END_TS"  type="timestamp with time zone"/>
+            <column name="END_TS" type="timestamp with time zone"/>
             <column name="DESCRIPTION" type="VARCHAR2(4000)"/>
             <column name="SCHEDULE" type="VARCHAR2(20)">
                 <constraints nullable="false"/>
@@ -535,7 +567,8 @@
                 validate="true"/>
 
 
-        <createIndex associatedWith="" indexName="GAME_2_GAMING_EVENT_GAMING_EVENT_IDX" tableName="GAME_2_GAMING_EVENT" unique="true">
+        <createIndex associatedWith="" indexName="GAME_2_GAMING_EVENT_GAMING_EVENT_IDX" tableName="GAME_2_GAMING_EVENT"
+                     unique="true">
             <column name="GAMING_EVENT_ID"/>
             <column name="GAME_ID"/>
         </createIndex>
@@ -589,7 +622,8 @@
                 validate="true"/>
 
 
-        <createIndex associatedWith="" indexName="PLAYER_2_GAMING_EVENT_GAMING_EVENT_IDX" tableName="PLAYER_2_GAMING_EVENT" unique="true">
+        <createIndex associatedWith="" indexName="PLAYER_2_GAMING_EVENT_GAMING_EVENT_IDX"
+                     tableName="PLAYER_2_GAMING_EVENT" unique="true">
             <column name="GAMING_EVENT_ID"/>
             <column name="PLAYER_ID"/>
         </createIndex>
@@ -607,7 +641,7 @@
                 validate="true"/>
 
     </changeSet>
-    
+
     <changeSet id="game_group_games_added_date" author="Hinnerk">
         <addColumn tableName="GAME_GROUP_GAMES">
             <column name="ADDED_DT" type="date"/>

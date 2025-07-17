@@ -1,7 +1,6 @@
 package de.oetting.bgp.gamegroup.model;
 
 import java.util.List;
-import java.util.Map;
 
 public class GameGroupStatisticsModel {
 

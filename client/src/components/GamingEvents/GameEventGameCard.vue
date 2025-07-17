@@ -2,44 +2,40 @@
   <div class="full-height">
     <Card @click="onClickCard">
       <template #title>
-        <div class="title">
-          {{ game.name }}  <span :class="gameStatusClass(gameStatus)"> </span>         
-        </div>
+        <div class="title">{{ game.name }} <span :class="gameStatusClass(gameStatus)"> </span></div>
       </template>
       <template #content>
         <div class="content">
           <Image :src="game.thumbnailUrl" />
-          {{  gameComment }}
+          {{ gameComment }}
         </div>
         <span class="gamestatus-buttons" v-if="isPartOfGroup">
           <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
-          <Button :disabled="gameStatus == 'PLAYED'" 
-                  label="Played"                 
-                  @click.stop="onPlayed(game.id!)" />
-          <Button :disabled="gameStatus == 'REJECTED'" 
-                  label="Rejected" 
-                  severity="warn"
-                  @click.stop="onReject(game.id!)" />
-          <Button :disabled="gameStatus == 'SUGGESTED'" 
-                  label="Suggested" 
-                  severity="secondary"
-                  @click.stop="onSuggest(game.id!)" />     
           <Button
-            label="Delete" 
-            severity="danger"
-            @click.stop="onDelete(game.id!)" />     
+            :disabled="gameStatus == 'PLAYED'"
+            label="Played"
+            @click.stop="onPlayed(game.id!)"
+          />
+          <Button
+            :disabled="gameStatus == 'REJECTED'"
+            label="Rejected"
+            severity="warn"
+            @click.stop="onReject(game.id!)"
+          />
+          <Button
+            :disabled="gameStatus == 'SUGGESTED'"
+            label="Suggested"
+            severity="secondary"
+            @click.stop="onSuggest(game.id!)"
+          />
+          <Button label="Delete" severity="danger" @click.stop="onDelete(game.id!)" />
         </span>
         <span v-else>
-          {{ gameStatusName(gameStatus)}}
+          {{ gameStatusName(gameStatus) }}
         </span>
       </template>
     </Card>
-    <Dialog
-      v-model:visible="showGameDialog"
-      modal
-      :header="game.name"
-      style="width: 100%"
-    >
+    <Dialog v-model:visible="showGameDialog" modal :header="game.name" style="width: 100%">
       <ShowGameDetailsComponent :game="game" />
     </Dialog>
   </div>
@@ -109,65 +105,64 @@ function onClickCard() {
 function gameStatusClass(gameStatus: GameStatus) {
   switch (gameStatus) {
     case 'SUGGESTED':
-      return 'pi pi-lightbulb suggested';
+      return 'pi pi-lightbulb suggested'
     case 'REJECTED':
-      return 'pi pi-times declined';
+      return 'pi pi-times declined'
     case 'PLAYED':
-      return 'pi pi-check maybe';
+      return 'pi pi-check maybe'
     default:
-      return '';
+      return ''
   }
 }
 
 function gameStatusName(gameStatus: GameStatus): string {
   switch (gameStatus) {
     case 'SUGGESTED':
-      return 'Suggested';
+      return 'Suggested'
     case 'REJECTED':
-      return 'Rejected';
+      return 'Rejected'
     case 'PLAYED':
-      return 'Played';
+      return 'Played'
     default:
-      return '';
+      return ''
   }
 }
 
 async function onPlayed(gameId: number) {
   const result = await updateGameStatus(props.gamingEventId, gameId, 'PLAYED')
   if (result.success) {
-    gameStatus.value = 'PLAYED';    
+    gameStatus.value = 'PLAYED'
   } else {
-    errorMessage.value = result.error?.detail ?? "Error updating game status";
+    errorMessage.value = result.error?.detail ?? 'Error updating game status'
   }
 }
 
 async function onReject(gameId: number) {
   const result = await updateGameStatus(props.gamingEventId, gameId, 'REJECTED')
   if (result.success) {
-    gameStatus.value = 'REJECTED';    
+    gameStatus.value = 'REJECTED'
   } else {
-    errorMessage.value = result.error?.detail ?? "Error updating game status";
+    errorMessage.value = result.error?.detail ?? 'Error updating game status'
   }
 }
 
 async function onSuggest(gameId: number) {
   const result = await updateGameStatus(props.gamingEventId, gameId, 'SUGGESTED')
   if (result.success) {
-    gameStatus.value = 'SUGGESTED';    
+    gameStatus.value = 'SUGGESTED'
   } else {
-    errorMessage.value = result.error?.detail ?? "Error updating game status";
+    errorMessage.value = result.error?.detail ?? 'Error updating game status'
   }
 }
 
 async function onDelete(gameId: number) {
   const result = await removeGameFromEvent(props.gamingEventId, gameId)
-  if (!result.success) {    
-    errorMessage.value = result.error?.detail ?? "Error updating game status";
+  if (!result.success) {
+    errorMessage.value = result.error?.detail ?? 'Error updating game status'
   } else {
-    emits('game-removed', props.game);
+    emits('game-removed', props.game)
   }
 }
-
 </script>
 
 <style lang="css" scoped>
@@ -230,7 +225,7 @@ async function onDelete(gameId: number) {
   color: green;
 }
 
-.gamestatus-buttons > *{
+.gamestatus-buttons > * {
   margin-right: 4px;
 }
 </style>

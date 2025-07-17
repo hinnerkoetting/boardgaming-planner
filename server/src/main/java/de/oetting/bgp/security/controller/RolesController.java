@@ -42,7 +42,7 @@ public class RolesController {
 
     @PostMapping(value = "/bootstrapOwner")
     @Transactional
-    public ResponseEntity<?> bootstrapOwner(@PathVariable("playerId") long playerId)  {
+    public ResponseEntity<?> bootstrapOwner(@PathVariable("playerId") long playerId) {
         if (System.getenv("BOOTSTRAP_OWNER_ALLOWED") == null) {
             LOG.info("Bootstrap owner not allowed because env BOOTSTRAP_OWNER_ALLOWED is not defined");
             return ResponseEntity.badRequest().build();
@@ -61,7 +61,7 @@ public class RolesController {
         LOG.warn("Promoting {} to owner", playerId);
 
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("Player not found"));
-        User user = addRoles(player, Arrays.asList(Role.ADMIN, Role.OWNER ));
+        User user = addRoles(player, Arrays.asList(Role.ADMIN, Role.OWNER));
         groupManager.addUserToGroup(user.getUsername(), "owner");
 
         return ResponseEntity.ok(null);
@@ -71,7 +71,7 @@ public class RolesController {
     @Transactional
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
     @ResponseStatus(HttpStatus.OK)
-    public void addRole(@PathVariable("playerId") long playerId, @PathVariable("role") String roleName)  {
+    public void addRole(@PathVariable("playerId") long playerId, @PathVariable("role") String roleName) {
         Role role = Role.from(roleName);
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new NoSuchElementException("Player not found"));
         checkNotEditingYourself(player);
@@ -107,7 +107,7 @@ public class RolesController {
         return userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
     }
 
-    private void checkNotEditingYourself( Player player) {
+    private void checkNotEditingYourself(Player player) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (player.getName().equals(authentication.getPrincipal())) {
             throw new ConflictException("Cannot change roles on yourself");

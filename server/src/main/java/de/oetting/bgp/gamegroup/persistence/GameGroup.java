@@ -6,7 +6,6 @@ import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -14,7 +13,7 @@ public class GameGroup {
 
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @OneToMany(mappedBy = "gameGroup")

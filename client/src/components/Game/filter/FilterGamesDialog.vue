@@ -48,7 +48,7 @@ const props = defineProps({
 const numberOfVisibleGames = ref()
 
 const emit = defineEmits<{
-  (e: 'updated-filter', visibleGames: RatedGame[]): void,
+  (e: 'updated-filter', visibleGames: RatedGame[]): void
   (e: 'opened'): void
 }>()
 
@@ -75,13 +75,13 @@ function onClickClose() {
 }
 
 function filterLabel(): string {
-  const numberOfVisibleGames = props.visibleGames.length;
-  const numberOfAllGames = props.allGames.length;
+  const numberOfVisibleGames = props.visibleGames.length
+  const numberOfAllGames = props.allGames.length
   if (numberOfAllGames === numberOfVisibleGames) {
-    return 'Filter';
+    return 'Filter'
   }
-  
-  return `Filter ${numberOfVisibleGames} / ${numberOfAllGames}`;
+
+  return `Filter ${numberOfVisibleGames} / ${numberOfAllGames}`
 }
 </script>
 

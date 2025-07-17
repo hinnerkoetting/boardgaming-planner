@@ -50,23 +50,23 @@ const gameGroups: Ref<GameGroup[]> = ref([] as GameGroup[])
 const errorMessage: Ref<string> = ref('')
 
 onMounted(async () => {
-  errorMessage.value = '';
+  errorMessage.value = ''
   const result = await fetchMyGameGroups()
-  if (result.success) {  
+  if (result.success) {
     myGameGroups.value = result.success
   } else {
-    errorMessage.value = result.error?.detail || 'Error fetching game groups';    
-  }  
+    errorMessage.value = result.error?.detail || 'Error fetching game groups'
+  }
 })
 
 async function onClickLoadButton() {
-  errorMessage.value = '';
-  const result = await fetchGameGroups();  
-  if (result.success) {  
+  errorMessage.value = ''
+  const result = await fetchGameGroups()
+  if (result.success) {
     gameGroups.value = result.success
   } else {
-    errorMessage.value = result.error?.detail || 'Error fetching game groups';    
-  }  
+    errorMessage.value = result.error?.detail || 'Error fetching game groups'
+  }
 }
 
 function removeMyGroupsFromOthers(gameGroups: GameGroup[]): GameGroup[] {

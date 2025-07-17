@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RatingRepository extends PagingAndSortingRepository<Rating, Long>,CrudRepository<Rating,Long> {
+public interface RatingRepository extends PagingAndSortingRepository<Rating, Long>, CrudRepository<Rating, Long> {
 
     List<Rating> findByGameGroupIdAndPlayerId(long gameGroupId, long playerId);
+
     List<Rating> findByGameGroupId(long gameGroupId);
+
     List<Rating> findByGameGroupIdAndGameId(long gameGroupId, long gameId);
 
     Optional<Rating> findByGameGroupIdAndPlayerIdAndGameId(long gameGroupId, long playerId, long gameId);

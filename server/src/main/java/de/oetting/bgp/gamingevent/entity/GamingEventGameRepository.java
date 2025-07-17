@@ -3,11 +3,9 @@ package de.oetting.bgp.gamingevent.entity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
-public interface GamingEventGameRepository extends CrudRepository<GamingEventGameEntity,Long> {
+public interface GamingEventGameRepository extends CrudRepository<GamingEventGameEntity, Long> {
 
 
     void deleteByGamingEventIdAndGameId(long gamingEventId, long gameId);

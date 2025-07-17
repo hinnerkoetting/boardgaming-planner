@@ -19,7 +19,7 @@ public class GameGroupEventListener implements EventListener {
 
     @Override
     public boolean shouldSend(Event event) {
-        if (!(event instanceof GameGroupEvent) ) {
+        if (!(event instanceof GameGroupEvent)) {
             return false;
         }
         return listeningGameGroup == ((GameGroupEvent) event).getGameGroupId();

@@ -4,7 +4,7 @@ import de.oetting.bgp.gamingevent.entity.Schedule;
 
 import java.util.List;
 
-public class  GamingEventModel {
+public class GamingEventModel {
 
     private Long id;
     private long start;

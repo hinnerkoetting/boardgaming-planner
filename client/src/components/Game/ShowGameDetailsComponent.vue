@@ -1,7 +1,12 @@
 <template>
   <div class="full-height">
     <div class="content">
-      <Image :src="game.imageUrl" class="image" style="max-width: min(100%, 600px)" imageStyle="max-width: 100%" />
+      <Image
+        :src="game.imageUrl"
+        class="image"
+        style="max-width: min(100%, 600px)"
+        imageStyle="max-width: 100%"
+      />
       <div class="row">
         <div :class="showExpandedDescription ? '' : 'summary'" @click="onClickDescription">
           {{ htmlDecode(game.description) }}
@@ -40,7 +45,9 @@
         <a :href="game.url" target="_blank">Further information</a>
       </div>
       <div class="row" v-if="game.url">
-        <RouterLink :to="{ name: 'gameStatistics', params: { gameId: game.id } }">Statistics</RouterLink>
+        <RouterLink :to="{ name: 'gameStatistics', params: { gameId: game.id } }"
+          >Statistics</RouterLink
+        >
       </div>
     </div>
   </div>

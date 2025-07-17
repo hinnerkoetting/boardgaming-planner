@@ -2,7 +2,7 @@ package de.oetting.bgp.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class HTTPException extends RuntimeException{
+public class HTTPException extends RuntimeException {
 
     private final HttpStatus httpStatus;
 

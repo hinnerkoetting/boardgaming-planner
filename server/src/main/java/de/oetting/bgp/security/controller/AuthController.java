@@ -24,9 +24,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,20 +51,20 @@ public class AuthController {
     private PlayerRepository playerRepository;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginReq)  {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginReq) {
 
         try {
             var authenticationToken = new UsernamePasswordAuthenticationToken(loginReq.getLogin(), loginReq.getPassword());
             authenticationManager.authenticate(authenticationToken);
 
             return ResponseEntity.ok(createLoginResponseForUser(loginReq.getLogin()));
-        }catch (BadCredentialsException e){
+        } catch (BadCredentialsException e) {
             HttpErrorResponse errorResponse = new HttpErrorResponse();
             errorResponse.setType("CLIENT_ERROR");
             errorResponse.setDetail("Invalid username or password");
             errorResponse.setTitle("Could not login");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("error during login", e);
             HttpErrorResponse errorResponse = new HttpErrorResponse();
             errorResponse.setType("SERVER_ERROR");
@@ -80,7 +85,7 @@ public class AuthController {
 
     @PostMapping(value = "/register")
     @Transactional
-    public ResponseEntity<?> register(@RequestBody RegistrationRequest registrationRequest)  {
+    public ResponseEntity<?> register(@RequestBody RegistrationRequest registrationRequest) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         if (doesUserAlreadyExist(registrationRequest.getLogin())) {
@@ -103,7 +108,7 @@ public class AuthController {
         try {
             userDetailsManager.loadUserByUsername(name);
             return true;
-        } catch (UsernameNotFoundException e){
+        } catch (UsernameNotFoundException e) {
             return false;
         }
     }

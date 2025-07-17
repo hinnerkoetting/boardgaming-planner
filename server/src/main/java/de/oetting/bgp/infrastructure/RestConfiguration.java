@@ -1,8 +1,8 @@
 package de.oetting.bgp.infrastructure;
 
+import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.gamegroup.persistence.GameGroup;
-import de.oetting.bgp.entities.Player;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;

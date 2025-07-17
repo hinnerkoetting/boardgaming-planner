@@ -2,7 +2,6 @@ package de.oetting.bgp.game.controller;
 
 import de.oetting.bgp.game.model.GameStatisticsModel;
 import de.oetting.bgp.gamingevent.entity.GamingEventGameRepository;
-import de.oetting.bgp.gamingevent.entity.GamingEventParticipantsEntity;
 import de.oetting.bgp.gamingevent.entity.GamingEventRepository;
 import de.oetting.bgp.infrastructure.CurrentUser;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,7 @@ public class GameStatisticsController {
     @Autowired
     private GamingEventRepository gamingEventRepository;
 
-    @GetMapping(path="/statistics")
+    @GetMapping(path = "/statistics")
     @Transactional
     public GameStatisticsModel loadGameStatistics(@PathVariable("gameId") long gameId) {
         var currentPlayerId = CurrentUser.getCurrentPlayerId();

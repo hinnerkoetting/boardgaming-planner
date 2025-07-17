@@ -4,4 +4,3 @@ export class GameGroup {
     readonly name: string
   ) {}
 }
-

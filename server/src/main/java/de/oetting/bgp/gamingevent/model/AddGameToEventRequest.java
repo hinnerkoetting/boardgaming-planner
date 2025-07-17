@@ -1,7 +1,6 @@
 package de.oetting.bgp.gamingevent.model;
 
 import de.oetting.bgp.gamingevent.GameEventStatus;
-import de.oetting.bgp.gamingevent.ParticipationStatus;
 
 public class AddGameToEventRequest {
 

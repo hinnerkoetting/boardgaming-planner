@@ -1,41 +1,36 @@
 <script setup lang="ts">
-import { RatedGame } from '@/model/Game';
-import { init } from 'echarts';
-import { onMounted, ref, useTemplateRef, type PropType, type Ref } from 'vue';
+import { RatedGame } from '@/model/Game'
+import { init } from 'echarts'
+import { onMounted, ref, useTemplateRef, type PropType, type Ref } from 'vue'
 
-const chart = useTemplateRef("chart")
+const chart = useTemplateRef('chart')
 
 const props = defineProps({
   games: {
     type: Array as PropType<RatedGame[]>,
     required: true
   }
-}
-);
+})
 
-const average: Ref<Record<number, number>> = ref({});
+const average: Ref<Record<number, number>> = ref({})
 
+function groupGamesByRating(games: RatedGame[]): void {
+  Array.from(Array(10).keys()).forEach((i) => {
+    average.value[i] = 0
+  })
 
-function groupGamesByRating(games: RatedGame[]): void {  
-  Array.from(Array(10).keys()).forEach(i => {
-    average.value[i] = 0;
-  });
-
-  games.forEach(game => {
+  games.forEach((game) => {
     const rating = Math.floor(game.rating.averageRating)
-   
-    average.value[rating] = average.value[rating] + 1;
-    
-  });
+
+    average.value[rating] = average.value[rating] + 1
+  })
 }
 
 onMounted(() => {
-
   groupGamesByRating(props.games)
-  var myChart = init(chart.value);
+  var myChart = init(chart.value)
 
-
-  new ResizeObserver(() => myChart.resize()).observe(chart.value!);
+  new ResizeObserver(() => myChart.resize()).observe(chart.value!)
 
   const option = {
     xAxis: {
@@ -51,33 +46,29 @@ onMounted(() => {
       {
         data: Object.values(average.value),
         type: 'bar',
-        name: "Average",
+        name: 'Average',
         label: {
           show: true,
           position: 'top',
-          formatter: '{c}',
+          formatter: '{c}'
         }
-      }      
+      }
     ],
     title: {
       show: true,
-      text: 'Number of games by rating',
-    }, legend: {      
+      text: 'Number of games by rating'
+    },
+    legend: {
       orient: 'vertical',
       right: 0,
       top: 'bottom'
-    },
+    }
+  }
 
-  };
-
-  option && myChart.setOption(option);
-});
-
-
-
+  option && myChart.setOption(option)
+})
 </script>
 
 <template>
-  <div style="width: 100%; height: 400px;" ref="chart"></div>
-
+  <div style="width: 100%; height: 400px" ref="chart"></div>
 </template>

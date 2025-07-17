@@ -14,7 +14,7 @@ export async function wrapResponse<T extends {}>(response: Response): Promise<Re
       success: content,
       error: undefined
     }
-  }  
+  }
   return parseErrorResponse(response)
 }
 
@@ -27,12 +27,11 @@ export async function wrapEmptySuccessResponse(
       error: undefined
     }
   }
-  return parseErrorResponse(response)  
+  return parseErrorResponse(response)
 }
 
-
 async function parseErrorResponse<T extends {}>(response: Response): Promise<ResponseWrapper<T>> {
- try {
+  try {
     const content = (await response.json()) as ErrorResponse
 
     return {

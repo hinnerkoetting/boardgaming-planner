@@ -60,7 +60,7 @@ public class GamingEventController {
     @Transactional
     @GetMapping("/gamingEvents/{gamingEventId}")
     public GamingEventModel getGamingEvent(@PathVariable("gamingEventId") long gamingEventId) {
-       return map(gamingEventRepository.findById(gamingEventId).orElseThrow());
+        return map(gamingEventRepository.findById(gamingEventId).orElseThrow());
     }
 
     @Transactional
@@ -240,7 +240,7 @@ public class GamingEventController {
 
         // It's a bit difficult to exactly return the number of requested events if we always want to include recurring events.
         // I think it's good enough for now to just return more, but this needs to be fixed at some point.
-        var recurringEvents= gamingEventRepository.findByGameGroupIdAndScheduleIn(gameGroupId, Arrays.asList(Schedule.MONTHLY, Schedule.WEEKLY));
+        var recurringEvents = gamingEventRepository.findByGameGroupIdAndScheduleIn(gameGroupId, Arrays.asList(Schedule.MONTHLY, Schedule.WEEKLY));
         var singleEvents = gamingEventRepository.findByGameGroupIdAndScheduleAndStartAfter(gameGroupId, Schedule.ONCE, zonedDateTime, PageRequest.of(0, number, Sort.by("start")));
 
         var result = new ArrayList<>(singleEvents);

@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 public class TagEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
@@ -22,8 +22,11 @@ public class TagEntity {
     @NotNull
     private TagType type;
 
-    /** Used to create a mapping so that we can automatically add tags to imported games */
-    @Column@Length(max = 200)
+    /**
+     * Used to create a mapping so that we can automatically add tags to imported games
+     */
+    @Column
+    @Length(max = 200)
     private String importedSourceName;
 
     public Long getId() {

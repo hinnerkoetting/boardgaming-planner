@@ -1,5 +1,3 @@
 export class GameGroupStatistics {
-  constructor(
-    readonly playDates: number[]
-  ) {}
+  constructor(readonly playDates: number[]) {}
 }

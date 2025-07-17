@@ -30,6 +30,7 @@ public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
+
     @DeleteMapping(path = "/{playerId}")
     @ResponseStatus(value = HttpStatus.OK)
     @Transactional
@@ -61,7 +62,7 @@ public class PlayerController {
         return model;
     }
 
-    private void checkNotEditingYourself( Player player) {
+    private void checkNotEditingYourself(Player player) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (player.getName().equals(authentication.getPrincipal())) {
             throw new ConflictException("Cannot change roles on yourself");

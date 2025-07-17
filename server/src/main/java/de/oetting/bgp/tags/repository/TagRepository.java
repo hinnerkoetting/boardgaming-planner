@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TagRepository extends PagingAndSortingRepository<TagEntity, Long>, CrudRepository<TagEntity,Long> {
+public interface TagRepository extends PagingAndSortingRepository<TagEntity, Long>, CrudRepository<TagEntity, Long> {
 
     @Query(value = "SELECT MAX(t.ranking) FROM TagEntity t")
     Integer findMaxRanking();

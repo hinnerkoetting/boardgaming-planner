@@ -10,15 +10,15 @@ public class GamingEventParticipantsEntity {
 
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="GAMING_EVENT_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAMING_EVENT_ID", nullable = false, updatable = false)
     private GamingEventEntity gamingEvent;
 
     @ManyToOne
-    @JoinColumn(name="PLAYER_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "PLAYER_ID", nullable = false, updatable = false)
     private Player participant;
 
     @Enumerated(EnumType.STRING)

@@ -1,7 +1,7 @@
 package de.oetting.bgp.controller;
 
-import de.oetting.bgp.infrastructure.CurrentUser;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.infrastructure.CurrentUser;
 import de.oetting.bgp.service.events.SseEmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;

@@ -1,25 +1,25 @@
 package de.oetting.bgp.gamegroup.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.gamegroup.persistence.*;
-import de.oetting.bgp.game.model.PlayerTagModel;
-import de.oetting.bgp.player.PlayerRepository;
-import de.oetting.bgp.player.service.PlayerService;
-import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.game.entity.Game;
+import de.oetting.bgp.game.model.PlayerTagModel;
 import de.oetting.bgp.game.model.RatedGameModel;
 import de.oetting.bgp.game.model.TagModel;
 import de.oetting.bgp.game.model.TagWrapper;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
+import de.oetting.bgp.gamegroup.persistence.*;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
+import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.rating.controller.RatingService;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
+import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
 import de.oetting.bgp.tags.entity.TagEntity;
 import de.oetting.bgp.tags.entity.TagType;
@@ -79,7 +79,7 @@ public class GameGroupController {
     @Transactional
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request){
+    public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request) {
         GameGroup savedEntity = gameGroupService.createGameGroup(request);
 
         return map(savedEntity);
@@ -88,13 +88,13 @@ public class GameGroupController {
     @Transactional
     @DeleteMapping(path = "/{gameGroupId}")
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    public void deleteGameGroup(@PathVariable("gameGroupId") long gameGroupId){
+    public void deleteGameGroup(@PathVariable("gameGroupId") long gameGroupId) {
         gameGroupService.deleteGameGroup(gameGroupId);
     }
 
     @GetMapping
     @Transactional
-    public List<GameGroupModel> getGameGroups(){
+    public List<GameGroupModel> getGameGroups() {
         return StreamSupport.stream(gameGroupRepository.findAll().spliterator(), false)
                 .map(this::map)
                 .toList();
@@ -102,17 +102,17 @@ public class GameGroupController {
 
     @GetMapping(path = "/{gameGroupId}")
     @Transactional
-    public GameGroupModel getGameGroup(@PathVariable("gameGroupId") long gameGroupId){
-       return gameGroupRepository.findById(gameGroupId)
-               .map(this::map)
-               .orElseThrow(() -> new NoSuchElementException("Group does not exist"));
+    public GameGroupModel getGameGroup(@PathVariable("gameGroupId") long gameGroupId) {
+        return gameGroupRepository.findById(gameGroupId)
+                .map(this::map)
+                .orElseThrow(() -> new NoSuchElementException("Group does not exist"));
     }
 
     @Transactional
     @PostMapping(path = "/{gameGroupId}/players")
     @ResponseStatus(value = HttpStatus.CREATED)
     public void addPlayerById(@RequestBody IdWrapper playerId, @PathVariable("gameGroupId") long gameGroupId) {
-       gameGroupService.addPlayerById(playerId.getId(), gameGroupId);
+        gameGroupService.addPlayerById(playerId.getId(), gameGroupId);
     }
 
     @GetMapping(path = "/{gameGroupId}/players")
@@ -213,7 +213,7 @@ public class GameGroupController {
 
     private RatedGameModel map(List<Rating> ratings, Game2GameGroupRelation game2GameGroupRelation, List<GameGroupTagEntity> gameGroupTags, List<PlayerTagEntity> playerTags) {
         var game = game2GameGroupRelation.getGame();
-        RatedGameModel ratedGame =new RatedGameModel();
+        RatedGameModel ratedGame = new RatedGameModel();
         ratedGame.setDescription(game.getDescription());
         ratedGame.setThumbnailUrl(game.getThumbnailUrl());
         ratedGame.setImageUrl(game.getImageUrl());

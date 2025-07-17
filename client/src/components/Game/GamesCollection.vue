@@ -4,7 +4,7 @@
       <template #list="slotProps">
         <div class="grid">
           <template v-for="(item, index) in slotProps.items" :key="index">
-            <div class="grid-card">                  
+            <div class="grid-card">
               <GameComponent
                 :game="item"
                 :game-group-id="gameGroupId"
@@ -33,10 +33,9 @@
       <TagGameInGroupComponent
         :game="selectedGame!"
         :game-group-id="gameGroupId"
-        @close="tagWindowVisible = false"    
+        @close="tagWindowVisible = false"
       />
     </Dialog>
-    
   </div>
 </template>
 

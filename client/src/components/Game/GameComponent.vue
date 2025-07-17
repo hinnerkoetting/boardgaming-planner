@@ -4,14 +4,19 @@
       <template #title>
         <div class="title-wrapper">
           <div class="title">
-            {{ game.name }} 
-          </div>                            
-          <span v-if="isNew" class="pi pi-star-fill" style="font-size: 1rem; color: gold; margin-left: 4px;" title="NEW"></span>
+            {{ game.name }}
+          </div>
+          <span
+            v-if="isNew"
+            class="pi pi-star-fill"
+            style="font-size: 1rem; color: gold; margin-left: 4px"
+            title="NEW"
+          ></span>
         </div>
       </template>
       <template #content>
-        <div class="content">          
-          <Image :src="game.thumbnailUrl"  />          
+        <div class="content">
+          <Image :src="game.thumbnailUrl" />
           <div>
             <div v-if="game.rating?.existsVeto" class="center-horizontally">
               <Tag severity="danger">Vetoed</Tag><br />
@@ -26,23 +31,26 @@
             </div>
             <div
               v-if="!game.rating?.averageRating && !game.rating?.myRating"
-              class="center-horizontally">
+              class="center-horizontally"
+            >
               Not rated yet
             </div>
-            <div class="center-horizontally" style="margin-top: 8px;">
+            <div class="center-horizontally" style="margin-top: 8px">
               <Button
                 style="float: left"
                 v-if="withRateButton"
                 severity="secondary"
-                @click.stop="$emit('game-rating-selected', game)"                
-                >Rate</Button>
-                
+                @click.stop="$emit('game-rating-selected', game)"
+                >Rate</Button
+              >
+
               <Button
                 style="float: right"
                 v-if="withTagButton"
                 severity="secondary"
-                @click.stop="$emit('game-tag-selected', game)"                             
-                >Update</Button>
+                @click.stop="$emit('game-tag-selected', game)"
+                >Update</Button
+              >
             </div>
           </div>
           <!-- <div class="center-horizontally" style="margin-top: 8px;">
@@ -51,12 +59,7 @@
         </div>
       </template>
     </Card>
-    <Dialog
-      v-model:visible="showGameDialog"
-      modal
-      :header="game.name"
-      style="width: 100%"
-    >
+    <Dialog v-model:visible="showGameDialog" modal :header="game.name" style="width: 100%">
       <ShowGameDetailsComponent :game="game" />
     </Dialog>
   </div>
@@ -94,7 +97,7 @@ const props = defineProps({
   isNew: {
     type: Boolean,
     default: false
-  },
+  }
 })
 
 defineEmits<{
@@ -111,7 +114,6 @@ watch(
     game.value = newGameValue
   }
 )
-
 
 function onClickCard() {
   showGameDialog.value = true

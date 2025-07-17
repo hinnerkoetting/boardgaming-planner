@@ -76,7 +76,7 @@
     </div>
     <!-- Global and group tags-->
     <div class="filterOption">
-      <div class="filterContent tagFilterOption" >
+      <div class="filterContent tagFilterOption">
         <div v-for="tag in nonPlayerTags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
@@ -96,7 +96,7 @@
 
     <!-- Player Tags -->
     <div class="filterOption">
-      <div class="filterContent tagFilterOption" >
+      <div class="filterContent tagFilterOption">
         <div v-for="tag in playerTags" :key="tag.id" class="one-filter">
           <Button
             :severity="tag.selected === 'FILTER_EVERYONE' ? 'primary' : 'secondary'"
@@ -137,7 +137,12 @@
 import type { RatedGame } from '@/model/Game'
 import type { Player } from '@/model/Player/Player'
 import { TagModel } from '@/model/TagModel'
-import { FilterService, TagSelection, PlayerTagSelection, type PlayerFilterType } from '@/services/FilterService'
+import {
+  FilterService,
+  TagSelection,
+  PlayerTagSelection,
+  type PlayerFilterType
+} from '@/services/FilterService'
 import { Checkbox } from 'primevue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
@@ -185,7 +190,6 @@ watch(
   }
 )
 
-
 onMounted(async () => {
   const settings = filterService.loadFilterSettings()
   if (settings) {
@@ -204,14 +208,16 @@ onMounted(async () => {
 function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
   const tagSettings = filterService.loadFilterSettings()?.nonPlayerTags
   if (tagSettings) {
-    return allTags.filter(t => t.type !== 'PLAYER').map((tag) => {
-      const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
-      if (currentSelection) {
-        return new TagSelection(tag.description, tag.id, currentSelection.selected)
-      } else {
-        return new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
-      }
-    })
+    return allTags
+      .filter((t) => t.type !== 'PLAYER')
+      .map((tag) => {
+        const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
+        if (currentSelection) {
+          return new TagSelection(tag.description, tag.id, currentSelection.selected)
+        } else {
+          return new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
+        }
+      })
   }
   return allTags.map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
@@ -219,24 +225,30 @@ function updateTagsFromSettings(allTags: TagModel[]): TagSelection[] {
 function updatePlayerTagsFromSettings(allTags: TagModel[]): PlayerTagSelection[] {
   const tagSettings = filterService.loadFilterSettings()?.playerTags
   if (tagSettings) {
-    return allTags.filter(t => t.type === 'PLAYER').map((tag) => {
-      const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
-      if (currentSelection) {
-        return new PlayerTagSelection(tag.description, tag.id, currentSelection.selected)
-      } else {
-        return new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
-      }
-    })
+    return allTags
+      .filter((t) => t.type === 'PLAYER')
+      .map((tag) => {
+        const currentSelection = tagSettings.find((tagSetting) => tagSetting.id === tag.id)
+        if (currentSelection) {
+          return new PlayerTagSelection(tag.description, tag.id, currentSelection.selected)
+        } else {
+          return new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER')
+        }
+      })
   }
   return allTags.map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
 function createInitialTagSelection(allTags: TagModel[]): TagSelection[] {
-  return allTags.filter(t => t.type === 'GLOBAL' || t.type === 'GAME_GROUP').map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+  return allTags
+    .filter((t) => t.type === 'GLOBAL' || t.type === 'GAME_GROUP')
+    .map((tag) => new TagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
 function createInitialPlayerTagSelection(allTags: TagModel[]): PlayerTagSelection[] {
-  return allTags.filter(t => t.type === 'PLAYER').map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
+  return allTags
+    .filter((t) => t.type === 'PLAYER')
+    .map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
 async function onClickFilterWith(tag: TagSelection) {

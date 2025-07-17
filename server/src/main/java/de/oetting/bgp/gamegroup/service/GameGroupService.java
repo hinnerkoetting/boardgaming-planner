@@ -1,15 +1,15 @@
 package de.oetting.bgp.gamegroup.service;
 
-import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
-import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.player.PlayerRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class GameGroupService {
     @Autowired
     private RatingRepository ratingRepository;
 
-    public GameGroup createGameGroup(CreateGameGroupRequest request){
+    public GameGroup createGameGroup(CreateGameGroupRequest request) {
         if (gameGroupRepository.existsByName(request.getName())) {
             throw new ConflictException("Group already exists");
         }
@@ -74,7 +74,7 @@ public class GameGroupService {
         gameGroupEventService.gameAdded(gameGroupId, game);
     }
 
-    public void checkUserIsPartOfGroup(long gameGroupId){
+    public void checkUserIsPartOfGroup(long gameGroupId) {
         var myPlayer = findMyPlayer();
         if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
             throw new UnprocessableEntityException("Only allowed if you are member of group");

@@ -4,6 +4,5 @@ export class GameStatistics {
     readonly playedNumberOfTimes: number,
     readonly numberOfTimesPlayedByPlayers: [string: number],
     readonly playDates: number[]
-  ) {    
-  }
+  ) {}
 }

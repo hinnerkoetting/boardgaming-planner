@@ -2,8 +2,6 @@ package de.oetting.bgp.gamingevent.model;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.gamingevent.ParticipationStatus;
-import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
-import jakarta.persistence.*;
 
 public class GamingEventParticipantsModel {
 

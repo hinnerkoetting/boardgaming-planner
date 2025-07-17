@@ -46,11 +46,11 @@ async function onStartLogin() {
   }
   if (isLoggedIn()) {
     emits('logged-in')
-    const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-    if (redirectPath) {      
+    const redirectPath = sessionStorage.getItem('redirectAfterLogin')
+    if (redirectPath) {
       sessionStorage.removeItem('redirectAfterLogin')
-      
-      router.replace(redirectPath);    
+
+      router.replace(redirectPath)
     } else {
       router.push('gameGroups')
     }

@@ -12,7 +12,7 @@ public class Player {
 
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(unique = true)
     @Length(min = 3, max = 35)

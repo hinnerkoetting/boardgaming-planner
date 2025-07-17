@@ -19,11 +19,10 @@ EventBus.addEventListener('login-status', () => {
 <template>
   <div class="wrapper full-width">
     <div class="box">
-      <img alt="logo" class="logo" src="@/assets/logo-full.png" />      
-    </div>      
-    
-    
-    <div class="wrapper2">      
+      <img alt="logo" class="logo" src="@/assets/logo-full.png" />
+    </div>
+
+    <div class="wrapper2">
       <LoginComponent v-if="!isLoggedInRef" @logged-in="onLoggedIn" />
       <RouterLink v-if="!isLoggedInRef" to="register" id="register">Register</RouterLink>
       <div>
@@ -83,14 +82,10 @@ button {
 }
 
 .box {
-   display: flex;   
-
+  display: flex;
 }
-
 
 .box > h1 {
   margin-left: 16px;
 }
-
-
 </style>

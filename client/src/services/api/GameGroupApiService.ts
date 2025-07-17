@@ -46,13 +46,17 @@ export async function fetchGamesInGroup(gameGroupId: Number): Promise<RatedGame[
   return await response.json()
 }
 
-
-export async function fetchGameGrouptStatistics(gameGroupId: Number): Promise<ResponseWrapper<GameGroupStatistics>> {
+export async function fetchGameGrouptStatistics(
+  gameGroupId: Number
+): Promise<ResponseWrapper<GameGroupStatistics>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/statistics`)
   return await wrapResponse(response)
 }
 
-export async function fetchGameInGroup(gameGroupId: number, gameId: number): Promise<ResponseWrapper<RatedGame>> {
+export async function fetchGameInGroup(
+  gameGroupId: number,
+  gameId: number
+): Promise<ResponseWrapper<RatedGame>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games/${gameId}`)
   return wrapResponse(response)
 }
@@ -114,12 +118,15 @@ export async function deleteTagFromGameInGroup(
   gameId: number,
   tagId: number
 ): Promise<ResponseWrapper<boolean>> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag/${tagId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
+  const response = await authorizedFetch(
+    `/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag/${tagId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }
-  })
+  )
   return wrapEmptySuccessResponse(response)
 }
 
@@ -129,13 +136,16 @@ export async function addTagToPlayereInGroup(
   playerId: number,
   tagId: number
 ): Promise<ResponseWrapper<boolean>> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ id: tagId })
-  })
+  const response = await authorizedFetch(
+    `/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: tagId })
+    }
+  )
   return wrapEmptySuccessResponse(response)
 }
 
@@ -145,12 +155,14 @@ export async function deleteTagFromPlayerInGroup(
   playerId: number,
   tagId: number
 ): Promise<ResponseWrapper<boolean>> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag/${tagId}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
+  const response = await authorizedFetch(
+    `/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag/${tagId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     }
-  })
+  )
   return wrapEmptySuccessResponse(response)
 }
-

@@ -80,7 +80,7 @@ export class RatedGame extends Game {
       url,
       recommendedNumberOfPlayers,
       bestNumberOfPlayers,
-      addedToGameGroupDate 
+      addedToGameGroupDate
     )
   }
 }
@@ -104,7 +104,6 @@ export class PlayerTagInGameGroup {
   constructor(
     readonly id: number,
     readonly description: string,
-    readonly playerId: number,
+    readonly playerId: number
   ) {}
 }
-

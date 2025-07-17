@@ -42,7 +42,7 @@ const router = createRouter({
       name: 'groupGamingEvent',
       component: () => import('../views/GameGroup/GamingEvents/GamingEventView.vue')
     },
-        {
+    {
       path: '/gameGroup/:gameGroupId/statistics',
       name: 'gameGroupStatistics',
       component: () => import('../views/GameGroup/GameGroupStatistics.vue')
@@ -54,7 +54,7 @@ const router = createRouter({
       name: 'account',
       component: () => import('../views/AccountView.vue')
     },
-    
+
     // Game
     {
       path: '/game/:gameId',
@@ -97,12 +97,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-if (to.matched.some((record) => record.meta.publicArea)) {
+  if (to.matched.some((record) => record.meta.publicArea)) {
     next()
   } else {
     if (!isLoggedIn()) {
       console.log('User is not logged in, redirecting to home')
-      sessionStorage.setItem('redirectAfterLogin', to.fullPath);
+      sessionStorage.setItem('redirectAfterLogin', to.fullPath)
 
       next({ name: 'home' })
     } else {

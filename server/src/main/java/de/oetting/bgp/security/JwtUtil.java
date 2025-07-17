@@ -2,7 +2,10 @@ package de.oetting.bgp.security;
 
 
 import de.oetting.bgp.entities.Player;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +29,7 @@ public class JwtUtil {
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
 
-    public JwtUtil(){
+    public JwtUtil() {
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret_key));
         this.jwtParser = Jwts.parser().verifyWith(key).build();
     }

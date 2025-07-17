@@ -1,8 +1,8 @@
 package de.oetting.bgp.game.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.exceptions.ConflictException;
+import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.game.model.GameConverter;
 import de.oetting.bgp.game.model.GameModel;
 import de.oetting.bgp.game.repository.GameRepository;
@@ -45,7 +45,7 @@ public class GameController {
                 .toList();
     }
 
-    @GetMapping(path="/{gameId}")
+    @GetMapping(path = "/{gameId}")
     public GameModel loadGame(@PathVariable("gameId") long gameId) {
         return GameConverter.convert(gameRepository.findById(gameId).orElseThrow());
     }

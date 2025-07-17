@@ -9,19 +9,19 @@ public class Rating {
 
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="PLAYER_ID", nullable=false, updatable=false)
-    private  Player player;
+    @JoinColumn(name = "PLAYER_ID", nullable = false, updatable = false)
+    private Player player;
 
     @ManyToOne
-    @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAME_GROUP_ID", nullable = false, updatable = false)
     private GameGroup gameGroup;
 
     @ManyToOne
-    @JoinColumn(name="GAME_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAME_ID", nullable = false, updatable = false)
     private Game game;
 
     private int rating;

@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public interface GamingEventRepository extends CrudRepository<GamingEventEntity,Long> {
+public interface GamingEventRepository extends CrudRepository<GamingEventEntity, Long> {
 
     List<GamingEventEntity> findByGameGroupId(long gameGroupId, Pageable pageable);
 

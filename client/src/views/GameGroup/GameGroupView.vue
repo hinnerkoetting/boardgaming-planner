@@ -1,14 +1,17 @@
 <template>
   <div>
     <h1>Group {{ gameGroup.name }}</h1>
-    
 
     <div>
-      <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId }}">Next events</router-link>
-      
+      <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId } }"
+        >Next events</router-link
+      >
+
       &#183;
 
-      <router-link :to="{ name: 'gameGroupStatistics', params: { gameGroupId: gameGroupId }}">Statistics</router-link>
+      <router-link :to="{ name: 'gameGroupStatistics', params: { gameGroupId: gameGroupId } }"
+        >Statistics</router-link
+      >
     </div>
 
     <h2>
@@ -23,7 +26,7 @@
         @opened="onDialogOpened"
       />
     </h2>
-    
+
     <GamesCollection
       v-if="displayedGames.length > 0"
       :games="displayedGames"
@@ -94,9 +97,11 @@ const gameGroupId = Number(route.params.gameGroupId)
 const addGameComponent: Ref<typeof AddGameToGroupComponent | undefined> = ref(undefined)
 const toast = useToast()
 const lastVisitedGameGroupStored = localStorage.getItem('gameGroup_visited_' + gameGroupId)
-const lastVisitedGameGroup = ref(lastVisitedGameGroupStored && Number(lastVisitedGameGroupStored) || 0)
+const lastVisitedGameGroup = ref(
+  (lastVisitedGameGroupStored && Number(lastVisitedGameGroupStored)) || 0
+)
 
-onMounted(async () => {  
+onMounted(async () => {
   localStorage.setItem('gameGroup_visited_' + gameGroupId, new Date().getTime().toString())
   loadGameGroup(gameGroupId).then((result) => {
     gameGroup.value = result
@@ -107,30 +112,30 @@ onMounted(async () => {
     if (isPartOfGroup.value) {
       subscribeToEvents()
     }
-    filterAndSort();
+    filterAndSort()
   })
   fetchGamesInGroup(gameGroupId).then((result) => {
     allGames.value = result
-    filterAndSort();
+    filterAndSort()
   })
   loadTags().then((response) => {
     tags.value = response
-  })  
+  })
 })
 
 async function subscribeToEvents() {
-  subscribeToEventsOnGameGroup(gameGroupId, (data) =>{    
+  subscribeToEventsOnGameGroup(gameGroupId, (data) => {
     const newToast = createToast(data)
     if (newToast) {
       toast.add(newToast)
-    }    
+    }
   })
 }
 
-function createToast(data: GameGroupEvent): ToastMessageOptions | undefined {  
+function createToast(data: GameGroupEvent): ToastMessageOptions | undefined {
   if (data.sourcePlayerId === getCurrentPlayerId()) {
-    return;
-  } 
+    return
+  }
   if (data.eventType === 'GAME_ADDED') {
     return {
       severity: 'info',
@@ -180,7 +185,7 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
     tags: {
       global: [],
       group: [],
-      player: []  
+      player: []
     }
   }
   displayedGames.value.push(gameGroupGame)
@@ -190,21 +195,19 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
 }
 
 function sortGames() {
-  displayedGames.value.sort(
-    (game1, game2) =>  {
-      const difference = game2.rating.averageRating - game1.rating.averageRating;
-      if (difference !== 0) {
-        return difference;
-      }
-      // if both games are rated differently, number of votes decided sorting.
-      // If above 5 more votes are better, if below 5, less votes are better.
-      if (game1.rating.averageRating > 5) {
-         return game2.rating.numberOfVotes - game1.rating.numberOfVotes;
-      } else {
-        return game1.rating.numberOfVotes - game2.rating.numberOfVotes;
-      }
+  displayedGames.value.sort((game1, game2) => {
+    const difference = game2.rating.averageRating - game1.rating.averageRating
+    if (difference !== 0) {
+      return difference
     }
-  )
+    // if both games are rated differently, number of votes decided sorting.
+    // If above 5 more votes are better, if below 5, less votes are better.
+    if (game1.rating.averageRating > 5) {
+      return game2.rating.numberOfVotes - game1.rating.numberOfVotes
+    } else {
+      return game1.rating.numberOfVotes - game2.rating.numberOfVotes
+    }
+  })
 }
 
 async function onClickLeaveButton() {
@@ -216,7 +219,7 @@ async function onClickLeaveButton() {
 
 function onUpdatedFilters(filteredGames: RatedGame[]) {
   displayedGames.value = filteredGames
-  filterAndSort();
+  filterAndSort()
 }
 
 function onDialogOpened() {
@@ -224,8 +227,8 @@ function onDialogOpened() {
 }
 
 function filterAndSort() {
-  filterGames();
-  sortGames();
+  filterGames()
+  sortGames()
 }
 
 function filterGames() {

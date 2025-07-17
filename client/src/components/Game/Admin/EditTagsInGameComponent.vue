@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div v-for="tag in tagsSelection" :key="tag.id">      
+    <div v-for="tag in tagsSelection" :key="tag.id">
       <Button :severity="tag.selected ? 'primary' : 'secondary'" @click="onClickToggle(tag)">{{
         tag.description
       }}</Button>

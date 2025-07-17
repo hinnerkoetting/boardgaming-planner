@@ -1,8 +1,8 @@
 package de.oetting.bgp.tags.entity;
 
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,23 +10,23 @@ import jakarta.persistence.*;
 public class PlayerTagEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="GAME_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAME_ID", nullable = false, updatable = false)
     private Game game;
 
     @ManyToOne
-    @JoinColumn(name="TAG_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "TAG_ID", nullable = false, updatable = false)
     private TagEntity tag;
 
     @ManyToOne
-    @JoinColumn(name="GAME_GROUP_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "GAME_GROUP_ID", nullable = false, updatable = false)
     private GameGroup gameGroup;
 
     @ManyToOne
-    @JoinColumn(name="PLAYER_ID", nullable=false, updatable=false)
+    @JoinColumn(name = "PLAYER_ID", nullable = false, updatable = false)
     private Player player;
 
     public PlayerTagEntity() {

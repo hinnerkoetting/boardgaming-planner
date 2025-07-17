@@ -1,5 +1,5 @@
-import type { Game } from "./Game";
-import type { Player } from "./Player/Player";
+import type { Game } from './Game'
+import type { Player } from './Player/Player'
 
 export class GamingEvent {
   constructor(
@@ -27,7 +27,6 @@ export class EventGame {
     readonly comment: string | null = null
   ) {}
 }
-
 
 export type ParticipationStatus = 'CONFIRMED' | 'DECLINED' | 'MAYBE' | 'NOT_RESPONDED'
 export type GameStatus = 'SUGGESTED' | 'REJECTED' | 'PLAYED'

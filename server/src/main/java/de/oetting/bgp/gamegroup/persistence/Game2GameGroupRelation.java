@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 public class Game2GameGroupRelation {
 
     @Id
-    @Column(name= "GAMES_ID")
+    @Column(name = "GAMES_ID")
     private long gameId;
 
     @Id
-    @Column(name= "GAME_GROUPS_ID")
+    @Column(name = "GAME_GROUPS_ID")
     private long gameGroupId;
 
     @Column(name = "ADDED_DT")
@@ -29,7 +29,8 @@ public class Game2GameGroupRelation {
     @JoinColumn(name = "GAME_GROUPS_ID", insertable = false, updatable = false)
     private GameGroup gameGroup;
 
-    public Game2GameGroupRelation() { }
+    public Game2GameGroupRelation() {
+    }
 
     public Game2GameGroupRelation(long gameId, long gameGroupId) {
         this.gameId = gameId;
