@@ -1,7 +1,10 @@
-package de.oetting.bgp.player;
+package de.oetting.bgp.player.controller;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
+import de.oetting.bgp.player.model.PlayerDetailsModel;
+import de.oetting.bgp.player.model.PublicPlayerModel;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.security.Role;
 import jakarta.transaction.Transactional;
@@ -15,8 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "api/players")
@@ -44,8 +49,8 @@ public class PlayerController {
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize(Role.HAS_ROLE_ADMIN)
-    public Iterable<Player> listPlayers() {
-        return playerRepository.findAll();
+    public List<PublicPlayerModel> listPlayers() {
+        return StreamSupport.stream(playerRepository.findAll().spliterator(), false).map(PlayerMapper::map).toList();
     }
 
     @GetMapping(path = "/{playerId}")

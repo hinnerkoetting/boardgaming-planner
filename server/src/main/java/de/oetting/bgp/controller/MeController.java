@@ -4,8 +4,8 @@ import de.oetting.bgp.controller.model.MeModel;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.gamegroup.model.GameGroupModelMapper;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.security.JwtUtil;
 import de.oetting.bgp.security.LoginResponse;
@@ -64,7 +64,7 @@ public class MeController {
     @Transactional
     public Collection<GameGroupModel> findMyGroups() {
         var player = findMyPlayer();
-        return player.getGameGroups().stream().map(this::map).toList();
+        return player.getGameGroups().stream().map(GameGroupModelMapper::map).toList();
     }
 
     @PutMapping(path = "/name")
@@ -101,7 +101,7 @@ public class MeController {
         try {
             authenticationManager.authenticate(authenticationToken);
         } catch (AuthenticationException e) {
-            throw new UnprocessableEntityException("Authentication faile");
+            throw new UnprocessableEntityException("Authentication failed");
         }
 
         var newPassword = passwordEncoder.encode(request.getNewPassword());
@@ -124,13 +124,6 @@ public class MeController {
     public void delete() {
         var player = findMyPlayer();
         playerService.delete(player);
-    }
-
-    private GameGroupModel map(GameGroup savedEntity) {
-        GameGroupModel model = new GameGroupModel();
-        model.setId(savedEntity.getId());
-        model.setName(savedEntity.getName());
-        return model;
     }
 
     private Player findMyPlayer() {

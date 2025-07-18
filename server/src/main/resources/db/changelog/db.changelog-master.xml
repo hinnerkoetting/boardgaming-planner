@@ -647,4 +647,30 @@
             <column name="ADDED_DT" type="date"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="game_group_type1" author="Hinnerk">
+        <addColumn tableName="GAME_GROUP">
+            <column name="TYPE" type="varchar2(20)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="game_group_type2" author="Hinnerk">
+        <update tableName="GAME_GROUP">
+            <column name="TYPE" value="PUBLIC"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="game_group_type3" author="Hinnerk">
+        <addNotNullConstraint tableName="GAME_GROUP" columnName="TYPE"/>
+    </changeSet>
+
+    <changeSet id="player_game_group" author="Hinnerk">
+        <addColumn tableName="PLAYER">
+            <column name="GAME_GROUP_ID" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="GAME_GROUP_ID" baseTableName="PLAYER"
+                                 constraintName="GAME_GROUP_PLAYER_FK" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
+    </changeSet>
 </databaseChangeLog>

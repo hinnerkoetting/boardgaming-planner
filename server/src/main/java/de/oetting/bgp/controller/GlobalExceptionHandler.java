@@ -137,10 +137,10 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpMessageNotWritableException.class)
     public HttpErrorResponse messageNotWritable(HttpMessageNotWritableException e, HttpServletRequest request) {
-        LOG.error("Request could not be parsed: {} - {}", e.getMessage(), request.getRequestURI());
+        LOG.error("Response not writable: {} - {}", e.getMessage(), request.getRequestURI());
         HttpErrorResponse problem = new HttpErrorResponse();
         problem.setTitle(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         problem.setType(SERVER_ERROR);

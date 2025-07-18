@@ -10,7 +10,7 @@ import de.oetting.bgp.gamingevent.GameEventStatus;
 import de.oetting.bgp.gamingevent.ParticipationStatus;
 import de.oetting.bgp.gamingevent.entity.*;
 import de.oetting.bgp.gamingevent.model.*;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

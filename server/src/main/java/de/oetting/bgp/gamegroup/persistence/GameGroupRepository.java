@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface GameGroupRepository extends PagingAndSortingRepository<GameGroup, Long>, CrudRepository<GameGroup, Long> {
@@ -15,4 +16,7 @@ public interface GameGroupRepository extends PagingAndSortingRepository<GameGrou
     Optional<Player> playerAssignedToGameGroup(long playerId, long gameGroupId);
 
     boolean existsByName(String name);
+
+    List<GameGroup> findByType(GameGroupType type);
+
 }

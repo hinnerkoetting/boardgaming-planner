@@ -12,9 +12,12 @@ import de.oetting.bgp.game.model.TagWrapper;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
+import de.oetting.bgp.gamegroup.model.GameGroupModelMapper;
 import de.oetting.bgp.gamegroup.persistence.*;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.controller.PlayerMapper;
+import de.oetting.bgp.player.model.PublicPlayerModel;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.rating.controller.RatingService;
 import de.oetting.bgp.repositories.RatingRepository;
@@ -37,7 +40,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "api/gameGroups")
@@ -82,7 +84,7 @@ public class GameGroupController {
     public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request) {
         GameGroup savedEntity = gameGroupService.createGameGroup(request);
 
-        return map(savedEntity);
+        return GameGroupModelMapper.map(savedEntity);
     }
 
     @Transactional
@@ -95,8 +97,8 @@ public class GameGroupController {
     @GetMapping
     @Transactional
     public List<GameGroupModel> getGameGroups() {
-        return StreamSupport.stream(gameGroupRepository.findAll().spliterator(), false)
-                .map(this::map)
+        return gameGroupRepository.findByType(GameGroupType.PUBLIC).stream()
+                .map(GameGroupModelMapper::map)
                 .toList();
     }
 
@@ -104,7 +106,7 @@ public class GameGroupController {
     @Transactional
     public GameGroupModel getGameGroup(@PathVariable("gameGroupId") long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId)
-                .map(this::map)
+                .map(GameGroupModelMapper::map)
                 .orElseThrow(() -> new NoSuchElementException("Group does not exist"));
     }
 
@@ -117,8 +119,12 @@ public class GameGroupController {
 
     @GetMapping(path = "/{gameGroupId}/players")
     @Transactional
-    public Collection<Player> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
-        return gameGroupRepository.findById(gameGroupId).orElseThrow().getPlayers().stream().sorted(Comparator.comparing(Player::getName)).toList();
+    public Collection<PublicPlayerModel> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
+        return gameGroupRepository.findById(gameGroupId).orElseThrow()
+                .getPlayers().stream()
+                .sorted(Comparator.comparing(Player::getName))
+                .map(PlayerMapper::map)
+                .toList();
     }
 
     @Transactional
@@ -246,13 +252,6 @@ public class GameGroupController {
         return model;
     }
 
-    private GameGroupModel map(GameGroup savedEntity) {
-        GameGroupModel model = new GameGroupModel();
-        model.setId(savedEntity.getId());
-        model.setName(savedEntity.getName());
-        return model;
-    }
-
     private PlayerTagModel map(PlayerTagEntity tag) {
         var model = new PlayerTagModel();
         model.setDescription(tag.getTag().getDescription());
@@ -260,4 +259,5 @@ public class GameGroupController {
         model.setPlayerId(tag.getPlayer().getId());
         return model;
     }
+
 }

@@ -3,7 +3,7 @@ package de.oetting.bgp.security.controller;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.ForbiddenException;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.security.Role;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;

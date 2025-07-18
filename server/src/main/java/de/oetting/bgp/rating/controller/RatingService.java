@@ -8,7 +8,7 @@ import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.infrastructure.CurrentUser;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.rating.RatingModel;
 import de.oetting.bgp.rating.RatingRequest;
 import de.oetting.bgp.repositories.RatingRepository;

@@ -1,4 +1,4 @@
-package de.oetting.bgp.player;
+package de.oetting.bgp.player.model;
 
 import java.util.Set;
 

@@ -1,0 +1,11 @@
+meta {
+  name: Get personal collection
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{server}}/api/players/{{playerId}}/personalCollection
+  body: none
+  auth: inherit
+}

@@ -3,7 +3,7 @@ package de.oetting.bgp.rating;
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.rating.controller.RatingService;
 import de.oetting.bgp.repositories.RatingRepository;
 import jakarta.transaction.Transactional;

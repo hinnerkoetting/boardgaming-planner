@@ -2,8 +2,9 @@ package de.oetting.bgp.player.service;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ForbiddenException;
+import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.infrastructure.CurrentUser;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class PlayerService {
 
     @Autowired
     private RatingRepository ratingRepository;
+
+    @Autowired
+    private GameGroupService gameGroupService;
 
     public void delete(Player player) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(player.getName());
@@ -48,4 +52,5 @@ public class PlayerService {
             throw new ForbiddenException("Not allowed");
         }
     }
+
 }

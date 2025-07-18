@@ -10,16 +10,21 @@ import java.util.Set;
 @Entity
 public class Player {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(unique = true)
     @Length(min = 3, max = 35)
     private String name;
+
     @ManyToMany(mappedBy = "players")
     @JsonBackReference
     private Set<GameGroup> gameGroups;
+
+    @ManyToOne
+    @JoinColumn(name = "GAME_GROUP_ID")
+    private GameGroup personalCollection;
 
     public Long getId() {
         return id;
@@ -49,5 +54,12 @@ public class Player {
         this.gameGroups.remove(gameGroup);
     }
 
+    public GameGroup getPersonalCollection() {
+        return personalCollection;
+    }
+
+    public void setPersonalCollection(GameGroup personalCollection) {
+        this.personalCollection = personalCollection;
+    }
 
 }

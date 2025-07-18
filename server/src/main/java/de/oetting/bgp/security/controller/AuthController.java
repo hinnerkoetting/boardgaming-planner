@@ -3,7 +3,7 @@ package de.oetting.bgp.security.controller;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.infrastructure.HttpErrorResponse;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.security.JwtUtil;
 import de.oetting.bgp.security.LoginRequest;
 import de.oetting.bgp.security.LoginResponse;

@@ -6,10 +6,11 @@ import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-public class GameGroup {
+public class GameGroup implements Serializable {
 
 
     @Id
@@ -31,6 +32,9 @@ public class GameGroup {
     @Column(unique = true)
     private String name;
 
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private GameGroupType type;
 
     public Long getId() {
         return id;
@@ -114,5 +118,13 @@ public class GameGroup {
 
     public void setPlayerTags(Set<PlayerTagEntity> playerTags) {
         this.playerTags = playerTags;
+    }
+
+    public GameGroupType getType() {
+        return type;
+    }
+
+    public void setType(GameGroupType type) {
+        this.type = type;
     }
 }

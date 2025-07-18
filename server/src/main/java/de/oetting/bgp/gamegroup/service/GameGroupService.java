@@ -5,11 +5,8 @@ import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
-import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
-import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
-import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
-import de.oetting.bgp.player.PlayerRepository;
+import de.oetting.bgp.gamegroup.persistence.*;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -95,4 +93,18 @@ public class GameGroupService {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
     }
+
+    public GameGroup createPersonalCollection() {
+        var myPlayer = findMyPlayer();
+        var newPersonalCollection = new GameGroup();
+        newPersonalCollection.setType(GameGroupType.PERSONAL);
+        newPersonalCollection.setName(String.format("%s's personal collection", myPlayer.getName()));
+        if (gameGroupRepository.existsByName(newPersonalCollection.getName())) {
+            throw new ConflictException("Group already exists");
+        }
+        var storedPersonalCollection = gameGroupRepository.save(newPersonalCollection);
+        storedPersonalCollection.setPlayers(Collections.singleton(myPlayer));
+        return storedPersonalCollection;
+    }
+
 }

@@ -1,4 +1,4 @@
-package de.oetting.bgp.player;
+package de.oetting.bgp.player.persistence;
 
 import de.oetting.bgp.entities.Player;
 import org.springframework.data.repository.CrudRepository;

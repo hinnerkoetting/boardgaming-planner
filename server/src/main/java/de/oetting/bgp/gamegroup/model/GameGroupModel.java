@@ -1,9 +1,12 @@
 package de.oetting.bgp.gamegroup.model;
 
+import de.oetting.bgp.gamegroup.persistence.GameGroupType;
+
 public class GameGroupModel {
 
     private long id;
     private String name;
+    private GameGroupType type;
 
     public long getId() {
         return id;
@@ -19,5 +22,13 @@ public class GameGroupModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public GameGroupType getType() {
+        return type;
+    }
+
+    public void setType(GameGroupType type) {
+        this.type = type;
     }
 }
