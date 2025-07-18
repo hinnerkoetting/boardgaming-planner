@@ -67,6 +67,13 @@ const router = createRouter({
       component: () => import('../views/Game/GameStatistics.vue')
     },
 
+    // Personal collection
+    {
+      path: '/personalCollection',
+      name: 'personalCollection',
+      component: () => import('../views/PersonalCollection.vue')
+    },
+
     // Admin
     {
       path: '/admin/players',

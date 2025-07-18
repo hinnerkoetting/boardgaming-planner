@@ -4,15 +4,13 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/gameGroups">Groups</RouterLink>
-        <RouterLink
-          :to="'/gameGroup/' + selectedGameGroup.id"
-          v-if="selectedGameGroup"
-          id="gameGroupSelected"
-        >
+        <RouterLink :to="'/gameGroup/' + selectedGameGroup.id" v-if="selectedGameGroup" id="gameGroupSelected">
           <div to="/gameGroups/1" v-if="selectedGameGroup">
             {{ selectedGameGroup.name }}
           </div>
         </RouterLink>
+        <RouterLink to="/personalCollection">Me</RouterLink>
+
         <a id="logout" @click="onClickLogout">Logout</a>
         <template v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
           <h2>Admin</h2>

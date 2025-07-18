@@ -32,7 +32,10 @@ export async function wrapEmptySuccessResponse(
 
 async function parseErrorResponse<T extends {}>(response: Response): Promise<ResponseWrapper<T>> {
   try {
-    const content = (await response.json()) as ErrorResponse
+    const content = {
+      'status': response.status,
+      ...(await response.json())
+    } as ErrorResponse
 
     return {
       success: undefined,
@@ -45,7 +48,8 @@ async function parseErrorResponse<T extends {}>(response: Response): Promise<Res
       error: {
         responseType: 'error',
         detail: 'Unknown error occurred',
-        type: 'ServerError  '
+        type: 'ServerError',
+        status: response.status
       }
     }
   }
