@@ -45,6 +45,7 @@ public class GameGroupService {
         }
         GameGroup groupEntity = new GameGroup();
         groupEntity.setName(request.getName());
+        groupEntity.setType(request.getType());
         return gameGroupRepository.save(groupEntity);
     }
 

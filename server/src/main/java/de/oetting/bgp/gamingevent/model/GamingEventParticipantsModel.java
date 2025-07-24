@@ -1,21 +1,19 @@
 package de.oetting.bgp.gamingevent.model;
 
-import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.gamingevent.ParticipationStatus;
+import de.oetting.bgp.player.model.PublicPlayerModel;
 
 public class GamingEventParticipantsModel {
 
-
-    private Player participant;
+    private PublicPlayerModel participant;
     private ParticipationStatus participationStatus;
     private String comment;
 
-
-    public Player getParticipant() {
+    public PublicPlayerModel getParticipant() {
         return participant;
     }
 
-    public void setParticipant(Player participant) {
+    public void setParticipant(PublicPlayerModel participant) {
         this.participant = participant;
     }
 

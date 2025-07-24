@@ -6,5 +6,5 @@ export class GameGroup {
   ) { }
 }
 
-export enum GameGroupType { 'PERSONAL', 'PUBLIC', 'PRIVATE' }
+export enum GameGroupType { PERSONAL = 'PERSONAL', PUBLIC = 'PUBLIC', PRIVATE = 'PRIVATE' }
 

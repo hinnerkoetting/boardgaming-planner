@@ -10,6 +10,7 @@ import de.oetting.bgp.gamingevent.GameEventStatus;
 import de.oetting.bgp.gamingevent.ParticipationStatus;
 import de.oetting.bgp.gamingevent.entity.*;
 import de.oetting.bgp.gamingevent.model.*;
+import de.oetting.bgp.player.controller.PlayerMapper;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,7 +276,7 @@ public class GamingEventController {
 
     private GamingEventParticipantsModel map(GamingEventParticipantsEntity entity) {
         var model = new GamingEventParticipantsModel();
-        model.setParticipant(entity.getParticipant());
+        model.setParticipant(PlayerMapper.map(entity.getParticipant()));
         model.setParticipationStatus(entity.getParticipationStatus());
         model.setComment(entity.getComment());
         return model;

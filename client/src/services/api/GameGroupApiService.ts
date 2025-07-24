@@ -12,7 +12,10 @@ export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrappe
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ name: gameGroup.name })
+    body: JSON.stringify({
+      name: gameGroup.name,
+      type: gameGroup.type
+    })
   })
   return await wrapResponse(response)
 }

@@ -34,7 +34,9 @@ async function onClickAddGameGroup() {
   <div>
     <Message severity="error" v-if="errorMessage"> {{ errorMessage }} </Message>
     <InputText name="name" v-model="name" placeholder="Name" v-on:keyup.enter="onClickAddGameGroup" /><br />
-    <Select v-model="type" :options="[GameGroupType.PUBLIC, GameGroupType.PRIVATE]" />
+    <Select v-model="type"
+      :options="[{ name: GameGroupType.PUBLIC, description: 'Public' }, { name: GameGroupType.PRIVATE, description: 'Private' }]"
+      optionLabel="description" optionValue="name" />
     <Button @click="onClickAddGameGroup" class="createButton">Create</Button>
   </div>
 </template>
