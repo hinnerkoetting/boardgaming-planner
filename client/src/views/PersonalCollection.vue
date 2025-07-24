@@ -20,7 +20,6 @@
 import GameGroupComponent from '@/components/GameGroup/GameGroupComponent.vue';
 import type { ResponseWrapper } from '@/model/api/Response';
 import type { GameGroup } from '@/model/GameGroup';
-import router from '@/router';
 import { createPersonalCollection, getPersonalCollection } from '@/services/api/PersonalCollection';
 import { Button, Message } from 'primevue';
 import { onMounted, ref, type Ref } from 'vue';

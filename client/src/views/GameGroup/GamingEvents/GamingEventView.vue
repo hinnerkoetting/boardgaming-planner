@@ -5,23 +5,13 @@
     <h1>{{ startTime && formatDate(startTime) }}</h1>
     <div v-if="event.schedule == 'WEEKLY'">
       <i>Every week</i>
-      <Button
-        label="Edit single event"
-        severity="secondary"
-        variant="link"
-        @click="editSingleEvent"
-        v-if="isPartOfGroup"
-      />
+      <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"
+        v-if="isPartOfGroup" />
     </div>
     <div v-if="event.schedule == 'MONTHLY'">
       <i>Every month</i>
-      <Button
-        label="Edit single event"
-        severity="secondary"
-        variant="link"
-        @click="editSingleEvent"
-        v-if="isPartOfGroup"
-      />
+      <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"
+        v-if="isPartOfGroup" />
     </div>
 
     {{ event.description }}
@@ -32,73 +22,34 @@
       {{ participant.participant.name }}
       <span class="participant-buttons" v-if="isMe(participant.participant.id)">
         <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
-        <Button
-          :disabled="participant.participationStatus == 'CONFIRMED'"
-          label="Confirm"
-          @click="onConfirmParticipation(participant.participant.id)"
-        />
-        <Button
-          :disabled="participant.participationStatus == 'DECLINED'"
-          label="Decline"
-          severity="warn"
-          @click="onDeclineParticipation(participant.participant.id)"
-        />
-        <Button
-          :disabled="participant.participationStatus == 'MAYBE'"
-          label="Maybe"
-          severity="secondary"
-          @click="onMaybeParticipation(participant.participant.id)"
-        />
+        <Button :disabled="participant.participationStatus == 'CONFIRMED'" label="Confirm"
+          @click="onConfirmParticipation(participant.participant.id)" />
+        <Button :disabled="participant.participationStatus == 'DECLINED'" label="Decline" severity="warn"
+          @click="onDeclineParticipation(participant.participant.id)" />
+        <Button :disabled="participant.participationStatus == 'MAYBE'" label="Maybe" severity="secondary"
+          @click="onMaybeParticipation(participant.participant.id)" />
       </span>
-      <span
-        :class="participicationStatusClass(participant.participationStatus)"
-        style="margin-right: 8px"
-      />
+      <span :class="participicationStatusClass(participant.participationStatus)" style="margin-right: 8px" />
     </div>
-    <Button
-      label="Invite missing players"
-      severity="secondary"
-      @click="addMissingPlayers"
-      style="margin-top: 16px"
-      v-if="isPartOfGroup"
-    />
+    <Button label="Invite missing players" severity="secondary" @click="addMissingPlayers" style="margin-top: 16px"
+      v-if="isPartOfGroup" />
 
     <h2>Games:</h2>
     <h2 class="green" v-if="isPartOfGroup">Add game</h2>
-    <AddGameToGroupComponent
-      @game-added="onGameAdded"
-      ref="addGameComponent"
-      style="margin-bottom: 16px"
-      v-if="isPartOfGroup"
-    />
+    <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" style="margin-bottom: 16px"
+      v-if="isPartOfGroup" />
     <div v-for="(game, index) in event.games" :key="index" style="margin: 8px">
-      <GameEventGameCard
-        :game="game.game"
-        :game-group-id="gameGroupId"
-        :gameStatus="game.gameStatus"
-        :gameComment="game.comment"
-        :withRateButton="true"
-        :with-tag-button="true"
-        :players="event.participants.map((p) => p.participant)"
-        :gaming-event-id="gamingEventId"
-        :is-part-of-group="isPartOfGroup"
-        @game-removed="onGameRemoved"
-      />
+      <GameEventGameCard :game="game.game" :game-group-id="gameGroupId" :gameStatus="game.gameStatus"
+        :gameComment="game.comment" :withRateButton="true" :with-tag-button="true"
+        :players="event.participants.map((p) => p.participant)" :gaming-event-id="gamingEventId"
+        :is-part-of-group="isPartOfGroup" @game-removed="onGameRemoved" />
     </div>
-    <Button
-      severity="danger"
-      label="Delete event"
-      @click="onDeleteEvent"
-      style="margin-top: 16px"
-      v-if="isPartOfGroup"
-    />
+    <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px"
+      v-if="isPartOfGroup" />
 
     <Dialog v-model:visible="editEventDialogVisible" modal header="Edit event">
-      <EditGamingEventComponent
-        :game-group-id="gameGroupId"
-        :gaming-event-id="gamingEventId"
-        @event-updated="onEventUpdated"
-      />
+      <EditGamingEventComponent :game-group-id="gameGroupId" :gaming-event-id="gamingEventId"
+        @event-updated="onEventUpdated" />
     </Dialog>
   </div>
 </template>
@@ -306,9 +257,15 @@ function onBackToEvents() {
       gameGroupId: gameGroupId
     },
     query: {
-      startTime: startTime?.getTime().toString()
+      startTime: startTime && startOfMonth(startTime).getTime().toString()
     }
   })
+}
+
+function startOfMonth(date: Date): Date {
+  date.setDate(1)
+  date.setHours(0, 0, 0, 0)
+  return date
 }
 </script>
 

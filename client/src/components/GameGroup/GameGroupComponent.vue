@@ -26,14 +26,15 @@
       <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" />
     </template>
 
-    <div v-if="gameGroup?.type != 'PERSONAL'">
+    <div v-if="gameGroup?.type != GameGroupType.PERSONAL">
       <h2>Players</h2>
       <DataTable :value="players" tableStyle="min-width: 20rem" class="players">
         <Column field="name" header="Name"></Column>
       </DataTable>
     </div>
 
-    <Button v-if="isPartOfGroup && gameGroup?.type != 'PERSONAL'" severity="danger" @click="onClickLeaveButton">Leave
+    <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
+      @click="onClickLeaveButton">Leave
       group</Button>
   </div>
 </template>
@@ -43,7 +44,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
-import { GameGroup } from '@/model/GameGroup'
+import { GameGroup, GameGroupType } from '@/model/GameGroup'
 import type { Player } from '@/model/Player/Player'
 import type { Game, RatedGame } from '@/model/Game'
 import GamesCollection from '@/components/Game/GamesCollection.vue'

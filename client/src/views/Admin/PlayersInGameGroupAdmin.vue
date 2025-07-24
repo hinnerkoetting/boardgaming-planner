@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Players in group {{ gameGroup.name }}</h1>
+    <h1>Players in group {{ gameGroup?.name }}</h1>
     <DataTable :value="players" tableStyle="min-width: 50rem">
       <Column field="name" header="Name"></Column>
       <Column header="Actions">
@@ -39,7 +39,7 @@ import {
   removePlayerFromGroup
 } from '@/services/api/GameGroupApiService'
 
-const gameGroup: Ref<GameGroup> = ref(new GameGroup(-1, ''))
+const gameGroup: Ref<GameGroup | null> = ref(null)
 const players: Ref<Player[]> = ref([])
 const route = useRoute()
 const gameGroupId = Number(route.params.gameGroupId)

@@ -2,21 +2,24 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { ref, type Ref } from 'vue'
-import { GameGroup } from '@/model/GameGroup'
+import { GameGroup, GameGroupType } from '@/model/GameGroup'
 import { addGameGroup } from '@/services/api/GameGroupApiService'
 import Message from 'primevue/message'
+import { Select } from 'primevue'
 
 const emit = defineEmits<{
   (e: 'game-group-added', gameGroup: GameGroup): void
 }>()
 
 const name: Ref<string> = ref('')
+const type: Ref<GameGroupType> = ref(GameGroupType.PUBLIC)
 const errorMessage = ref()
 
 async function onClickAddGameGroup() {
   const gameGroup: GameGroup = {
     name: name.value,
-    id: undefined
+    id: undefined,
+    type: type.value
   }
   const response = await addGameGroup(gameGroup)
   if (response.success) {
@@ -30,13 +33,8 @@ async function onClickAddGameGroup() {
 <template>
   <div>
     <Message severity="error" v-if="errorMessage"> {{ errorMessage }} </Message>
-    <InputText
-      name="name"
-      v-model="name"
-      placeholder="Name"
-      v-on:keyup.enter="onClickAddGameGroup"
-    ></InputText
-    ><br />
+    <InputText name="name" v-model="name" placeholder="Name" v-on:keyup.enter="onClickAddGameGroup" /><br />
+    <Select v-model="type" :options="[GameGroupType.PUBLIC, GameGroupType.PRIVATE]" />
     <Button @click="onClickAddGameGroup" class="createButton">Create</Button>
   </div>
 </template>
