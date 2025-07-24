@@ -7,18 +7,11 @@ import java.util.Optional;
 
 public interface GamingEventGameRepository extends CrudRepository<GamingEventGameEntity, Long> {
 
-
     void deleteByGamingEventIdAndGameId(long gamingEventId, long gameId);
 
     void deleteByGamingEventId(long gamingEventId);
 
     Optional<GamingEventGameEntity> findByGamingEventIdAndGameId(long gamingEventId, long gameId);
-
-    @Query("from GamingEventGameEntity" +
-            " where game.id = :gameId" +
-            " and exists (select p from GamingEventParticipantsEntity p where p.gamingEvent = gamingEvent and p.participant.id = :playerId and p.participationStatus in ('CONFIRMED', 'MAYBE'))" +
-            " order by gamingEvent.start desc")
-    Optional<GamingEventGameEntity> findByGameIdAndLastByOrderByGamingEventStart(long gameId, long playerId);
 
     @Query("select count(e) from GamingEventGameEntity e" +
             " where game.id = :gameId" +

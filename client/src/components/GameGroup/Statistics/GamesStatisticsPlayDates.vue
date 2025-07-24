@@ -47,6 +47,10 @@ onMounted(async () => {
       type: 'value',
       minInterval: 1
     },
+    title: {
+      show: true,
+      text: 'Plays per month'
+    },
     series: [
       {
         data: yData,
@@ -71,7 +75,6 @@ function formatDate(date: Date) {
 
 <template>
   <div style="width: 100%">
-    Last played
 
     <div style="width: 100%; height: 400px" ref="chart"></div>
   </div>

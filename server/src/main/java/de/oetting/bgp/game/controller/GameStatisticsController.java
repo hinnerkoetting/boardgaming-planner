@@ -1,6 +1,7 @@
 package de.oetting.bgp.game.controller;
 
 import de.oetting.bgp.game.model.GameStatisticsModel;
+import de.oetting.bgp.gamingevent.entity.CustomGamingEventGameRepository;
 import de.oetting.bgp.gamingevent.entity.GamingEventGameRepository;
 import de.oetting.bgp.gamingevent.entity.GamingEventRepository;
 import de.oetting.bgp.infrastructure.CurrentUser;
@@ -22,6 +23,9 @@ public class GameStatisticsController {
     private GamingEventGameRepository gamingEventGameRepository;
 
     @Autowired
+    private CustomGamingEventGameRepository customGamingEventGameRepository;
+
+    @Autowired
     private GamingEventRepository gamingEventRepository;
 
     @GetMapping(path = "/statistics")
@@ -29,7 +33,7 @@ public class GameStatisticsController {
     public GameStatisticsModel loadGameStatistics(@PathVariable("gameId") long gameId) {
         var currentPlayerId = CurrentUser.getCurrentPlayerId();
         var model = new GameStatisticsModel();
-        Optional<Long> lastPlayDate = gamingEventGameRepository.findByGameIdAndLastByOrderByGamingEventStart(gameId, currentPlayerId)
+        Optional<Long> lastPlayDate = customGamingEventGameRepository.findByGameIdAndLastByOrderByGamingEventStart(gameId, currentPlayerId)
                 .map(eventGame -> eventGame.getGamingEvent().getStart().toInstant().toEpochMilli());
         model.setLastPlayed(lastPlayDate.orElse(null));
         model.setPlayedNumberOfTimes(gamingEventGameRepository.countByGameId(gameId, currentPlayerId));

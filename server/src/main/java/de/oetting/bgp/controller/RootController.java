@@ -24,7 +24,8 @@ public class RootController {
             "/gameGroups",
             "/account",
             "/gameGroup/**",
-            "/admin/**"
+            "/admin/**",
+            "/game/**",
     })
     @ResponseBody
     public Resource respondForVueRoutes() throws URISyntaxException {
