@@ -1,9 +1,6 @@
 package de.oetting.bgp.rating;
 
 import de.oetting.bgp.entities.Rating;
-import de.oetting.bgp.game.repository.GameRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
-import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.rating.controller.RatingService;
 import de.oetting.bgp.repositories.RatingRepository;
 import jakarta.transaction.Transactional;
@@ -19,12 +16,7 @@ public class RatingController {
 
     @Autowired
     private RatingRepository ratingRepository;
-    @Autowired
-    private PlayerRepository playerRepository;
-    @Autowired
-    private GameRepository gameRepository;
-    @Autowired
-    private GameGroupRepository gameGroupRepository;
+
     @Autowired
     private RatingService ratingService;
 
@@ -32,7 +24,7 @@ public class RatingController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @Transactional
     public RatingModel updateRating(@RequestBody RatingRequest request) {
-        return ratingService.updateRating(request);
+        return ratingService.updateRatingAndReturnNewResults(request);
     }
 
     @DeleteMapping

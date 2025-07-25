@@ -1,24 +1,22 @@
 package de.oetting.bgp.bgg.service;
 
-import com.github.marcioos.bggclient.BGG;
-import com.github.marcioos.bggclient.common.ThingType;
-import com.github.marcioos.bggclient.fetch.FetchException;
-import com.github.marcioos.bggclient.fetch.domain.CollectionItem;
-import com.github.marcioos.bggclient.fetch.domain.FetchItem;
-import com.github.marcioos.bggclient.fetch.domain.Poll;
-import com.github.marcioos.bggclient.search.SearchException;
-import com.github.marcioos.bggclient.search.domain.SearchItem;
-import com.github.marcioos.bggclient.search.domain.SearchOutput;
 import de.oetting.bgp.entities.Player;
+import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.game.repository.GameRepository;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupId;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroup;
 import de.oetting.bgp.player.persistence.PlayerRepository;
+import de.oetting.bgp.rating.RatingRequest;
+import de.oetting.bgp.rating.controller.RatingService;
 import de.oetting.bgp.tags.entity.TagEntity;
 import de.oetting.bgp.tags.entity.TagType;
 import de.oetting.bgp.tags.repository.TagRepository;
+import org.audux.bgg.BggClient;
+import org.audux.bgg.common.ThingType;
+import org.audux.bgg.response.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
+import java.lang.Thread;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -46,13 +49,13 @@ public class BggUpdateService {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
-    private GameGroupRepository gameGroupRepository;
-
-    @Autowired
     private Game2GameGroupRepository game2GameGroupRepository;
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private RatingService ratingService;
 
     private final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
 
@@ -68,33 +71,63 @@ public class BggUpdateService {
         gameRepository.findAll().forEach(game -> updateGameInOwnTransaction(game, globalTags));
     }
 
-    public Optional<Game> importFromBgg(int bggId) throws FetchException {
-        Collection<FetchItem> fetchItems = BGG.fetch(List.of(bggId), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
-        if (fetchItems.isEmpty()) {
-            LOG.error("Fetch from BGG did not find anything for {}", bggId);
-            return Optional.empty();
+    public Optional<Game> importFromBgg(int bggId) {
+        try {
+            Response<Things> things = BggClient.things(new Integer[]{bggId}, new ThingType[]{}, false, false, false, false, false).callAsync().get();
+            if (things.isError() || things.getData() == null || things.getData().getThings().isEmpty()) {
+                LOG.error("Fetch from BGG did not find anything for {}", bggId);
+                return Optional.empty();
+            }
+
+            var firstItem = things.getData().getThings().getFirst();
+            var globalTags = tagRepository.findByType(TagType.GLOBAL);
+
+            if (gameRepository.findByName(firstItem.getName()).isPresent()) {
+                throw new ConflictException("Game already exists");
+            }
+            Game game = new Game();
+            game.setName(firstItem.getName());
+            Game writtenGame = updateGameFromBgg(game, firstItem, globalTags);
+            return Optional.of(writtenGame);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
-
-        FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
-        var globalTags = tagRepository.findByType(TagType.GLOBAL);
-
-        Game game = new Game();
-        game.setName(firstItem.getName());
-        Game writtenGame = updateGameFromBgg(game, firstItem, globalTags);
-        return Optional.of(writtenGame);
     }
 
-    public void syncBggCollection(String ownerName) throws FetchException {
-        var userCollection = BGG.fetchCollection(ownerName);
-        if (userCollection.getItems() == null) {
-            throw new NoSuchElementException("User not found");
+    public void syncBggCollection(String ownerName) {
+        try {
+            Response<Collection> userCollection = BggClient.collection(ownerName).callAsync().get();
+            if (userCollection.getData() == null) {
+                throw new NoSuchElementException("User not found");
+            }
+            var personalCollection = findMyPlayer().getPersonalCollection();
+            userCollection.getData().getItems().forEach(item -> {
+                sleepRandom(100);
+                var game = loadOrImportGame(item);
+                if (game2GameGroupRepository.existsById(new Game2GameGroupId(game.getId(), personalCollection.getId()))) {
+                    game2GameGroupRepository.save(new Game2GameGroupRelation(game.getId(), personalCollection.getId()));
+                }
+                String ownRating = item.getStats() != null ? item.getStats().getRatings().getValue() : null;
+                if (ownRating != null && !"N/A".equals(ownRating)) {
+                    updateRating(ownRating, game, personalCollection);
+                }
+            });
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
-        var personalCollection = findMyPlayer().getPersonalCollection();
-        userCollection.getItems().forEach(item -> {
-            sleepRandom(100);
-            var game = loadOrImportGame(item);
-            game2GameGroupRepository.save(new Game2GameGroupRelation(game.getId(), personalCollection.getId()));
-        });
+    }
+
+    private void updateRating(String ownRating, Game game, GameGroup gameGroup) {
+        try {
+            var request = new RatingRequest();
+            request.setRating(Integer.parseInt(ownRating));
+            request.setGameId(game.getId());
+            request.setGameGroupId(gameGroup.getId());
+            request.setPlayerId(findMyPlayer().getId());
+            ratingService.updateRating(request);
+        } catch (Exception e) {
+            LOG.error("Could not update rating {} for game {}", ownRating, game.getName());
+        }
     }
 
     private Player findMyPlayer() {
@@ -104,25 +137,19 @@ public class BggUpdateService {
 
     private Game loadOrImportGame(CollectionItem item) {
         var optionalGame = gameRepository.findByName(item.getName());
-        if (optionalGame.isPresent()) {
-            return optionalGame.get();
-        }
-        try {
-            return importFromBgg(item.getId()).orElseThrow(() -> new IllegalStateException("Cannot find game from boardgamegeek although it exists in my collection. Id=" + item.getId()));
-        } catch (FetchException e) {
-            throw new RuntimeException(e);
-        }
+        return optionalGame.orElseGet(() -> importFromBgg(item.getObjectId())
+                .orElseThrow(() -> new IllegalStateException("Cannot find game from boardgamegeek although it exists in my collection. Id=" + item.getObjectId())));
+
     }
 
-    private List<TagEntity> findMatchingTags(FetchItem fetchItem, List<TagEntity> tags) {
+    private List<TagEntity> findMatchingTags(Thing fetchItem, List<TagEntity> tags) {
         return tags.stream()
                 .filter(tag -> isMatchingTag(fetchItem, tag))
                 .toList();
     }
 
-    private boolean isMatchingTag(FetchItem fetchItem, TagEntity tag) {
-        return fetchItem.getCategories().contains(tag.getImportedSourceName()) ||
-                fetchItem.getMechanics().contains(tag.getImportedSourceName());
+    private boolean isMatchingTag(Thing fetchItem, TagEntity tag) {
+        return fetchItem.getLinks().stream().anyMatch(link -> link.getValue().contains(tag.getImportedSourceName()));
     }
 
     private void updateGameInOwnTransaction(Game game, List<TagEntity> globalTags) {
@@ -131,103 +158,113 @@ public class BggUpdateService {
                 Game gameInNewTransaction = gameRepository.findById(game.getId()).orElseThrow();
                 updateGame(gameInNewTransaction, globalTags);
                 sleepRandom(2000);
-            } catch (SearchException e) {
+            } catch (Exception e) {
                 LOG.warn("Could not update game {}: {}", game.getName(), e.getMessage());
             }
         });
     }
 
-    public Optional<Game> updateGame(Game game) throws SearchException {
+    public Optional<Game> updateGame(Game game) {
         var globalTags = tagRepository.findByType(TagType.GLOBAL);
         return updateGame(game, globalTags);
     }
 
-    private Optional<Game> updateGame(Game game, List<TagEntity> globalTags) throws SearchException {
+    private Optional<Game> updateGame(Game game, List<TagEntity> globalTags) {
         LOG.info("Updating game {}", game.getName());
-        Optional<SearchItem> optionalItem = findMatchingSearchItem(game);
+        Optional<SearchResult> optionalItem = findMatchingSearchItem(game);
         return optionalItem.flatMap(item -> {
             sleepRandom(100);
             return updateGame(game, item, globalTags);
         });
     }
 
-    private Optional<Game> updateGame(Game game, SearchItem item, List<TagEntity> globalTags) {
+    private Optional<Game> updateGame(Game game, SearchResult item, List<TagEntity> globalTags) {
         try {
-            Collection<FetchItem> fetchItems = BGG.fetch(List.of(item.getId()), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
-            if (fetchItems.size() == 0) {
-                LOG.error("Fetch from BGG did not find anything for {}", game.getName());
+            Response<Things> things = BggClient.things(new Integer[]{item.getId()}, new ThingType[]{}, false, false, false, false, false).callAsync().get();
+            if (things.isError() || things.getData() == null || things.getData().getThings().isEmpty()) {
+                LOG.error("Fetch from BGG did not find anything for {}", item.getId());
                 return Optional.empty();
             }
-            FetchItem firstItem = fetchItems.stream().findFirst().orElseThrow();
+            Thing firstItem = things.getData().getThings().getFirst();
             try {
                 return Optional.of(updateGameFromBgg(game, firstItem, globalTags));
             } catch (Exception e) {
                 LOG.error("Could not update item", e);
             }
-        } catch (FetchException e) {
+        } catch (Exception e) {
             LOG.warn("Could not update game during fetch {}: {}", game.getName(), e.getMessage());
         }
         return Optional.empty();
     }
 
-    private Optional<SearchItem> findMatchingSearchItem(Game game) throws SearchException {
-        SearchOutput searchOutput = BGG.search(game.getName(), ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
-        if (searchOutput == null || searchOutput.getItems() == null) {
-            LOG.info("Did not find matching game game {}", game.getName());
-            return Optional.empty();
+    private Optional<SearchResult> findMatchingSearchItem(Game game) {
+        try {
+            var searchOutput = BggClient.search(game.getName(), new ThingType[]{}).callAsync().get();
+            if (searchOutput == null || searchOutput.getData() == null) {
+                LOG.info("Did not find matching game game {}", game.getName());
+                return Optional.empty();
+            }
+            if (searchOutput.getData().getTotal() == 1) {
+                return Optional.of(searchOutput.getData().getResults().getFirst());
+            }
+            return searchOutput.getData().getResults().stream()
+                    .filter(item -> item.getName().getValue().equals(game.getName()))
+                    .findAny();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
-        if (searchOutput.getItems().size() == 1) {
-            return Optional.of(searchOutput.getItems().get(0));
-        }
-        return searchOutput.getItems().stream()
-                .filter(item -> item.getName().getValue().equals(game.getName()))
-                .findAny();
     }
 
-    private Game updateGameFromBgg(Game game, FetchItem fetchItem, List<TagEntity> globalTags) {
+    private Game updateGameFromBgg(Game game, Thing fetchItem, List<TagEntity> globalTags) {
         game.setUrl(String.format("https://boardgamegeek.com/boardgame/%s", fetchItem.getId()));
-        game.setMaxPlayers(Integer.parseInt(fetchItem.getMaxPlayers().getValue()));
-        game.setMinPlayers(Integer.parseInt(fetchItem.getMinPlayers().getValue()));
+        game.setMaxPlayers(fetchItem.getMaxPlayers() == null ? null : (int) Math.round(fetchItem.getMaxPlayers()));
+        game.setMinPlayers(fetchItem.getMinPlayers());
         game.setDescription(fetchItem.getDescription());
-        game.setImageUrl(fetchItem.getImageUrl());
-        game.setThumbnailUrl(fetchItem.getThumbnailUrl());
-        game.setPlayingTimeMinutes(Integer.parseInt(fetchItem.getPlayingTime().getValue()));
+        game.setImageUrl(fetchItem.getImage());
+        game.setThumbnailUrl(fetchItem.getThumbnail());
+        game.setPlayingTimeMinutes(fetchItem.getPlayingTimeInMinutes());
         game.setBestNumberOfPlayers(getBestNumberOfPlayers(fetchItem));
-        game.setRecommendedNumberOfPlayers(getRecommededNumberOfPlayers(fetchItem));
+        game.setRecommendedNumberOfPlayers(getRecommendedNumberOfPlayers(fetchItem));
         findMatchingTags(fetchItem, globalTags)
                 .forEach(game::addGlobalTag);
         return gameRepository.save(game);
     }
 
-    private Set<Integer> getRecommededNumberOfPlayers(FetchItem fetchItem) {
-        Optional<Poll> numberPlayersPoll = fetchItem.getPolls().stream()
-                .filter(Poll::isSuggestedNumPlayersPoll)
-                .findAny();
-        return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
+    private Set<Integer> getRecommendedNumberOfPlayers(Thing fetchItem) {
+        List<NumberOfPlayersResults> numberPlayersPoll = fetchItem.getPolls().stream()
+                .filter(NumberOfPlayersPoll.class::isInstance)
+                .map(NumberOfPlayersPoll.class::cast)
+                .flatMap(poll -> poll.getResults().stream())
+                .toList();
+
+        return numberPlayersPoll.stream()
                 .filter(BggUpdateService::isPlayerNumberRecommended)
-                .map(results -> parseNumberOfPlayers(results))
-                .collect(Collectors.toSet())).orElse(Collections.emptySet());
+                .map(BggUpdateService::parseNumberOfPlayers)
+                .collect(Collectors.toSet());
     }
 
-    private Set<Integer> getBestNumberOfPlayers(FetchItem fetchItem) {
-        Optional<Poll> numberPlayersPoll = fetchItem.getPolls().stream()
-                .filter(Poll::isSuggestedNumPlayersPoll)
-                .findAny();
-        return numberPlayersPoll.map(poll -> poll.getResultsList().stream()
+    private Set<Integer> getBestNumberOfPlayers(Thing fetchItem) {
+        List<NumberOfPlayersResults> numberPlayersPoll = fetchItem.getPolls().stream()
+                .filter(NumberOfPlayersPoll.class::isInstance)
+                .map(NumberOfPlayersPoll.class::cast)
+                .flatMap(poll -> poll.getResults().stream())
+                .toList();
+
+        return numberPlayersPoll.stream()
                 .filter(BggUpdateService::isPlayerNumberBest)
                 .map(BggUpdateService::parseNumberOfPlayers)
-                .collect(Collectors.toSet())).orElse(Collections.emptySet());
+                .collect(Collectors.toSet());
     }
 
-    private static int parseNumberOfPlayers(Poll.Results results) {
-        String numPlayers = results.getNumPlayers();
+    private static int parseNumberOfPlayers(NumberOfPlayersResults results) {
+        String numPlayers = results.getNumberOfPlayers();
         if (numPlayers.contains("+")) {
             return Integer.parseInt(numPlayers.substring(0, numPlayers.indexOf("+"))) + 1;
         }
         return Integer.parseInt(numPlayers);
     }
 
-    private static boolean isPlayerNumberRecommended(Poll.Results pollResults) {
+    private static boolean isPlayerNumberRecommended(NumberOfPlayersResults pollResults) {
         int numberOfBest = getNumberOfVotesForBest(pollResults);
         int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
         int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
@@ -235,7 +272,7 @@ public class BggUpdateService {
         return numberOfBest * 2 < sum && (numberOfBest + numberOfRecommended) > numberOfNotRecommended;
     }
 
-    private static boolean isPlayerNumberBest(Poll.Results pollResults) {
+    private static boolean isPlayerNumberBest(NumberOfPlayersResults pollResults) {
         int numberOfBest = getNumberOfVotesForBest(pollResults);
         int numberOfRecommended = getNumberOfVotesForRecommended(pollResults);
         int numberOfNotRecommended = getNumberOfVotesForNotRecommended(pollResults);
@@ -243,22 +280,22 @@ public class BggUpdateService {
         return numberOfBest * 2 >= sum;
     }
 
-    private static int getNumberOfVotesForBest(Poll.Results pollResults) {
+    private static int getNumberOfVotesForBest(NumberOfPlayersResults pollResults) {
         return getNumberOfVotesForOption(pollResults, "Best");
     }
 
-    private static int getNumberOfVotesForRecommended(Poll.Results pollResults) {
+    private static int getNumberOfVotesForRecommended(NumberOfPlayersResults pollResults) {
         return getNumberOfVotesForOption(pollResults, "Recommended");
     }
 
-    private static int getNumberOfVotesForNotRecommended(Poll.Results pollResults) {
+    private static int getNumberOfVotesForNotRecommended(NumberOfPlayersResults pollResults) {
         return getNumberOfVotesForOption(pollResults, "Not Recommended");
     }
 
-    private static int getNumberOfVotesForOption(Poll.Results pollResults, String option) {
+    private static int getNumberOfVotesForOption(NumberOfPlayersResults pollResults, String option) {
         return pollResults.getResults().stream()
                 .filter(result -> option.equals(result.getValue()))
-                .map(Poll.Result::getNumVotes)
+                .map(PollResult::getNumberOfVotes)
                 .findAny()
                 .orElseThrow();
     }

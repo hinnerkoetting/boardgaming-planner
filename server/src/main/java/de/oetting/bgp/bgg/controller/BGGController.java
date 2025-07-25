@@ -1,11 +1,6 @@
 package de.oetting.bgp.bgg.controller;
 
-import com.github.marcioos.bggclient.BGG;
-import com.github.marcioos.bggclient.common.ThingType;
-import com.github.marcioos.bggclient.fetch.FetchException;
-import com.github.marcioos.bggclient.search.SearchException;
-import com.github.marcioos.bggclient.search.domain.SearchItem;
-import com.github.marcioos.bggclient.search.domain.SearchOutput;
+
 import de.oetting.bgp.bgg.service.BggUpdateService;
 import de.oetting.bgp.exceptions.BadRequestException;
 import de.oetting.bgp.exceptions.ConflictException;
@@ -14,6 +9,9 @@ import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.security.Role;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
+import org.audux.bgg.BggClient;
+import org.audux.bgg.common.ThingType;
+import org.audux.bgg.response.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping(path = "api/bgg")
@@ -37,29 +36,29 @@ public class BGGController {
     private GameRepository gameRepository;
 
     @GetMapping(path = "/search/{searchTerm}")
-    public List<SearchItem> searchBgg(@PathVariable("searchTerm") String searchTerm) throws SearchException {
-        SearchOutput output = BGG.search(searchTerm, ThingType.BOARDGAME, ThingType.BOARDGAME_EXPANSION);
-        if (output == null) {
+    public List<SearchResult> searchBgg(@PathVariable("searchTerm") String searchTerm) throws ExecutionException, InterruptedException {
+        var searchOutput = BggClient.search(searchTerm, new ThingType[]{}).callAsync().get();
+        if (searchOutput == null || searchOutput.getData() == null) {
             return Collections.emptyList();
         }
-        return output.getItems();
+        return searchOutput.getData().getResults();
     }
 
     @PutMapping(path = "/sync/game/{gameId}")
     @Transactional
-    public Game syncGameFromBgg(@PathVariable("gameId") long gameId) throws FetchException {
+    public Game syncGameFromBgg(@PathVariable("gameId") long gameId) {
         Game game = gameRepository.findById(gameId).orElseThrow();
 
         try {
             return bggUpdateService.updateGame(game)
                     .orElseThrow(() -> new ConflictException("Could not sync game"));
-        } catch (SearchException e) {
+        } catch (Exception e) {
             throw new ConflictException(e.getMessage());
         }
     }
 
     @PostMapping(path = "/import/{id}")
-    public Game importGameFromBgg(@PathVariable("id") int id) throws FetchException {
+    public Game importGameFromBgg(@PathVariable("id") int id) {
         return bggUpdateService.importFromBgg(id).orElseThrow();
     }
 
@@ -77,7 +76,7 @@ public class BGGController {
 
     @PostMapping(path = "/sync/collection/{name}")
     @Transactional
-    public void importBggCollection(@PathVariable(name = "name") String name) throws FetchException {
+    public void importBggCollection(@PathVariable(name = "name") String name) {
         if (StringUtils.isEmpty(name)) {
             throw new NoSuchElementException("Name is empty");
         }

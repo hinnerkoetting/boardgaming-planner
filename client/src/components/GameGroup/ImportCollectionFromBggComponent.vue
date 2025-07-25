@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Button @click="openDialog">Import collection from BoardGameGeek</Button>
+    <Button @click="openDialog" class="import-button">Import collection from BoardGameGeek</Button>
+
     <Dialog v-model:visible="dialogVisible" header="Import collection from BoardGameGeek" :modal="true">
 
       <Message severity="info" class="info-message">Importing will add all games that are owned by this user on
@@ -61,5 +62,9 @@ async function importFromBgg() {
 .info-message {
   margin: 8px 0;
   max-width: 500px;
+}
+
+.import-button {
+  margin: 8px 0;
 }
 </style>

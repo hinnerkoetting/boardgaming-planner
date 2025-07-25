@@ -13,7 +13,8 @@ export async function loginRequest(
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     },
     body: JSON.stringify({
       login: name,

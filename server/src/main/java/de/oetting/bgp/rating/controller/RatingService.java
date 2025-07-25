@@ -38,7 +38,16 @@ public class RatingService {
     @Autowired
     private GameGroupService gameGroupService;
 
-    public RatingModel updateRating(RatingRequest request) {
+    public RatingModel updateRatingAndReturnNewResults(RatingRequest request) {
+        updateRating(request);
+
+        var game = gameRepository.findById(request.getGameId()).orElseThrow();
+        gameGroupEventService.ratingUpdated(request.getGameGroupId(), game, request.getRating());
+
+        return computeRating(request);
+    }
+
+    public void updateRating(RatingRequest request) {
         checkUserIsPartOfGroup(request.getGameGroupId());
         var optionalRating = ratingRepository.findByGameGroupIdAndPlayerIdAndGameId(request.getGameGroupId(), request.getPlayerId(), request.getGameId());
 
@@ -47,11 +56,6 @@ public class RatingService {
         } else {
             createNewRating(request);
         }
-
-        var game = gameRepository.findById(request.getGameId()).orElseThrow();
-        gameGroupEventService.ratingUpdated(request.getGameGroupId(), game, request.getRating());
-
-        return computeRating(request);
     }
 
     public RatingModel deleteRating(RatingRequest request) {
