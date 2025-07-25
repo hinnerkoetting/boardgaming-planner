@@ -1,0 +1,19 @@
+meta {
+  name: Sync BGG Collection
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{server}}/api/bgg/sync/collection/{{name}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  name: 
+}

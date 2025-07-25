@@ -6,10 +6,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GameRepository extends PagingAndSortingRepository<Game, Long>, CrudRepository<Game, Long> {
 
     List<Game> findByNameContainingIgnoreCase(String name);
 
+    Optional<Game> findByName(String name);
 }

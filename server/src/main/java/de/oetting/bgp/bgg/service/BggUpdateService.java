@@ -3,19 +3,26 @@ package de.oetting.bgp.bgg.service;
 import com.github.marcioos.bggclient.BGG;
 import com.github.marcioos.bggclient.common.ThingType;
 import com.github.marcioos.bggclient.fetch.FetchException;
+import com.github.marcioos.bggclient.fetch.domain.CollectionItem;
 import com.github.marcioos.bggclient.fetch.domain.FetchItem;
 import com.github.marcioos.bggclient.fetch.domain.Poll;
 import com.github.marcioos.bggclient.search.SearchException;
 import com.github.marcioos.bggclient.search.domain.SearchItem;
 import com.github.marcioos.bggclient.search.domain.SearchOutput;
+import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.game.repository.GameRepository;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.tags.entity.TagEntity;
 import de.oetting.bgp.tags.entity.TagType;
 import de.oetting.bgp.tags.repository.TagRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -38,7 +45,16 @@ public class BggUpdateService {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    private ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+    @Autowired
+    private GameGroupRepository gameGroupRepository;
+
+    @Autowired
+    private Game2GameGroupRepository game2GameGroupRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    private final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
 
     public void updateAsynchronous() {
         // TODO: Not the best way to start an asynchronous job, but we avoid having to use spring schedulers for now
@@ -54,7 +70,7 @@ public class BggUpdateService {
 
     public Optional<Game> importFromBgg(int bggId) throws FetchException {
         Collection<FetchItem> fetchItems = BGG.fetch(List.of(bggId), ThingType.BOARDGAME_EXPANSION, ThingType.BOARDGAME);
-        if (fetchItems.size() == 0) {
+        if (fetchItems.isEmpty()) {
             LOG.error("Fetch from BGG did not find anything for {}", bggId);
             return Optional.empty();
         }
@@ -66,6 +82,36 @@ public class BggUpdateService {
         game.setName(firstItem.getName());
         Game writtenGame = updateGameFromBgg(game, firstItem, globalTags);
         return Optional.of(writtenGame);
+    }
+
+    public void syncBggCollection(String ownerName) throws FetchException {
+        var userCollection = BGG.fetchCollection(ownerName);
+        if (userCollection.getItems() == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        var personalCollection = findMyPlayer().getPersonalCollection();
+        userCollection.getItems().forEach(item -> {
+            sleepRandom(100);
+            var game = loadOrImportGame(item);
+            game2GameGroupRepository.save(new Game2GameGroupRelation(game.getId(), personalCollection.getId()));
+        });
+    }
+
+    private Player findMyPlayer() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
+    }
+
+    private Game loadOrImportGame(CollectionItem item) {
+        var optionalGame = gameRepository.findByName(item.getName());
+        if (optionalGame.isPresent()) {
+            return optionalGame.get();
+        }
+        try {
+            return importFromBgg(item.getId()).orElseThrow(() -> new IllegalStateException("Cannot find game from boardgamegeek although it exists in my collection. Id=" + item.getId()));
+        } catch (FetchException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<TagEntity> findMatchingTags(FetchItem fetchItem, List<TagEntity> tags) {

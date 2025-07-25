@@ -5,6 +5,7 @@ import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.model.GameGroupModelMapper;
+import de.oetting.bgp.gamegroup.persistence.GameGroupType;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.security.JwtUtil;
@@ -64,7 +65,7 @@ public class MeController {
     @Transactional
     public Collection<GameGroupModel> findMyGroups() {
         var player = findMyPlayer();
-        return player.getGameGroups().stream().map(GameGroupModelMapper::map).toList();
+        return player.getGameGroups().stream().map(GameGroupModelMapper::map).filter(group -> group.getType() != GameGroupType.PERSONAL).toList();
     }
 
     @PutMapping(path = "/name")

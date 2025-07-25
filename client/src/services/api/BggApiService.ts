@@ -33,3 +33,8 @@ export async function syncAllGamesFromBgg(): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/bgg/sync`, { method: 'POST' })
   return wrapEmptySuccessResponse(response)
 }
+
+export async function importCollectionFromBgg(name: string): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/bgg/sync/collection/${name}`, { method: 'POST' })
+  return wrapEmptySuccessResponse(response)
+}

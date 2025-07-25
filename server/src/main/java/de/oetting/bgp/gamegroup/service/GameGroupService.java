@@ -55,6 +55,9 @@ public class GameGroupService {
         }
         Player player = playerRepository.findById(playerId).orElseThrow();
         GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        if (gameGroup.getType() == GameGroupType.PERSONAL) {
+            throw new ConflictException("Cannot join personal group");
+        }
         gameGroup.addPlayer(player);
 
         gameGroupEventService.playerAdded(gameGroupId, player);

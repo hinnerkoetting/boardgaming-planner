@@ -13,6 +13,7 @@ import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.security.Role;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping(path = "api/bgg")
@@ -70,5 +72,15 @@ public class BGGController {
         }
         lastBggUpdateRun = LocalDateTime.now();
         bggUpdateService.updateAsynchronous();
+    }
+
+
+    @PostMapping(path = "/sync/collection/{name}")
+    @Transactional
+    public void importBggCollection(@PathVariable(name = "name") String name) throws FetchException {
+        if (StringUtils.isEmpty(name)) {
+            throw new NoSuchElementException("Name is empty");
+        }
+        bggUpdateService.syncBggCollection(name);
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Group {{ gameGroup?.name || '' }}</h1>
+    <h1>{{ gameGroup?.name || '' }}</h1>
 
     <div>
       <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId } }">Next
@@ -26,7 +26,11 @@
       <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" />
     </template>
 
-    <div v-if="gameGroup?.type != GameGroupType.PERSONAL">
+    <div v-if="gameGroup?.type === GameGroupType.PERSONAL">
+      <ImportCollectionFromBggComponent @imported="gamesImported" />
+    </div>
+
+    <div v-if="gameGroup?.type !== GameGroupType.PERSONAL">
       <h2>Players</h2>
       <DataTable :value="players" tableStyle="min-width: 20rem" class="players">
         <Column field="name" header="Name"></Column>
@@ -69,6 +73,8 @@ import { useToast } from 'primevue/usetoast'
 import type { ToastMessageOptions } from 'primevue'
 import type { GameGroupEvent } from '@/services/GameGroupEvent'
 import { loadTags } from '@/services/StoreApiService'
+import { importCollectionFromBgg } from '@/services/api/BggApiService'
+import ImportCollectionFromBggComponent from './ImportCollectionFromBggComponent.vue'
 
 const gameGroup: Ref<GameGroup | null> = ref(null)
 const players: Ref<Player[]> = ref([])
@@ -221,6 +227,14 @@ function filterAndSort() {
 function filterGames() {
   displayedGames.value = new FilterService().filterWithStoredSettings(allGames.value, players.value)
 }
+
+function gamesImported() {
+  fetchGamesInGroup(props.gameGroupId).then((result) => {
+    allGames.value = result
+    filterAndSort()
+  })
+}
+
 </script>
 
 <style lang="css" scoped>
