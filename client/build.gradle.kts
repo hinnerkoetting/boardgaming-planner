@@ -1,11 +1,11 @@
 plugins {
-  id("com.github.node-gradle.node") version("7.1.0")
+    id("com.github.node-gradle.node") version ("7.1.0")
 }
 
-node {    
+node {
     download = true
-    version = "20.12.2"
-    npmVersion = "10.8.3"
+    version = "22.17.1"
+    npmVersion = "10.9.2"
 }
 
 val buildTask = tasks.getByName("npm_run_build") {
