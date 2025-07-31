@@ -22,7 +22,10 @@ export default defineConfig(({ command }) => {
           changeOrigin: true,
           secure: false
         }
-      }
+      },
+    },
+    build: {
+      chunkSizeWarningLimit: 1600 // caused by echarts
     }
   };
   if (command === 'serve') { // development
