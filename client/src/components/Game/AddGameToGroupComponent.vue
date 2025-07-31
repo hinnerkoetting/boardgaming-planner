@@ -68,14 +68,8 @@ defineExpose({
 
 <template>
   <div>
-    <InputText
-      id="searchTerm"
-      name="searchTerm"
-      v-model="searchTerm"
-      placeholder="Searchterm..."
-      v-on:keyup.enter="onClickSearch"
-      @focus="($event.target as any).select()"
-    ></InputText>
+    <InputText id="searchTerm" name="searchTerm" v-model="searchTerm" placeholder="Searchterm..."
+      v-on:keyup.enter="onClickSearch" @focus="($event.target as any).select()" size="small"></InputText>
     <Button @click="onClickSearch" class="searchButton">Search</Button>
 
     <AddExistingGameTable :searchItems="searchItems" @game-added="onClickAdd" />
@@ -83,11 +77,7 @@ defineExpose({
       Did not find what you were looking for?
       <Button @click="onClickSearchBgg" class="searchButton">Search on BGG</Button>
     </template>
-    <AddBggGameTable
-      :searchItems="bggSearchItems"
-      @game-added="onClickAdd"
-      :emptyTableMessage="bggEmptyTableMessage"
-    />
+    <AddBggGameTable :searchItems="bggSearchItems" @game-added="onClickAdd" :emptyTableMessage="bggEmptyTableMessage" />
   </div>
 </template>
 
@@ -99,7 +89,7 @@ defineExpose({
   padding: 8px;
   font-size: 15px;
   line-height: 1.6;
-  padding-left: 16px;
+  padding-left: 8px;
   display: flex;
   vertical-align: middle;
   align-items: center;

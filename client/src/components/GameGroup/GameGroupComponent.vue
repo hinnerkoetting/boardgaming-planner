@@ -3,12 +3,17 @@
     <h1>{{ gameGroup?.name || '' }}</h1>
 
     <div>
-      <router-link :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId } }">Next
-        events</router-link>
+      <router-link
+        :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId } }">Calendar</router-link>
 
       &#183;
 
       <router-link :to="{ name: 'gameGroupStatistics', params: { gameGroupId: gameGroupId } }">Statistics</router-link>
+
+      <span v-if="gameGroup?.type !== GameGroupType.PERSONAL">
+        &#183;
+        <Button @click="playerDialogVisible = true" variant="link" class="players-link">Players</Button>
+      </span>
     </div>
 
     <h2>
@@ -17,35 +22,32 @@
         :numberOfPlayersInGroup="players.length" @updatedFilter="onUpdatedFilters" @opened="onDialogOpened" />
     </h2>
 
+    <div v-if="isPartOfGroup" class="add-game">
+      <span style="white-space: nowrap;">Add game</span>
+      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" />
+    </div>
+
     <GamesCollection v-if="displayedGames.length > 0" :games="displayedGames" :game-group-id="gameGroupId"
       :withRateButton="isPartOfGroup" :withTagButton="isPartOfGroup" @ratingOpened="onDialogOpened"
       @game-rated="filterAndSort" :players="players" :lastVisitedGameGroup="lastVisitedGameGroup" />
 
-    <template v-if="isPartOfGroup">
-      <h2 class="green">Add game</h2>
-      <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" />
-    </template>
 
     <div v-if="gameGroup?.type === GameGroupType.PERSONAL">
       <ImportCollectionFromBggComponent @imported="gamesImported" />
     </div>
 
-    <div v-if="gameGroup?.type !== GameGroupType.PERSONAL">
-      <h2>Players</h2>
-      <DataTable :value="players" tableStyle="min-width: 20rem" class="players">
-        <Column field="name" header="Name"></Column>
-      </DataTable>
-    </div>
+
 
     <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
-      @click="onClickLeaveButton">Leave
-      group</Button>
+      @click="onClickLeaveButton">Leave group</Button>
+
+    <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
+      <PlayersInGroupComponent :players="players" />
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { GameGroup, GameGroupType } from '@/model/GameGroup'
@@ -70,11 +72,11 @@ import FilterGamesDialog from '@/components/Game/filter/FilterGamesDialog.vue'
 import { FilterService } from '@/services/FilterService'
 import { subscribeToEventsOnGameGroup } from '@/services/ServerSentEvents'
 import { useToast } from 'primevue/usetoast'
-import type { ToastMessageOptions } from 'primevue'
+import { Dialog, type ToastMessageOptions } from 'primevue'
 import type { GameGroupEvent } from '@/services/GameGroupEvent'
 import { loadTags } from '@/services/StoreApiService'
-import { importCollectionFromBgg } from '@/services/api/BggApiService'
 import ImportCollectionFromBggComponent from './ImportCollectionFromBggComponent.vue'
+import PlayersInGroupComponent from './PlayersInGroupComponent.vue'
 
 const gameGroup: Ref<GameGroup | null> = ref(null)
 const players: Ref<Player[]> = ref([])
@@ -82,6 +84,7 @@ const allGames: Ref<RatedGame[]> = ref([])
 const displayedGames: Ref<RatedGame[]> = ref([])
 const tags: Ref<TagModel[]> = ref([])
 const isPartOfGroup = ref(false)
+const playerDialogVisible = ref(false)
 
 const props = defineProps<{
   gameGroupId: number
@@ -250,5 +253,12 @@ h2 {
 .players:v-deep(tr) {
   --p-datatable-header-cell-background: var(--color-background);
   --p-datatable-row-background: var(--color-background);
+}
+
+.add-game {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 </style>
