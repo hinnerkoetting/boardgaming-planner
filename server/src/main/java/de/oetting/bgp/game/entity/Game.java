@@ -3,7 +3,7 @@ package de.oetting.bgp.game.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import de.oetting.bgp.tags.entity.TagEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -114,7 +114,7 @@ public class Game {
         this.gameGroups.add(gameGroup);
     }
 
-    public void deleteGameGroup(GameGroup gameGroup) {
+    public void deleteGameGroup(GameGroupEntity gameGroup) {
         this.gameGroups.removeIf(g -> Objects.equals(g.getGameGroup().getId(), gameGroup.getId()));
     }
 

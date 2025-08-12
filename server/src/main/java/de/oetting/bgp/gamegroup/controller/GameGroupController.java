@@ -82,7 +82,7 @@ public class GameGroupController {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request) {
-        GameGroup savedEntity = gameGroupService.createGameGroup(request);
+        GameGroupEntity savedEntity = gameGroupService.createGameGroup(request);
 
         return GameGroupModelMapper.map(savedEntity);
     }
@@ -165,7 +165,7 @@ public class GameGroupController {
         gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         Game game = gameRepository.findById(gameId).orElseThrow();
         TagEntity tag = tagRepository.findById(gameTagId.getId()).orElseThrow();
-        GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        GameGroupEntity gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
         if (!TagType.GAME_GROUP.equals(tag.getType())) {
             throw new ConflictException("Only game group tags can be added to game groups");
         }

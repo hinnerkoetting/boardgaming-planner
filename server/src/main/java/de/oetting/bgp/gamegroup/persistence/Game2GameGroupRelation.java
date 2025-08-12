@@ -27,7 +27,7 @@ public class Game2GameGroupRelation {
 
     @ManyToOne
     @JoinColumn(name = "GAME_GROUPS_ID", insertable = false, updatable = false)
-    private GameGroup gameGroup;
+    private GameGroupEntity gameGroup;
 
     public Game2GameGroupRelation() {
     }
@@ -45,11 +45,11 @@ public class Game2GameGroupRelation {
         this.game = game;
     }
 
-    public GameGroup getGameGroup() {
+    public GameGroupEntity getGameGroup() {
         return gameGroup;
     }
 
-    public void setGameGroup(GameGroup gameGroup) {
+    public void setGameGroup(GameGroupEntity gameGroup) {
         this.gameGroup = gameGroup;
     }
 

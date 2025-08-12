@@ -39,13 +39,14 @@ public class GameGroupService {
     @Autowired
     private RatingRepository ratingRepository;
 
-    public GameGroup createGameGroup(CreateGameGroupRequest request) {
+    public GameGroupEntity createGameGroup(CreateGameGroupRequest request) {
         if (gameGroupRepository.existsByName(request.getName())) {
             throw new ConflictException("Group already exists");
         }
-        GameGroup groupEntity = new GameGroup();
+        GameGroupEntity groupEntity = new GameGroupEntity();
         groupEntity.setName(request.getName());
         groupEntity.setType(request.getType());
+        groupEntity.setOpenForNewPlayers(request.isOpenForNewPlayers());
         return gameGroupRepository.save(groupEntity);
     }
 
@@ -54,7 +55,10 @@ public class GameGroupService {
             throw new ConflictException("Player already exists");
         }
         Player player = playerRepository.findById(playerId).orElseThrow();
-        GameGroup gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        GameGroupEntity gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+        if (!gameGroup.isOpenForNewPlayers()) {
+            throw new ConflictException("Group is not open for new players");
+        }
         if (gameGroup.getType() == GameGroupType.PERSONAL) {
             throw new ConflictException("Cannot join personal group");
         }
@@ -83,7 +87,7 @@ public class GameGroupService {
         }
     }
 
-    public Optional<GameGroup> find(long gameGroupId) {
+    public Optional<GameGroupEntity> find(long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId);
     }
 
@@ -98,11 +102,12 @@ public class GameGroupService {
         return playerRepository.findByName(username).orElseThrow(() -> new NoSuchElementException("Player not found"));
     }
 
-    public GameGroup createPersonalCollection() {
+    public GameGroupEntity createPersonalCollection() {
         var myPlayer = findMyPlayer();
-        var newPersonalCollection = new GameGroup();
+        var newPersonalCollection = new GameGroupEntity();
         newPersonalCollection.setType(GameGroupType.PERSONAL);
         newPersonalCollection.setName(String.format("%s's personal collection", myPlayer.getName()));
+        newPersonalCollection.setOpenForNewPlayers(false);
         if (gameGroupRepository.existsByName(newPersonalCollection.getName())) {
             throw new ConflictException("Group already exists");
         }

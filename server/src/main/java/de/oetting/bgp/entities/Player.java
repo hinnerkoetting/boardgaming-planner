@@ -1,7 +1,7 @@
 package de.oetting.bgp.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -20,11 +20,11 @@ public class Player {
 
     @ManyToMany(mappedBy = "players")
     @JsonBackReference
-    private Set<GameGroup> gameGroups;
+    private Set<GameGroupEntity> gameGroups;
 
     @ManyToOne
     @JoinColumn(name = "GAME_GROUP_ID")
-    private GameGroup personalCollection;
+    private GameGroupEntity personalCollection;
 
     public Long getId() {
         return id;
@@ -38,27 +38,27 @@ public class Player {
         this.name = name;
     }
 
-    public Set<GameGroup> getGameGroups() {
+    public Set<GameGroupEntity> getGameGroups() {
         return gameGroups;
     }
 
-    public void setGameGroups(Set<GameGroup> gameGroups) {
+    public void setGameGroups(Set<GameGroupEntity> gameGroups) {
         this.gameGroups = gameGroups;
     }
 
-    public void addGameGroup(GameGroup gameGroup) {
+    public void addGameGroup(GameGroupEntity gameGroup) {
         this.gameGroups.add(gameGroup);
     }
 
-    public void deleteGameGroup(GameGroup gameGroup) {
+    public void deleteGameGroup(GameGroupEntity gameGroup) {
         this.gameGroups.remove(gameGroup);
     }
 
-    public GameGroup getPersonalCollection() {
+    public GameGroupEntity getPersonalCollection() {
         return personalCollection;
     }
 
-    public void setPersonalCollection(GameGroup personalCollection) {
+    public void setPersonalCollection(GameGroupEntity personalCollection) {
         this.personalCollection = personalCollection;
     }
 

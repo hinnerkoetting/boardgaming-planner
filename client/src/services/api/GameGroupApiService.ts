@@ -14,7 +14,8 @@ export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrappe
     },
     body: JSON.stringify({
       name: gameGroup.name,
-      type: gameGroup.type
+      type: gameGroup.type,
+      openForNewPlayers: gameGroup.openForNewPlayers
     })
   })
   return await wrapResponse(response)

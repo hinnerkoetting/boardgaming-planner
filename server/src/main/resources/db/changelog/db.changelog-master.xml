@@ -673,4 +673,12 @@
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
                                  referencedColumnNames="ID" referencedTableName="GAME_GROUP" validate="true"/>
     </changeSet>
+
+    <changeSet id="game_group_open_new_players" author="Hinnerk">
+        <addColumn tableName="GAME_GROUP">
+            <column name="OPEN_FOR_NEW_PLAYERS" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

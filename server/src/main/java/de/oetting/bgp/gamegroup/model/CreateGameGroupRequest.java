@@ -6,6 +6,7 @@ public class CreateGameGroupRequest {
 
     private String name;
     private GameGroupType type;
+    private boolean openForNewPlayers;
 
     public String getName() {
         return name;
@@ -21,5 +22,13 @@ public class CreateGameGroupRequest {
 
     public void setType(GameGroupType type) {
         this.type = type;
+    }
+
+    public boolean isOpenForNewPlayers() {
+        return openForNewPlayers;
+    }
+
+    public void setOpenForNewPlayers(boolean openForNewPlayers) {
+        this.openForNewPlayers = openForNewPlayers;
     }
 }

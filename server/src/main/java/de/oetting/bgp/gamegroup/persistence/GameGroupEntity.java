@@ -9,10 +9,10 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-@Entity
-public class GameGroup implements Serializable {
-
-
+@Entity(name = "GameGroup")
+@Table(name = "GAME_GROUP")
+public class GameGroupEntity implements Serializable {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -35,6 +35,9 @@ public class GameGroup implements Serializable {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private GameGroupType type;
+
+    @Column(name = "open_for_new_players")
+    private boolean openForNewPlayers;
 
     public Long getId() {
         return id;
@@ -126,5 +129,13 @@ public class GameGroup implements Serializable {
 
     public void setType(GameGroupType type) {
         this.type = type;
+    }
+
+    public boolean isOpenForNewPlayers() {
+        return openForNewPlayers;
+    }
+
+    public void setOpenForNewPlayers(boolean openForNewPlayers) {
+        this.openForNewPlayers = openForNewPlayers;
     }
 }

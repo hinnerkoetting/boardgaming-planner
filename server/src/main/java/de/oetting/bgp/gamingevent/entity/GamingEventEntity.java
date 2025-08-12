@@ -1,6 +1,6 @@
 package de.oetting.bgp.gamingevent.entity;
 
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
@@ -19,7 +19,7 @@ public class GamingEventEntity {
 
     @ManyToOne
     @JoinColumn(name = "GAME_GROUP_ID", nullable = false, updatable = false)
-    private GameGroup gameGroup;
+    private GameGroupEntity gameGroup;
 
     @Column
     private String description;
@@ -57,11 +57,11 @@ public class GamingEventEntity {
         this.description = description;
     }
 
-    public GameGroup getGameGroup() {
+    public GameGroupEntity getGameGroup() {
         return gameGroup;
     }
 
-    public void setGameGroup(GameGroup gameGroup) {
+    public void setGameGroup(GameGroupEntity gameGroup) {
         this.gameGroup = gameGroup;
     }
 

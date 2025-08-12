@@ -8,7 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface GameGroupRepository extends PagingAndSortingRepository<GameGroup, Long>, CrudRepository<GameGroup, Long> {
+public interface GameGroupRepository extends PagingAndSortingRepository<GameGroupEntity, Long>, CrudRepository<GameGroupEntity, Long> {
 
     @Query("select p from Player p " +
             "join p.gameGroups gg " +
@@ -17,6 +17,6 @@ public interface GameGroupRepository extends PagingAndSortingRepository<GameGrou
 
     boolean existsByName(String name);
 
-    List<GameGroup> findByType(GameGroupType type);
+    List<GameGroupEntity> findByType(GameGroupType type);
 
 }

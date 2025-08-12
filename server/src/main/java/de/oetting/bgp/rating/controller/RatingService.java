@@ -4,7 +4,7 @@ import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.game.repository.GameRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.infrastructure.CurrentUser;
@@ -71,7 +71,7 @@ public class RatingService {
     private void createNewRating(RatingRequest request) {
         Player player = playerRepository.findById(request.getPlayerId()).orElseThrow(() -> new NoSuchElementException("Player not found"));
         Game game = gameRepository.findById(request.getGameId()).orElseThrow(() -> new NoSuchElementException("Game not found"));
-        GameGroup gameGroup = gameGroupRepository.findById(request.getGameGroupId()).orElseThrow(() -> new NoSuchElementException("GameGroup not found"));
+        GameGroupEntity gameGroup = gameGroupRepository.findById(request.getGameGroupId()).orElseThrow(() -> new NoSuchElementException("GameGroup not found"));
         Rating rating = new Rating();
         rating.setGame(game);
         rating.setGameGroup(gameGroup);

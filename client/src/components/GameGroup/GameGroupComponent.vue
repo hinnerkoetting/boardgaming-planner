@@ -37,7 +37,6 @@
     </div>
 
 
-
     <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
       @click="onClickLeaveButton">Leave group</Button>
 

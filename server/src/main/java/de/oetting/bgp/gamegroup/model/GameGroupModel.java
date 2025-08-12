@@ -7,6 +7,7 @@ public class GameGroupModel {
     private long id;
     private String name;
     private GameGroupType type;
+    private boolean openForNewPlayers;
 
     public long getId() {
         return id;
@@ -30,5 +31,13 @@ public class GameGroupModel {
 
     public void setType(GameGroupType type) {
         this.type = type;
+    }
+
+    public boolean isOpenForNewPlayers() {
+        return openForNewPlayers;
+    }
+
+    public void setOpenForNewPlayers(boolean openForNewPlayers) {
+        this.openForNewPlayers = openForNewPlayers;
     }
 }

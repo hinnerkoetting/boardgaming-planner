@@ -5,7 +5,8 @@
       <div v-for="(item, index) in slotProps.items" :key="index">
         <div class="row" @click="$emit('onRowClick', item)">
           {{ item.name }}
-          <Button @click="$emit('onClickActionButton', item)"> {{ actionButtonText }} </Button>
+          <Button @click="$emit('onClickActionButton', item)" v-if="item.openForNewPlayers"> {{ actionButtonText
+            }}</Button>
         </div>
       </div>
     </template>

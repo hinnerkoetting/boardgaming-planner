@@ -7,7 +7,7 @@ import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupId;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
-import de.oetting.bgp.gamegroup.persistence.GameGroup;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.rating.RatingRequest;
 import de.oetting.bgp.rating.controller.RatingService;
@@ -117,7 +117,7 @@ public class BggUpdateService {
         }
     }
 
-    private void updateRating(String ownRating, Game game, GameGroup gameGroup) {
+    private void updateRating(String ownRating, Game game, GameGroupEntity gameGroup) {
         try {
             var request = new RatingRequest();
             request.setRating(Integer.parseInt(ownRating));
