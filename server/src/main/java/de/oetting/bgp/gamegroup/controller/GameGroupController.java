@@ -1,7 +1,6 @@
 package de.oetting.bgp.gamegroup.controller;
 
 import de.oetting.bgp.controller.IdWrapper;
-import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.entities.Rating;
 import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.game.entity.Game;
@@ -11,12 +10,17 @@ import de.oetting.bgp.game.model.TagModel;
 import de.oetting.bgp.game.model.TagWrapper;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
+import de.oetting.bgp.gamegroup.model.GameGroupMemberModel;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.model.GameGroupModelMapper;
-import de.oetting.bgp.gamegroup.persistence.*;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupId;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
+import de.oetting.bgp.gamegroup.persistence.GameGroupMemberType;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupType;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
-import de.oetting.bgp.player.controller.PlayerMapper;
-import de.oetting.bgp.player.model.PublicPlayerModel;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.player.service.PlayerService;
 import de.oetting.bgp.rating.controller.RatingService;
@@ -33,7 +37,15 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneOffset;
 import java.util.Collection;
@@ -119,11 +131,11 @@ public class GameGroupController {
 
     @GetMapping(path = "/{gameGroupId}/players")
     @Transactional
-    public Collection<PublicPlayerModel> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
+    public Collection<GameGroupMemberModel> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {
         return gameGroupRepository.findById(gameGroupId).orElseThrow()
                 .getPlayers().stream()
-                .sorted(Comparator.comparing(Player::getName))
-                .map(PlayerMapper::map)
+                .sorted(Comparator.comparing(membership -> membership.getPlayer().getName()))
+                .map(GameGroupModelMapper::map)
                 .toList();
     }
 
@@ -215,6 +227,24 @@ public class GameGroupController {
         playerService.checkCurrentPlayerId(playerId);
         playerTagRepository.findByGameGroupIdAndGameIdAndTagIdAndPlayerId(gameGroupId, gameId, tagId, playerId)
                 .ifPresent(playerTagRepository::delete);
+    }
+
+    @Transactional
+    @PutMapping(path = "/{gameGroupId}/{playerId}/{type}")
+    public void updateMembershipType(@PathVariable("gameGroupId") long gameGroupId,
+                                     @PathVariable("playerId") long playerId,
+                                     @PathVariable("type") GameGroupMemberType type
+    ) {
+        gameGroupService.checkUserIsAdminOrOwnerInGroupOrGlobalAdmin(gameGroupId);
+        if (type == GameGroupMemberType.OWNER) {
+            gameGroupService.checkUserIsOwnerInGroupOrGlobalAdmin(gameGroupId);
+        }
+        var membership = gameGroupRepository.playerAssignedToGameGroup(playerId, gameGroupId);
+        if (membership.isEmpty()) {
+            throw new NoSuchElementException("Player is not member of group");
+        }
+
+        membership.get().setType(type);
     }
 
     private RatedGameModel map(List<Rating> ratings, Game2GameGroupRelation game2GameGroupRelation, List<GameGroupTagEntity> gameGroupTags, List<PlayerTagEntity> playerTags) {

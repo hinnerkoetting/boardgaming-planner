@@ -197,7 +197,7 @@ public class GamingEventController {
 
         var allGroupPlayers = gamingEvent.getGameGroup().getPlayers();
         allGroupPlayers.forEach(player -> {
-            addPlayerIfMissing(player, gamingEvent);
+            addPlayerIfMissing(player.getPlayer(), gamingEvent);
         });
         return map(gamingEvent);
     }

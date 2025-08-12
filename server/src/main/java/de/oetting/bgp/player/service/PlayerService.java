@@ -36,7 +36,7 @@ public class PlayerService {
         }
         ratingRepository.deleteByPlayerId(player.getId());
         var gameGroups = new ArrayList<>(player.getGameGroups());
-        gameGroups.forEach(gameGroup -> gameGroup.deletePlayer(player));
+        gameGroups.forEach(gameGroup -> gameGroup.getGameGroup().deletePlayer(gameGroup));
 
         playerRepository.delete(player);
 

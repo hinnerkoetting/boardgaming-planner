@@ -65,7 +65,10 @@ public class MeController {
     @Transactional
     public Collection<GameGroupModel> findMyGroups() {
         var player = findMyPlayer();
-        return player.getGameGroups().stream().map(GameGroupModelMapper::map).filter(group -> group.getType() != GameGroupType.PERSONAL).toList();
+        return player.getGameGroups().stream()
+                .map(gameGroupMembership -> GameGroupModelMapper.map(gameGroupMembership.getGameGroup()))
+                .filter(group -> group.getType() != GameGroupType.PERSONAL)
+                .toList();
     }
 
     @PutMapping(path = "/name")

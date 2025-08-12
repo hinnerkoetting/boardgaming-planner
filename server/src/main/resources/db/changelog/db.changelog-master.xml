@@ -681,4 +681,13 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="game_group_player_settings" author="Hinnerk">
+        <renameTable oldTableName="GAME_GROUP_PLAYERS" newTableName="GAME_GROUP_2_PLAYERS"/>
+        <addColumn tableName="GAME_GROUP_2_PLAYERS">
+            <column name="TYPE" type="varchar2(20)" defaultValue="MEMBER"/>
+        </addColumn>
+        <renameColumn tableName="GAME_GROUP_2_PLAYERS" oldColumnName="PLAYERS_ID" newColumnName="PLAYER_ID"/>
+        <renameColumn tableName="GAME_GROUP_2_PLAYERS" oldColumnName="GAME_GROUPS_ID" newColumnName="GAME_GROUP_ID"/>
+    </changeSet>
 </databaseChangeLog>

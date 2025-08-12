@@ -2,10 +2,18 @@ package de.oetting.bgp.gamegroup.service;
 
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.ConflictException;
+import de.oetting.bgp.exceptions.ForbiddenException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
-import de.oetting.bgp.gamegroup.persistence.*;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
+import de.oetting.bgp.gamegroup.persistence.GameGroupMemberType;
+import de.oetting.bgp.gamegroup.persistence.GameGroupMembership;
+import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
+import de.oetting.bgp.gamegroup.persistence.GameGroupType;
+import de.oetting.bgp.infrastructure.CurrentUser;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
@@ -62,7 +70,8 @@ public class GameGroupService {
         if (gameGroup.getType() == GameGroupType.PERSONAL) {
             throw new ConflictException("Cannot join personal group");
         }
-        gameGroup.addPlayer(player);
+        var membership = new GameGroupMembership(playerId, gameGroupId);
+        gameGroup.addPlayer(membership);
 
         gameGroupEventService.playerAdded(gameGroupId, player);
     }
@@ -85,6 +94,30 @@ public class GameGroupService {
         if (gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId).isEmpty()) {
             throw new UnprocessableEntityException("Only allowed if you are member of group");
         }
+    }
+
+    public void checkUserIsAdminOrOwnerInGroupOrGlobalAdmin(long gameGroupId) {
+        if (!CurrentUser.checkIfUserIsGlobalAdmin() && !isUserAdminOrOwnerInGroup(gameGroupId)) {
+            throw new ForbiddenException("Only allowed if you are admin or owner of group");
+        }
+    }
+
+    public void checkUserIsOwnerInGroupOrGlobalAdmin(long gameGroupId) {
+        if (!CurrentUser.checkIfUserIsGlobalAdmin() && !isUserOwnerInGroup(gameGroupId)) {
+            throw new ForbiddenException("Only allowed if you are owner of group");
+        }
+    }
+
+    private boolean isUserAdminOrOwnerInGroup(long gameGroupId) {
+        var myPlayer = findMyPlayer();
+        var membership = gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId);
+        return membership.map(m -> m.getType() == GameGroupMemberType.ADMIN || m.getType() == GameGroupMemberType.OWNER).orElse(false);
+    }
+
+    private boolean isUserOwnerInGroup(long gameGroupId) {
+        var myPlayer = findMyPlayer();
+        var membership = gameGroupRepository.playerAssignedToGameGroup(myPlayer.getId(), gameGroupId);
+        return membership.map(m -> m.getType() == GameGroupMemberType.OWNER).orElse(false);
     }
 
     public Optional<GameGroupEntity> find(long gameGroupId) {
@@ -112,7 +145,8 @@ public class GameGroupService {
             throw new ConflictException("Group already exists");
         }
         var storedPersonalCollection = gameGroupRepository.save(newPersonalCollection);
-        storedPersonalCollection.setPlayers(Collections.singleton(myPlayer));
+        var membership = new GameGroupMembership(myPlayer.getId(), storedPersonalCollection.getId());
+        storedPersonalCollection.setPlayers(Collections.singleton(membership));
         return storedPersonalCollection;
     }
 

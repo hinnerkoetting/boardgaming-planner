@@ -76,9 +76,10 @@ import type { GameGroupEvent } from '@/services/GameGroupEvent'
 import { loadTags } from '@/services/StoreApiService'
 import ImportCollectionFromBggComponent from './ImportCollectionFromBggComponent.vue'
 import PlayersInGroupComponent from './PlayersInGroupComponent.vue'
+import type { GameGroupMember } from '@/model/GameGroupMember'
 
 const gameGroup: Ref<GameGroup | null> = ref(null)
-const players: Ref<Player[]> = ref([])
+const players: Ref<GameGroupMember[]> = ref([])
 const allGames: Ref<RatedGame[]> = ref([])
 const displayedGames: Ref<RatedGame[]> = ref([])
 const tags: Ref<TagModel[]> = ref([])
@@ -102,7 +103,11 @@ onMounted(async () => {
     gameGroup.value = result
   })
   fetchPlayersInGroup(props.gameGroupId).then((result) => {
-    players.value = result
+    if (!result.success) {
+      console.error('Error fetching players in group:', result.error!.detail)
+      return
+    }
+    players.value = result.success
     isPartOfGroup.value = players.value.some((player) => player.id === getCurrentPlayerId())
     if (isPartOfGroup.value) {
       subscribeToEvents()

@@ -130,8 +130,12 @@ async function loadData() {
     console.error('Error when loading event ' + gamingEventId)
   }
 
-  const players = await fetchPlayersInGroup(gameGroupId)
-  isPartOfGroup.value = players.some((player) => player.id === getCurrentPlayerId())
+  const playersResult = await fetchPlayersInGroup(gameGroupId)
+  if (playersResult.success) {
+    isPartOfGroup.value = playersResult.success.some((player) => player.id === getCurrentPlayerId())
+  } else {
+    errorMessage.value = playersResult.error?.detail || 'Error fetching players in group'
+  }
 }
 
 function formatDate(date: Date) {
