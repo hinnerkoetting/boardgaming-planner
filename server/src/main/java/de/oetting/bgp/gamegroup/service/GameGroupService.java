@@ -76,6 +76,27 @@ public class GameGroupService {
         gameGroupEventService.playerAdded(gameGroupId, player);
     }
 
+    public void removePlayerById(long playerId, long gameGroupId) {
+        checkUserIsAdminOrOwnerInGroupOrGlobalAdmin(gameGroupId);
+        Player player = playerRepository.findById(playerId).orElseThrow();
+        GameGroupEntity gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();
+
+        if (gameGroup.getType() == GameGroupType.PERSONAL) {
+            throw new ConflictException("Cannot remove players in personal group");
+        }
+        var membership = gameGroup.getPlayers().stream().filter(m -> m.getPlayer().getId() == playerId).findFirst();
+        if (membership.map(m -> m.getType() == GameGroupMemberType.OWNER).orElse(false)) {
+            throw new ForbiddenException("Owner cannot be removed");
+        }
+        if (membership.isEmpty()) {
+            return;
+        }
+
+        gameGroup.deletePlayer(membership.get());
+
+        gameGroupEventService.playerRemoved(gameGroupId, player);
+    }
+
     public void addPlayedGameById(long gameId, long gameGroupId) {
         var game = gameRepository.findById(gameId).orElseThrow();
         var gameGroup = gameGroupRepository.findById(gameGroupId).orElseThrow();

@@ -5,13 +5,14 @@
     { name: GameGroupMemberType.OWNER, description: memberTypeToString(GameGroupMemberType.OWNER) }]"
       optionLabel="description" optionValue="name" />
     <Button @click="onClickSubmit">Submit</Button>
+    <Message v-if="errorMessage" severity="warn">{{ errorMessage }} </Message>
   </div>
 </template>
 
 <script setup lang="ts">
 import { GameGroupMember, GameGroupMemberType, memberTypeToString } from '@/model/GameGroupMember';
 import { updatePlayerMembershipType } from '@/services/api/GameGroupApiService';
-import { Button, Select } from 'primevue';
+import { Button, Message, Select } from 'primevue';
 import { ref, type PropType } from 'vue';
 
 const props = defineProps({
@@ -30,8 +31,13 @@ const emits = defineEmits<{
 }>()
 
 const type = ref(props.membership.type)
+const errorMessage = ref<string>('')
 
 async function onClickSubmit() {
+  if (type.value === GameGroupMemberType.OWNER) {
+    errorMessage.value = 'Not allowed!';
+    return
+  }
   const result = await updatePlayerMembershipType(props.gameGroupId, props.membership.id, type.value)
   if (result.success) {
     emits('type-changed', type.value as GameGroupMemberType)

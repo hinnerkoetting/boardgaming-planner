@@ -17,6 +17,11 @@ public class GameGroupEventService {
         sseEmitterService.onEventInGameGroup(event);
     }
 
+    public void playerRemoved(long gameGroupId, Player removedUser) {
+        var event = new GameGroupEvent(CurrentUser.getCurrentPlayerId(), CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.PLAYER_REMOVED, String.format("Player %s left", removedUser.getName()));
+        sseEmitterService.onEventInGameGroup(event);
+    }
+
     public void gameAdded(long gameGroupId, Game game) {
         var event = new GameGroupEvent(CurrentUser.getCurrentPlayerId(), CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.GAME_ADDED, String.format("Game %s was added", game.getName()));
         sseEmitterService.onEventInGameGroup(event);

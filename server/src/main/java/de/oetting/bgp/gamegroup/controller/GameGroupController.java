@@ -129,6 +129,13 @@ public class GameGroupController {
         gameGroupService.addPlayerById(playerId.getId(), gameGroupId);
     }
 
+    @Transactional
+    @DeleteMapping(path = "/{gameGroupId}/players/{playerId}")
+    @ResponseStatus
+    public void removePlayerById(@PathVariable("playerId") long playerId, @PathVariable("gameGroupId") long gameGroupId) {
+        gameGroupService.removePlayerById(playerId, gameGroupId);
+    }
+
     @GetMapping(path = "/{gameGroupId}/players")
     @Transactional
     public Collection<GameGroupMemberModel> listPlayers(@PathVariable("gameGroupId") long gameGroupId) {

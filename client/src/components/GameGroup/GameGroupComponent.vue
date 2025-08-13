@@ -41,7 +41,7 @@
       @click="onClickLeaveButton">Leave group</Button>
 
     <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
-      <PlayersInGroupComponent :players="players" />
+      <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" />
     </Dialog>
   </div>
 </template>
