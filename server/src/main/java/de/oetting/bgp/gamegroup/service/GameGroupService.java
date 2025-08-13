@@ -5,7 +5,7 @@ import de.oetting.bgp.exceptions.ConflictException;
 import de.oetting.bgp.exceptions.ForbiddenException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
-import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
+import de.oetting.bgp.gamegroup.model.GameGroupRequest;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
@@ -55,7 +55,7 @@ public class GameGroupService {
     @Autowired
     private GameGroupMembershipRepository gameGroupMembershipRepository;
 
-    public GameGroupEntity createGameGroup(CreateGameGroupRequest request) {
+    public GameGroupEntity createGameGroup(GameGroupRequest request) {
         if (gameGroupRepository.existsByName(request.getName())) {
             throw new ConflictException("Group already exists");
         }

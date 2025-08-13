@@ -9,10 +9,10 @@ import de.oetting.bgp.game.model.RatedGameModel;
 import de.oetting.bgp.game.model.TagModel;
 import de.oetting.bgp.game.model.TagWrapper;
 import de.oetting.bgp.game.repository.GameRepository;
-import de.oetting.bgp.gamegroup.model.CreateGameGroupRequest;
 import de.oetting.bgp.gamegroup.model.GameGroupMemberModel;
 import de.oetting.bgp.gamegroup.model.GameGroupModel;
 import de.oetting.bgp.gamegroup.model.GameGroupModelMapper;
+import de.oetting.bgp.gamegroup.model.GameGroupRequest;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupId;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
@@ -93,8 +93,20 @@ public class GameGroupController {
     @Transactional
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public GameGroupModel createGameGroup(@RequestBody CreateGameGroupRequest request) {
+    public GameGroupModel createGameGroup(@RequestBody GameGroupRequest request) {
         GameGroupEntity savedEntity = gameGroupService.createGameGroup(request);
+
+        return GameGroupModelMapper.map(savedEntity);
+    }
+
+    @Transactional
+    @PutMapping(path = "/{gameGroupId}")
+    public GameGroupModel updateGameGroup(@RequestBody GameGroupRequest request, @PathVariable("gameGroupId") long gameGroupId) {
+        var existingGameGroup = gameGroupService.find(gameGroupId).orElseThrow();
+        existingGameGroup.setName(request.getName());
+        existingGameGroup.setType(request.getType());
+        existingGameGroup.setOpenForNewPlayers(request.isOpenForNewPlayers());
+        var savedEntity = gameGroupRepository.save(existingGameGroup);
 
         return GameGroupModelMapper.map(savedEntity);
     }

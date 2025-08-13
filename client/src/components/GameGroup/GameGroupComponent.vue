@@ -12,7 +12,11 @@
 
       <span v-if="gameGroup?.type !== GameGroupType.PERSONAL">
         &#183;
-        <Button @click="playerDialogVisible = true" variant="link" class="players-link">Players</Button>
+        <Button @click="playerDialogVisible = true" variant="link" class="link">Players</Button>
+      </span>
+      <span v-if="amIGroupAdminOrOwner()">
+        &#183;
+        <Button @click="settingsDialogVisible = true" variant="link" class="link">Settings</Button>
       </span>
     </div>
 
@@ -43,6 +47,9 @@
     <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
       <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" @player-removed="onPlayerRemoved" />
     </Dialog>
+    <Dialog v-model:visible="settingsDialogVisible" :modal="true" header="Settings">
+      <GameGroupSettingsComponent :game-group="gameGroup!" @game-group-updated="onGroupUpdated" />
+    </Dialog>
   </div>
 </template>
 
@@ -50,7 +57,6 @@
 import { onMounted, type Ref } from 'vue'
 import { ref } from 'vue'
 import { GameGroup, GameGroupType } from '@/model/GameGroup'
-import type { Player } from '@/model/Player/Player'
 import type { Game, RatedGame } from '@/model/Game'
 import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
@@ -76,7 +82,9 @@ import type { GameGroupEvent } from '@/services/GameGroupEvent'
 import { loadTags } from '@/services/StoreApiService'
 import ImportCollectionFromBggComponent from './ImportCollectionFromBggComponent.vue'
 import PlayersInGroupComponent from './PlayersInGroupComponent.vue'
-import type { GameGroupMember } from '@/model/GameGroupMember'
+import { GameGroupMemberType, type GameGroupMember } from '@/model/GameGroupMember'
+import GameGroupSettingsComponnent from './GameGroupSettingsComponent.vue'
+import GameGroupSettingsComponent from './GameGroupSettingsComponent.vue'
 
 const gameGroup: Ref<GameGroup | null> = ref(null)
 const players: Ref<GameGroupMember[]> = ref([])
@@ -85,6 +93,7 @@ const displayedGames: Ref<RatedGame[]> = ref([])
 const tags: Ref<TagModel[]> = ref([])
 const isPartOfGroup = ref(false)
 const playerDialogVisible = ref(false)
+const settingsDialogVisible = ref(false)
 
 const props = defineProps<{
   gameGroupId: number
@@ -245,6 +254,17 @@ function gamesImported() {
 function onPlayerRemoved(player: GameGroupMember) {
   players.value = players.value.filter((p) => p.id !== player.id)
   filterAndSort()
+}
+
+function amIGroupAdminOrOwner(): boolean {
+  return players.value.some(
+    (p) => p.id === getCurrentPlayerId() && (p.type === GameGroupMemberType.ADMIN || p.type === GameGroupMemberType.OWNER)
+  )
+}
+
+function onGroupUpdated(updatedGroup: GameGroup) {
+  gameGroup.value = updatedGroup
+  settingsDialogVisible.value = false
 }
 
 </script>

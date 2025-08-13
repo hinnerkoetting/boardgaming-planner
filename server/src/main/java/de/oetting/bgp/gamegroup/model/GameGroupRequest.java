@@ -2,7 +2,7 @@ package de.oetting.bgp.gamegroup.model;
 
 import de.oetting.bgp.gamegroup.persistence.GameGroupType;
 
-public class CreateGameGroupRequest {
+public class GameGroupRequest {
 
     private String name;
     private GameGroupType type;

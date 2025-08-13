@@ -185,3 +185,18 @@ export async function updatePlayerMembershipType(
   })
   return wrapEmptySuccessResponse(response)
 }
+
+export async function updateGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroup.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: gameGroup.name,
+      type: gameGroup.type,
+      openForNewPlayers: gameGroup.openForNewPlayers
+    })
+  })
+  return await wrapResponse(response)
+}
