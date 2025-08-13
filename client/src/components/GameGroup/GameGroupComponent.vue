@@ -41,7 +41,7 @@
       @click="onClickLeaveButton">Leave group</Button>
 
     <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
-      <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" />
+      <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" @player-removed="onPlayerRemoved" />
     </Dialog>
   </div>
 </template>
@@ -240,6 +240,11 @@ function gamesImported() {
     allGames.value = result
     filterAndSort()
   })
+}
+
+function onPlayerRemoved(player: GameGroupMember) {
+  players.value = players.value.filter((p) => p.id !== player.id)
+  filterAndSort()
 }
 
 </script>

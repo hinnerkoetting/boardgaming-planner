@@ -45,6 +45,10 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (e: 'player-removed', player: GameGroupMember): void
+}>()
+
 const players = ref(props.players)
 const dialogVisible = ref(false)
 const selectedPlayer = ref<GameGroupMember | null>(null)
@@ -57,6 +61,7 @@ function editType(player: GameGroupMember) {
 function onClickRemovePlayer(playerId: number) {
   removePlayerFromGroup(props.gameGroupId, playerId)
   players.value = players.value.filter((item) => !(item.id === playerId))
+  emits('player-removed', props.players.find((p) => p.id === playerId)!)
 }
 
 function amIGroupOwner(): boolean {

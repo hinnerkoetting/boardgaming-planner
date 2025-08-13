@@ -131,7 +131,6 @@ public class GameGroupController {
 
     @Transactional
     @DeleteMapping(path = "/{gameGroupId}/players/{playerId}")
-    @ResponseStatus
     public void removePlayerById(@PathVariable("playerId") long playerId, @PathVariable("gameGroupId") long gameGroupId) {
         gameGroupService.removePlayerById(playerId, gameGroupId);
     }

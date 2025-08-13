@@ -11,12 +11,15 @@ import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
 import de.oetting.bgp.gamegroup.persistence.GameGroupMemberType;
 import de.oetting.bgp.gamegroup.persistence.GameGroupMembership;
+import de.oetting.bgp.gamegroup.persistence.GameGroupMembershipRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupType;
 import de.oetting.bgp.infrastructure.CurrentUser;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import de.oetting.bgp.repositories.RatingRepository;
 import de.oetting.bgp.service.events.GameGroupEventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ import java.util.Optional;
 
 @Service
 public class GameGroupService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GameGroupService.class);
 
     @Autowired
     private GameGroupRepository gameGroupRepository;
@@ -46,6 +51,9 @@ public class GameGroupService {
 
     @Autowired
     private RatingRepository ratingRepository;
+
+    @Autowired
+    private GameGroupMembershipRepository gameGroupMembershipRepository;
 
     public GameGroupEntity createGameGroup(CreateGameGroupRequest request) {
         if (gameGroupRepository.existsByName(request.getName())) {
@@ -89,10 +97,13 @@ public class GameGroupService {
             throw new ForbiddenException("Owner cannot be removed");
         }
         if (membership.isEmpty()) {
+            LOG.info("Tried to remove player, but is not part of group");
             return;
         }
 
         gameGroup.deletePlayer(membership.get());
+        gameGroupMembershipRepository.delete(membership.get());
+        ratingRepository.deleteByPlayerIdAndGameGroupId(playerId, gameGroupId);
 
         gameGroupEventService.playerRemoved(gameGroupId, player);
     }
