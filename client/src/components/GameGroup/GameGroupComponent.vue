@@ -14,7 +14,7 @@
         &#183;
         <Button @click="playerDialogVisible = true" variant="link" class="link">Players</Button>
       </span>
-      <span v-if="amIGroupAdminOrOwner()">
+      <span v-if="showSettingsButton">
         &#183;
         <Button @click="settingsDialogVisible = true" variant="link" class="link">Settings</Button>
       </span>
@@ -33,7 +33,8 @@
 
     <GamesCollection v-if="displayedGames.length > 0" :games="displayedGames" :game-group-id="gameGroupId"
       :withRateButton="isPartOfGroup" :withTagButton="isPartOfGroup" @ratingOpened="onDialogOpened"
-      @game-rated="filterAndSort" :players="players" :lastVisitedGameGroup="lastVisitedGameGroup" />
+      @game-rated="filterAndSort" :players="players" :lastVisitedGameGroup="lastVisitedGameGroup"
+      @game-removed="onGameRemoved" />
 
 
     <div v-if="gameGroup?.type === GameGroupType.PERSONAL">
@@ -82,9 +83,9 @@ import type { GameGroupEvent } from '@/services/GameGroupEvent'
 import { loadTags } from '@/services/StoreApiService'
 import ImportCollectionFromBggComponent from './ImportCollectionFromBggComponent.vue'
 import PlayersInGroupComponent from './PlayersInGroupComponent.vue'
-import { GameGroupMemberType, type GameGroupMember } from '@/model/GameGroupMember'
-import GameGroupSettingsComponnent from './GameGroupSettingsComponent.vue'
+import { type GameGroupMember } from '@/model/GameGroupMember'
 import GameGroupSettingsComponent from './GameGroupSettingsComponent.vue'
+import { amIGroupAdminOrOwner } from '@/services/GameGroupService'
 
 const gameGroup: Ref<GameGroup | null> = ref(null)
 const players: Ref<GameGroupMember[]> = ref([])
@@ -256,15 +257,24 @@ function onPlayerRemoved(player: GameGroupMember) {
   filterAndSort()
 }
 
-function amIGroupAdminOrOwner(): boolean {
-  return players.value.some(
-    (p) => p.id === getCurrentPlayerId() && (p.type === GameGroupMemberType.ADMIN || p.type === GameGroupMemberType.OWNER)
-  )
+function getMyPlayer(): GameGroupMember {
+  return players.value.filter((p) => p.id === getCurrentPlayerId())[0]
 }
 
 function onGroupUpdated(updatedGroup: GameGroup) {
   gameGroup.value = updatedGroup
   settingsDialogVisible.value = false
+}
+
+function showSettingsButton(): boolean {
+  const myPlayer = getMyPlayer()
+  return myPlayer && amIGroupAdminOrOwner(myPlayer) || false
+}
+
+function onGameRemoved(gameId: number) {
+  displayedGames.value = displayedGames.value.filter((game) => game.id !== gameId)
+  allGames.value = allGames.value.filter((game) => game.id !== gameId)
+  filterAndSort()
 }
 
 </script>

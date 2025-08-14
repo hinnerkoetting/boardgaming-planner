@@ -31,7 +31,7 @@ public class GameGroupEventListener implements EventListener {
             sseEmitter.send(SseEmitter.event()
                     .name("GROUP_CHANGED")
                     .data(event));
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             LOG.debug("SSE-Event Verbindung abgebrochen {}", e.getMessage());
         }
     }

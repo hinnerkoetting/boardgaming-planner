@@ -5,16 +5,10 @@
         <div class="grid">
           <template v-for="(item, index) in slotProps.items" :key="index">
             <div class="grid-card">
-              <GameComponent
-                :game="item"
-                :game-group-id="gameGroupId"
-                @game-rating-selected="onClickRate"
-                @game-tag-selected="onClickTag"
-                :withRateButton="withRateButton"
-                :withTagButton="withTagButton"
-                :players="players"
-                :isNew="lastVisitedGameGroup < item.addedToGameGroupDate"
-              />
+              <GameComponent :game="item" :game-group-id="gameGroupId" @game-rating-selected="onClickRate"
+                @game-tag-selected="onClickTag" :withRateButton="withRateButton" :withTagButton="withTagButton"
+                :players="players" :isNew="lastVisitedGameGroup < item.addedToGameGroupDate"
+                @game-delete-selected="onClickRemoveGame" />
             </div>
           </template>
         </div>
@@ -22,19 +16,11 @@
     </DataView>
 
     <Dialog v-model:visible="ratingWindowVisible" modal :header="selectedGame?.name">
-      <RatingComponent
-        :game="selectedGame!"
-        :game-group-id="gameGroupId"
-        @game-rated="onGameRated"
-        @game-rating-deleted="onGameRatingDeleted"
-      />
+      <RatingComponent :game="selectedGame!" :game-group-id="gameGroupId" @game-rated="onGameRated"
+        @game-rating-deleted="onGameRatingDeleted" />
     </Dialog>
     <Dialog v-model:visible="tagWindowVisible" modal :header="selectedGame?.name">
-      <TagGameInGroupComponent
-        :game="selectedGame!"
-        :game-group-id="gameGroupId"
-        @close="tagWindowVisible = false"
-      />
+      <TagGameInGroupComponent :game="selectedGame!" :game-group-id="gameGroupId" @close="tagWindowVisible = false" />
     </Dialog>
   </div>
 </template>
@@ -48,7 +34,8 @@ import DataView from 'primevue/dataview'
 import GameComponent from './GameComponent.vue'
 import type { RatedGame } from '@/model/Game'
 import TagGameInGroupComponent from '../GameGroup/tags/TagGameInGroupComponent.vue'
-import type { Player } from '@/model/Player/Player'
+import type { GameGroupMember } from '@/model/GameGroupMember'
+import { removeGameFromGroup } from '@/services/api/GameGroupApiService'
 
 const props = defineProps({
   games: {
@@ -70,7 +57,7 @@ const props = defineProps({
     default: true
   },
   players: {
-    type: Array as PropType<Player[]>,
+    type: Array as PropType<GameGroupMember[]>,
     required: true
   },
   lastVisitedGameGroup: {
@@ -79,7 +66,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['ratingOpened', 'tagOpened', 'gameRated'])
+const emit = defineEmits<{
+  (e: 'ratingOpened'): void
+  (e: 'tagOpened'): void
+  (e: 'gameRated'): void
+  (e: 'gameRemoved', gameId: number): void
+}>()
 
 const games: Ref<RatedGame[]> = ref(props.games)
 const gameGroupId = ref(props.gameGroupId)
@@ -116,6 +108,12 @@ function onGameRated(rating: Rating) {
   ratingWindowVisible.value = false
   emit('gameRated')
 }
+
+async function onClickRemoveGame(game: RatedGame) {
+  await removeGameFromGroup(gameGroupId.value, game.id!)
+  emit('gameRemoved', game.id!)
+}
+
 </script>
 
 <style lang="css" scoped>
@@ -142,6 +140,7 @@ function onGameRated(rating: Rating) {
   .grid {
     display: block;
   }
+
   .grid-card {
     flex: 0 0 100%;
   }

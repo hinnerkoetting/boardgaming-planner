@@ -6,6 +6,7 @@ import de.oetting.bgp.exceptions.ForbiddenException;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.model.GameGroupRequest;
+import de.oetting.bgp.gamegroup.persistence.Game2GameGroupId;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRelation;
 import de.oetting.bgp.gamegroup.persistence.Game2GameGroupRepository;
 import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
@@ -119,6 +120,16 @@ public class GameGroupService {
         gameGroup.addGame(savedRelation);
 
         gameGroupEventService.gameAdded(gameGroupId, game);
+    }
+
+    public void removePlayedGameById(long gameId, long gameGroupId) {
+        checkUserIsAdminOrOwnerInGroupOrGlobalAdmin(gameGroupId);
+        checkUserIsPartOfGroup(gameGroupId);
+
+        var game = gameRepository.findById(gameId).orElseThrow();
+        ratingRepository.deleteByGameIdAndGameGroupId(game.getId(), gameGroupId);
+        game2GameGroupRepository.deleteById(new Game2GameGroupId(gameId, gameGroupId));
+        gameGroupEventService.gameRemoved(gameGroupId, game);
     }
 
     public void checkUserIsPartOfGroup(long gameGroupId) {

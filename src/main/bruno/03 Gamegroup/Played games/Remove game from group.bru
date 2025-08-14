@@ -1,0 +1,23 @@
+meta {
+  name: Remove game from group
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{server}}/api/gameGroups/{{gameGroupId}}/games/{{gameId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+vars:pre-request {
+  gameId: 2
+}
+
+assert {
+  res.status: eq 201
+}

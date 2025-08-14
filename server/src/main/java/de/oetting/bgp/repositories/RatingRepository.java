@@ -27,6 +27,8 @@ public interface RatingRepository extends PagingAndSortingRepository<Rating, Lon
 
     void deleteByPlayerIdAndGameGroupId(long playerId, long gameGroupId);
 
+    void deleteByGameIdAndGameGroupId(long gameId, long gameGroupId);
+
     void deleteByGameGroupId(long gameGroupId);
 
 }

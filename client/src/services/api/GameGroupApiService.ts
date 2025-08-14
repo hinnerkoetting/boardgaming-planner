@@ -103,6 +103,19 @@ export async function addGameToGroup(
   return wrapEmptySuccessResponse(response)
 }
 
+export async function removeGameFromGroup(
+  gameGroupId: number,
+  gameId: number
+): Promise<ResponseWrapper<boolean>> {
+  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games/${gameId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  return wrapEmptySuccessResponse(response)
+}
+
 export async function addTagToGameInGroup(
   gameGroupId: number,
   gameId: number,

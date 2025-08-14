@@ -14,4 +14,5 @@ public interface GameRepository extends PagingAndSortingRepository<Game, Long>, 
     List<Game> findByNameContainingIgnoreCase(String name);
 
     Optional<Game> findByName(String name);
+    
 }

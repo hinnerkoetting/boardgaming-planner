@@ -27,6 +27,11 @@ public class GameGroupEventService {
         sseEmitterService.onEventInGameGroup(event);
     }
 
+    public void gameRemoved(long gameGroupId, Game game) {
+        var event = new GameGroupEvent(CurrentUser.getCurrentPlayerId(), CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.GAME_REMOVED, String.format("Game %s was removed", game.getName()));
+        sseEmitterService.onEventInGameGroup(event);
+    }
+
     public void ratingUpdated(long gameGroupId, Game game, long rating) {
         var event = new GameGroupEvent(CurrentUser.getCurrentPlayerId(), CurrentUser.getCurrentUsername(), gameGroupId, GameGroupEventType.RATING, String.format("Game %s was rated with %s", game.getName(), rating));
         sseEmitterService.onEventInGameGroup(event);

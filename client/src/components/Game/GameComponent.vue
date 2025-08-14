@@ -6,12 +6,8 @@
           <div class="title">
             {{ game.name }}
           </div>
-          <span
-            v-if="isNew"
-            class="pi pi-star-fill"
-            style="font-size: 1rem; color: gold; margin-left: 4px"
-            title="NEW"
-          ></span>
+          <span v-if="isNew" class="pi pi-star-fill" style="font-size: 1rem; color: gold; margin-left: 4px"
+            title="NEW"></span>
         </div>
       </template>
       <template #content>
@@ -21,36 +17,23 @@
             <div v-if="game.rating?.existsVeto" class="center-horizontally">
               <Tag severity="danger">Vetoed</Tag><br />
             </div>
-            <div
-              v-if="!!game.rating?.averageRating || !!game.rating?.myRating"
-              class="center-horizontally rating"
-            >
+            <div v-if="!!game.rating?.averageRating || !!game.rating?.myRating" class="center-horizontally rating">
               Rating: &Oslash; {{ game.rating?.averageRating || '?' }} &#183; Me
               {{ game.rating?.myRating || '?' }} &#183;
               {{ game.rating?.numberOfVotes || '0' }} votes
             </div>
-            <div
-              v-if="!game.rating?.averageRating && !game.rating?.myRating"
-              class="center-horizontally"
-            >
+            <div v-if="!game.rating?.averageRating && !game.rating?.myRating" class="center-horizontally">
               Not rated yet
             </div>
-            <div class="center-horizontally" style="margin-top: 8px">
-              <Button
-                style="float: left"
-                v-if="withRateButton"
-                severity="secondary"
-                @click.stop="$emit('game-rating-selected', game)"
-                >Rate</Button
-              >
+            <div class="center-horizontally buttons" style="margin-top: 8px">
+              <Button style="float: left" v-if="withRateButton" severity="secondary"
+                @click.stop="$emit('game-rating-selected', game)">Rate</Button>
 
-              <Button
-                style="float: right"
-                v-if="withTagButton"
-                severity="secondary"
-                @click.stop="$emit('game-tag-selected', game)"
-                >Update</Button
-              >
+              <Button style="float: right" v-if="withTagButton" severity="secondary"
+                @click.stop="$emit('game-tag-selected', game)">Update</Button>
+
+              <Button style="float: right" severity="danger" @click.stop="$emit('game-delete-selected', game)"
+                v-if="showDeleteButton()">Remove</Button>
             </div>
           </div>
           <!-- <div class="center-horizontally" style="margin-top: 8px;">
@@ -73,9 +56,11 @@ import Tag from 'primevue/tag'
 import { ref, watch, type PropType } from 'vue'
 import ShowGameDetailsComponent from './ShowGameDetailsComponent.vue'
 import Dialog from 'primevue/dialog'
-import type { Player } from '@/model/Player/Player'
 import type { RatedGame } from '@/model/Game'
 import 'primeicons/primeicons.css'
+import { amIGroupAdminOrOwner } from '@/services/GameGroupService'
+import type { GameGroupMember } from '@/model/GameGroupMember'
+import { getCurrentPlayerId } from '@/services/LoginService'
 
 const props = defineProps({
   game: {
@@ -91,7 +76,7 @@ const props = defineProps({
     default: true
   },
   players: {
-    type: Array as PropType<Player[]>,
+    type: Array as PropType<GameGroupMember[]>,
     required: true
   },
   isNew: {
@@ -103,6 +88,7 @@ const props = defineProps({
 defineEmits<{
   (e: 'game-rating-selected', game: RatedGame): void
   (e: 'game-tag-selected', game: RatedGame): void
+  (e: 'game-delete-selected', game: RatedGame): void
 }>()
 
 const game = ref(props.game)
@@ -117,6 +103,15 @@ watch(
 
 function onClickCard() {
   showGameDialog.value = true
+}
+
+function showDeleteButton(): boolean {
+  const myPlayer = getMyPlayer()
+  return myPlayer && amIGroupAdminOrOwner(myPlayer) || false
+}
+
+function getMyPlayer(): GameGroupMember | null {
+  return props.players.filter((p) => p.id === getCurrentPlayerId())[0]
 }
 </script>
 
@@ -171,5 +166,12 @@ function onClickCard() {
 .title-wrapper {
   display: flex;
   align-items: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
 }
 </style>

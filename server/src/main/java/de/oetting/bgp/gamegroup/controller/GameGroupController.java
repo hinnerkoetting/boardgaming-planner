@@ -164,6 +164,12 @@ public class GameGroupController {
         gameGroupService.addPlayedGameById(gameId.getId(), gameGroupId);
     }
 
+    @Transactional
+    @DeleteMapping(path = "/{gameGroupId}/games/{gameId}")
+    public void removeGame(@PathVariable("gameId") long gameId, @PathVariable("gameGroupId") long gameGroupId) {
+        gameGroupService.removePlayedGameById(gameId, gameGroupId);
+    }
+
     @GetMapping(path = "/{gameGroupId}/games")
     @Transactional
     public Collection<RatedGameModel> listGamesInGroup(@PathVariable("gameGroupId") long gameGroupId) {
