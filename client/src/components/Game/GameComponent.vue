@@ -29,11 +29,12 @@
               <Button style="float: left" v-if="withRateButton" severity="secondary"
                 @click.stop="$emit('game-rating-selected', game)">Rate</Button>
 
-              <Button style="float: right" v-if="withTagButton" severity="secondary"
-                @click.stop="$emit('game-tag-selected', game)">Update</Button>
+              <!-- Prevent clicks from the splitbutton to be propaged to the card. -->
+              <span @click.stop="">
+                <SplitButton :model="menuItems(game)" @click="$emit('game-tag-selected', game)" label="Tag"
+                  severity="secondary" />
+              </span>
 
-              <Button style="float: right" severity="danger" @click.stop="$emit('game-delete-selected', game)"
-                v-if="showDeleteButton()">Remove</Button>
             </div>
           </div>
           <!-- <div class="center-horizontally" style="margin-top: 8px;">
@@ -61,6 +62,8 @@ import 'primeicons/primeicons.css'
 import { amIGroupAdminOrOwner } from '@/services/GameGroupService'
 import type { GameGroupMember } from '@/model/GameGroupMember'
 import { getCurrentPlayerId } from '@/services/LoginService'
+import { SplitButton } from 'primevue'
+import type { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 
 const props = defineProps({
   game: {
@@ -85,7 +88,7 @@ const props = defineProps({
   }
 })
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'game-rating-selected', game: RatedGame): void
   (e: 'game-tag-selected', game: RatedGame): void
   (e: 'game-delete-selected', game: RatedGame): void
@@ -113,6 +116,19 @@ function showDeleteButton(): boolean {
 function getMyPlayer(): GameGroupMember | null {
   return props.players.filter((p) => p.id === getCurrentPlayerId())[0]
 }
+
+function menuItems(game: RatedGame): MenuItem[] {
+  return [
+
+    {
+      label: 'Delete',
+      command: () => {
+        emit('game-delete-selected', game)
+      },
+      visible: showDeleteButton(),
+    },
+  ]
+};
 </script>
 
 <style lang="css" scoped>
