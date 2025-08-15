@@ -5,15 +5,21 @@
 
         <template #start>
           <div style="width: 100%;">
-            <RouterLink :to="{ name: 'gameGroup', params: { gameGroupId: selectedGameGroup?.id } }">Games</RouterLink>
-            &#183;
-            <RouterLink :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: selectedGameGroup?.id } }">
-              Calendar</RouterLink>
-            &#183;
-            <RouterLink :to="{ name: 'gameGroupStatistics', params: { gameGroupId: selectedGameGroup?.id } }">
-              Stats</RouterLink>
-            &#183;
-            <RouterLink to="/personalCollection">My games</RouterLink>
+            <template v-if="selectedGameGroup">
+              <RouterLink :to="{ name: 'gameGroup', params: { gameGroupId: selectedGameGroup?.id } }">Games</RouterLink>
+              &#183;
+              <RouterLink :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: selectedGameGroup?.id } }">
+                Calendar</RouterLink>
+              &#183;
+              <RouterLink :to="{ name: 'gameGroupStatistics', params: { gameGroupId: selectedGameGroup?.id } }">
+                Stats</RouterLink>
+              &#183;
+            </template>
+            <template v-if="!selectedGameGroup">
+              <RouterLink to="/gameGroups">Select group</RouterLink>
+              &#183;
+            </template>
+            <RouterLink to="/personalCollection">Me</RouterLink>
           </div>
         </template>
       </Menubar>
@@ -59,6 +65,13 @@ function onClickLogout() {
 
 
 const items: Ref<MenuItem[]> = ref([
+  {
+    label: 'Select group',
+    icon: 'pi pi-users',
+    command: () => {
+      router.push({ name: 'gameGroups' })
+    }
+  },
   {
     label: 'Settings',
     icon: 'pi pi-cog',
