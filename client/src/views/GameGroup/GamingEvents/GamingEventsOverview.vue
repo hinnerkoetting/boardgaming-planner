@@ -1,9 +1,7 @@
 <template>
   <div>
-    <h1>Group {{ gameGroup?.name }}</h1>
-    <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId } }"
-      >To games</router-link
-    >
+    <h1>Calendar for {{ gameGroup?.name }}</h1>
+    <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId } }">To games</router-link>
 
     <h2>
       <Button @click="onClickPreviousEvents" variant="link">
@@ -16,19 +14,15 @@
     </h2>
 
     <Button @click="showDialog = true" label="Create event" style="margin-top: 8px" />
-    <GamingEventsCollection
-      v-if="gamingEvents.length > 0"
-      :gaming-events="gamingEvents"
-      :game-group-id="gameGroupId"
-    />
+    <GamingEventsCollection v-if="gamingEvents.length > 0" :gaming-events="gamingEvents" :game-group-id="gameGroupId" />
 
     <br />
 
     <Button @click="onClickPreviousEvents" variant="link"> Previous month </Button>
     <Button @click="onClickNextEvents" variant="link"> Next month </Button>
 
-    <Dialog v-model:visible="showDialog" modal header="Create event"
-      ><div>
+    <Dialog v-model:visible="showDialog" modal header="Create event">
+      <div>
         <CreateGamingEventComponent :game-group-id="gameGroupId" @event-created="onEventCreated" />
       </div>
     </Dialog>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>My collection</h1>
+    <h1>My games</h1>
     <div v-if="!gameGroup">
       You do not have a personal collection yet. You can create one by clicking the button below.<br />
       <Button @click="onClickCreate">

@@ -1,16 +1,11 @@
 <template>
   <div class="charts">
     <h1>Statistics</h1>
-    <router-link :to="{ name: 'gameGroup', params: { gameGroupId: gameGroupId } }"
-      >To games</router-link
-    >
+
     <GamesRatingStatistics :games="games" v-if="games.length > 0" />
     <MyGamesRatingStatistics :games="games" v-if="games.length > 0" />
     <GamesTagsStatistics :games="games" v-if="games.length > 0" />
-    <GamesStatisticsPlayDates
-      v-if="gameGroupStatistics"
-      :gameGroupStatistics="gameGroupStatistics"
-    />
+    <GamesStatisticsPlayDates v-if="gameGroupStatistics" :gameGroupStatistics="gameGroupStatistics" />
 
     <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
   </div>
@@ -24,6 +19,7 @@ import MyGamesRatingStatistics from '@/components/GameGroup/Statistics/MyGamesRa
 import type { RatedGame } from '@/model/Game'
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
 import { fetchGameGrouptStatistics, fetchGamesInGroup } from '@/services/api/GameGroupApiService'
+import { Message } from 'primevue'
 import { onMounted, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 

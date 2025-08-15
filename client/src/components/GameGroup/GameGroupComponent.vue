@@ -1,21 +1,16 @@
 <template>
   <div>
-    <h1>{{ gameGroup?.name || '' }}</h1>
+    <h1 v-if="gameGroup?.type !== GameGroupType.PERSONAL">{{ gameGroup?.name || '' }}</h1>
 
     <div>
-      <router-link
-        :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: gameGroupId } }">Calendar</router-link>
-
-      &#183;
-
-      <router-link :to="{ name: 'gameGroupStatistics', params: { gameGroupId: gameGroupId } }">Statistics</router-link>
-
       <span v-if="gameGroup?.type !== GameGroupType.PERSONAL">
-        &#183;
         <Button @click="playerDialogVisible = true" variant="link" class="link">Players</Button>
       </span>
-      <span v-if="showSettingsButton">
+      <span v-if="gameGroup?.type !== GameGroupType.PERSONAL && showSettingsButton()">
         &#183;
+      </span>
+      <span v-if="showSettingsButton">
+
         <Button @click="settingsDialogVisible = true" variant="link" class="link">Settings</Button>
       </span>
     </div>

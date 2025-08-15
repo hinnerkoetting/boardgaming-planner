@@ -1,97 +1,26 @@
 <template>
   <div>
     <div v-if="isLoggedInRef">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/gameGroups">Groups</RouterLink>
-        <RouterLink :to="'/gameGroup/' + selectedGameGroup.id" v-if="selectedGameGroup" id="gameGroupSelected">
-          <div to="/gameGroups/1" v-if="selectedGameGroup">
-            {{ selectedGameGroup.name }}
+      <Menubar :model="items" breakpoint="5000px">
+
+        <template #start>
+          <div style="width: 100%;">
+            <RouterLink :to="{ name: 'gameGroup', params: { gameGroupId: selectedGameGroup?.id } }">Games</RouterLink>
+            &#183;
+            <RouterLink :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: selectedGameGroup?.id } }">
+              Calendar</RouterLink>
+            &#183;
+            <RouterLink :to="{ name: 'gameGroupStatistics', params: { gameGroupId: selectedGameGroup?.id } }">
+              Stats</RouterLink>
+            &#183;
+            <RouterLink to="/personalCollection">My games</RouterLink>
           </div>
-        </RouterLink>
-        <RouterLink to="/personalCollection">Me</RouterLink>
-
-        <a id="logout" @click="onClickLogout">Logout</a>
-        <template v-if="doesCurrentPlayerHaveRole(Role.ADMIN)">
-          <h2>Admin</h2>
-
-          <RouterLink to="/admin/players">Players</RouterLink>
-          <RouterLink to="/admin/games">Games</RouterLink>
-          <RouterLink to="/admin/gameGroups">Groups</RouterLink>
-          <RouterLink to="/admin/tags">Tags</RouterLink>
         </template>
-      </nav>
+      </Menubar>
     </div>
   </div>
 </template>
 
-<style lang="css" scoped>
-nav {
-  width: 100%;
-  font-size: 20px;
-  text-align: center;
-  margin-top: 2rem;
-
-  @media (min-width: 1024px) {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-@media (min-width: 1024px) {
-  h1 {
-    margin-top: 100px;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1.5rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-
-#gameGroupSelected {
-  color: gray;
-  margin-left: 2rem;
-
-  @media (max-width: 1023px) {
-    display: none;
-  }
-}
-
-#logout {
-  cursor: pointer;
-  margin-top: 20px;
-}
-</style>
 
 <script setup lang="ts">
 import { doesCurrentPlayerHaveRole, isLoggedIn, logout } from '@/services/LoginService'
@@ -100,9 +29,13 @@ import { Role } from '@/model/api/JwtPayload'
 import { ref, type Ref } from 'vue'
 import EventBus, { EventBusEvent } from '@/services/EventBus'
 import type { GameGroup } from '@/model/GameGroup'
+import { getStoredCurrentGameGroup, removeCurrentGameGroup, storeCurrentGameGroup } from '@/services/GameGroupService'
+import { Menubar } from 'primevue'
+import type { MenuItem } from 'primevue/menuitem'
+import { RouterLink } from 'vue-router'
 
 const isLoggedInRef = ref(isLoggedIn())
-const selectedGameGroup: Ref<GameGroup | undefined> = ref(undefined)
+const selectedGameGroup: Ref<GameGroup | undefined> = ref(getStoredCurrentGameGroup())
 
 EventBus.addEventListener('login-status', () => {
   isLoggedInRef.value = isLoggedIn()
@@ -111,14 +44,66 @@ EventBus.addEventListener('login-status', () => {
 EventBus.addEventListener('gaming-group-opened', (event: Event) => {
   const eventBusEvent = event as EventBusEvent
   selectedGameGroup.value = eventBusEvent.data
+  storeCurrentGameGroup(eventBusEvent.data)
 })
 
 EventBus.addEventListener('gaming-group-removed', () => {
   selectedGameGroup.value = undefined
+  removeCurrentGameGroup()
 })
 
 function onClickLogout() {
   logout()
   router.push({ name: 'home' })
 }
+
+
+const items: Ref<MenuItem[]> = ref([
+  {
+    label: 'Settings',
+    icon: 'pi pi-cog',
+    command: () => {
+      router.push({ name: 'account' })
+    }
+  },
+  {
+    label: 'Logout',
+    icon: 'pi pi-sign-out',
+    command: () => {
+      onClickLogout();
+    }
+  },
+  {
+    label: 'Admin',
+    icon: 'pi pi-star',
+    visible: doesCurrentPlayerHaveRole(Role.ADMIN),
+    items: [
+      {
+        label: 'Players',
+
+        command: () => {
+          router.push({ name: 'adminPlayers' })
+        }
+      },
+      {
+        label: 'Games',
+        command: () => {
+          router.push({ name: 'adminGames' })
+        }
+      },
+      {
+        label: 'Groups',
+        command: () => {
+          router.push({ name: 'adminGameGroups' })
+        }
+      },
+      {
+        label: 'Tags',
+        command: () => {
+          router.push({ name: 'adminTags' })
+        }
+      }
+    ]
+  }
+]);
 </script>

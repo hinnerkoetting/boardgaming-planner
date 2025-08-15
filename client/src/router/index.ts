@@ -97,7 +97,7 @@ const router = createRouter({
     },
     {
       path: '/admin/tags',
-      name: 'tags',
+      name: 'adminTags',
       component: () => import('../views/Admin/TagView.vue')
     }
   ]
