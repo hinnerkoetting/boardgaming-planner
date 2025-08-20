@@ -35,15 +35,19 @@
       v-if="isPartOfGroup" />
 
     <h2>Games:</h2>
-    <h2 class="green" v-if="isPartOfGroup">Add game</h2>
-    <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" style="margin-bottom: 16px"
-      v-if="isPartOfGroup" />
+
+
     <div v-for="(game, index) in event.games" :key="index" style="margin: 8px">
       <GameEventGameCard :game="game.game" :game-group-id="gameGroupId" :gameStatus="game.gameStatus"
         :gameComment="game.comment" :withRateButton="true" :with-tag-button="true"
         :players="event.participants.map((p) => p.participant)" :gaming-event-id="gamingEventId"
         :is-part-of-group="isPartOfGroup" @game-removed="onGameRemoved" />
     </div>
+
+    <h2 class="green" v-if="isPartOfGroup">Add game</h2>
+    <AddGameToGroupComponent @game-added="onGameAdded" ref="addGameComponent" style="margin-bottom: 16px"
+      v-if="isPartOfGroup" />
+
     <Button severity="danger" label="Delete event" @click="onDeleteEvent" style="margin-top: 16px"
       v-if="isPartOfGroup" />
 
@@ -74,7 +78,7 @@ import { getCurrentPlayerId } from '@/services/LoginService'
 import type { Game } from '@/model/Game'
 import AddGameToGroupComponent from '@/components/Game/AddGameToGroupComponent.vue'
 import router from '@/router'
-import { fetchPlayersInGroup } from '@/services/api/GameGroupApiService'
+import { addGameToGroup, fetchPlayersInGroup } from '@/services/api/GameGroupApiService'
 import EditGamingEventComponent from '@/components/GamingEvents/EditGamingEventComponent.vue'
 
 const route = useRoute()
@@ -197,6 +201,10 @@ function isMe(playerId: number): boolean {
 }
 
 async function onGameAdded(game: Game) {
+  const response = await addGameToGroup(gameGroupId, game.id!)
+  if (response.error) {
+    console.log("Cannot add game to group, already part of group. Continuing...")
+  }
   await addGameToEvent(gamingEventId, game.id!)
   event.value?.games.push({
     game,

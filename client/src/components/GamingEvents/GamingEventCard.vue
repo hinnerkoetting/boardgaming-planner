@@ -1,8 +1,5 @@
 <template>
-  <Card
-    @click="onClickCard"
-    :class="{ clickable_card: true, past: event.start < new Date().getTime() }"
-  >
+  <Card @click="onClickCard" :class="cardClasses()">
     <template #title>
       <div class="title">
         {{ formatDate(new Date(event.start)) }}
@@ -20,7 +17,7 @@
         }}
       </div>
       <div>
-        {{ event.games.map((game: EventGame) => game.game.name).join('&#183;') }}
+        {{event.games.map((game: EventGame) => game.game.name).join('&#183;')}}
       </div>
     </template>
   </Card>
@@ -70,6 +67,25 @@ function scheduleDescription(schedule: Schedule): string {
       return ''
   }
 }
+
+function cardClasses(): any {
+  // is same day as today
+  const eventDate = new Date(props.event.start)
+  if (eventDate.getDate() === new Date().getDate() &&
+    eventDate.getMonth() === new Date().getMonth() &&
+    eventDate.getFullYear() === new Date().getFullYear()) {
+    return {
+      clickable_card: true,
+      today: true
+    }
+  }
+  return {
+    clickable_card: true,
+    past: props.event.start < new Date().getTime()
+  }
+
+
+}
 </script>
 
 <style lang="css" scoped>
@@ -79,6 +95,10 @@ function scheduleDescription(schedule: Schedule): string {
 }
 
 .past {
-  --p-card-background: lightgray;
+  --p-card-background: var(--p-gray-200)
+}
+
+.today {
+  --p-card-background: var(--p-blue-100)
 }
 </style>
