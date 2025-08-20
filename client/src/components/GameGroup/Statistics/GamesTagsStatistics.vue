@@ -28,10 +28,10 @@ async function groupGamesByTag(games: RatedGame[]): Promise<void> {
 
   games.forEach((game) => {
     game.tags.global.forEach((tag) => {
-      gamesWithTag.value[tag.description] = gamesWithTag.value[tag.description] + 1
+      gamesWithTag.value[tag.description] = (gamesWithTag.value[tag.description] || 0) + 1
     })
     game.tags.group.forEach((tag) => {
-      gamesWithTag.value[tag.description] = gamesWithTag.value[tag.description] + 1
+      gamesWithTag.value[tag.description] = (gamesWithTag.value[tag.description] || 0) + 1
     })
   })
 

@@ -253,7 +253,7 @@ function onPlayerRemoved(player: GameGroupMember) {
 }
 
 function getMyPlayer(): GameGroupMember {
-  return players.value.filter((p) => p.id === getCurrentPlayerId())[0]
+  return players.value.filter((p) => p.id === getCurrentPlayerId())[0]!
 }
 
 function onGroupUpdated(updatedGroup: GameGroup) {

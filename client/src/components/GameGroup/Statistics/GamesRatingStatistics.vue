@@ -22,7 +22,7 @@ function groupGamesByRating(games: RatedGame[]): void {
   games.forEach((game) => {
     const rating = Math.floor(game.rating.averageRating)
 
-    average.value[rating] = average.value[rating] + 1
+    average.value[rating] = (average.value[rating] || 0) + 1
   })
 }
 

@@ -100,16 +100,16 @@ function filterDuplicateEvents(events: GamingEvent[]): GamingEvent[] {
   const uniqueEvents: GamingEvent[] = []
 
   for (let i = 0; i < events.length; i++) {
-    const event = events[i]
+    const event = events[i] as GamingEvent
     if (i === events.length - 1) {
       uniqueEvents.push(event)
     } else {
-      if (event.start === events[i + 1].start) {
+      if (event.start === events[i + 1]?.start) {
         // Both events have same start time, we will include the non-recurring one. Which will probably not always work, but might be good enough for now.
         if (event.schedule === 'ONCE') {
           uniqueEvents.push(event)
         } else {
-          uniqueEvents.push(events[i])
+          uniqueEvents.push(events[i + 1] as GamingEvent)
         }
         i++
       } else {

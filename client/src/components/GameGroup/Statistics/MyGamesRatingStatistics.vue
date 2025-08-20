@@ -23,26 +23,26 @@ function groupGamesByRating(games: RatedGame[]): void {
     if (game.rating.myRating !== null) {
       switch (game.rating.myRating) {
         case 0:
-          myRatings.value[1] = myRatings.value[1] + 1
+          myRatings.value[1] = (myRatings.value[1] || 0) + 1
           break
         case 1:
-          myRatings.value[2] = myRatings.value[2] + 1
+          myRatings.value[2] = (myRatings.value[2] || 0) + 1
           break
         case 4:
-          myRatings.value[3] = myRatings.value[3] + 1
+          myRatings.value[3] = (myRatings.value[3] || 0) + 1
           break
         case 7:
-          myRatings.value[4] = myRatings.value[4] + 1
+          myRatings.value[4] = (myRatings.value[4] || 0) + 1
           break
         case 10:
-          myRatings.value[5] = myRatings.value[5] + 1
+          myRatings.value[5] = (myRatings.value[5] || 0) + 1
           break
         default:
           console.error('Unknown rating: ' + game.rating.myRating)
           break
       }
     } else {
-      myRatings.value[0] = myRatings.value[0] + 1
+      myRatings.value[0] = (myRatings.value[0] || 0) + 1
     }
   })
 }
