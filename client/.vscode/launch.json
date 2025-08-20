@@ -14,23 +14,36 @@
     {
       "name": "Run DEV-server",
       "request": "launch",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "runtimeExecutable": "npm",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "type": "node"
     },
     {
       "name": "Build",
       "request": "launch",
-      "command": "npm run build",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "node-terminal"
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "build"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
     },
     {
       "name": "Type check",
       "request": "launch",
       "command": "npm run type-check",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "type": "node-terminal"
     }
   ]
