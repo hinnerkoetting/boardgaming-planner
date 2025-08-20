@@ -49,7 +49,7 @@ onMounted(async () => {
     },
     title: {
       show: true,
-      text: 'Plays per month'
+      text: 'Events per month'
     },
     series: [
       {

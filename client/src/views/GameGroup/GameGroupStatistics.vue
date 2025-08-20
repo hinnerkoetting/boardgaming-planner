@@ -4,7 +4,7 @@
 
     <GamesRatingStatistics :games="games" v-if="games.length > 0" />
     <MyGamesRatingStatistics :games="games" v-if="games.length > 0" />
-    <GamesTagsStatistics :games="games" v-if="games.length > 0" />
+    <GamesTagsStatisticsPieCollection :games="games" v-if="games.length > 0" />
     <GamesStatisticsPlayDates v-if="gameGroupStatistics" :gameGroupStatistics="gameGroupStatistics" />
 
     <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import GamesRatingStatistics from '@/components/GameGroup/Statistics/GamesRatingStatistics.vue'
 import GamesStatisticsPlayDates from '@/components/GameGroup/Statistics/GamesStatisticsPlayDates.vue'
-import GamesTagsStatistics from '@/components/GameGroup/Statistics/GamesTagsStatistics.vue'
+import GamesTagsStatisticsPieCollection from '@/components/GameGroup/Statistics/GamesTagsStatisticsPieCollection.vue'
 import MyGamesRatingStatistics from '@/components/GameGroup/Statistics/MyGamesRatingStatistics.vue'
 import type { RatedGame } from '@/model/Game'
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
@@ -44,6 +44,6 @@ onMounted(async () => {
 <style lang="css" scoped>
 .charts {
   width: 100%;
-  max-width: 1000px;
+  /* max-width: 1000px; */
 }
 </style>
