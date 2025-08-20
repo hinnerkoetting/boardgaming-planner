@@ -113,7 +113,7 @@ function showDeleteButton(): boolean {
   return myPlayer && amIGroupAdminOrOwner(myPlayer) || false
 }
 
-function getMyPlayer(): GameGroupMember | null {
+function getMyPlayer(): GameGroupMember | undefined {
   return props.players.filter((p) => p.id === getCurrentPlayerId())[0]
 }
 

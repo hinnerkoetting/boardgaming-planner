@@ -4,34 +4,18 @@
       <div class="numberOfPlayers filterOption">
         <div class="filterHeader">Player count</div>
         <div class="filterContent">
-          <InputNumber
-            v-model="numberOfPlayers"
-            showButtons
-            class="numberOfPlayersInput"
-            :min="0"
-            :max="99"
-            @update:model-value="filter"
-          />
+          <InputNumber v-model="numberOfPlayers" showButtons class="numberOfPlayersInput" :min="0" :max="99"
+            @update:model-value="filter" />
           <br />
         </div>
         <div class="playerFilterChoice">
           <RadioButton v-model="playerFilterType" inputId="BEST" value="BEST" @change="filter" />
           <label for="BEST" class="playerFilterLabel">Best</label>
 
-          <RadioButton
-            v-model="playerFilterType"
-            inputId="RECOMMENDED"
-            value="RECOMMENDED"
-            @change="filter"
-          />
+          <RadioButton v-model="playerFilterType" inputId="RECOMMENDED" value="RECOMMENDED" @change="filter" />
           <label for="RECOMMENDED" class="playerFilterLabel">Recommended</label>
 
-          <RadioButton
-            v-model="playerFilterType"
-            inputId="PLAYABLE"
-            value="PLAYABLE"
-            @change="filter"
-          />
+          <RadioButton v-model="playerFilterType" inputId="PLAYABLE" value="PLAYABLE" @change="filter" />
           <label for="PLAYABLE" class="playerFilterLabel">Playable</label>
 
           <RadioButton v-model="playerFilterType" inputId="OFF" value="OFF" @change="filter" />
@@ -42,54 +26,24 @@
     <div class="filterOption duration">
       <div class="filterHeader">Duration <br />(minutes)</div>
       <div class="filterContent durationContent">
-        <InputNumber
-          v-model="duration[0]"
-          showButtons
-          class="durationInput"
-          :min="0"
-          :max="600"
-          :step="10"
-          @update:model-value="filter"
-        />
+        <InputNumber v-model="duration[0]" showButtons class="durationInput" :min="0" :max="600" :step="10"
+          @update:model-value="filter" />
         to
-        <InputNumber
-          v-model="duration[1]"
-          showButtons
-          class="durationInput"
-          :min="0"
-          :max="600"
-          :step="10"
-          @update:model-value="filter"
-        />
+        <InputNumber v-model="duration[1]" showButtons class="durationInput" :min="0" :max="600" :step="10"
+          @update:model-value="filter" />
       </div>
       <div class="newLine">
-        <Slider
-          v-model="duration"
-          :step="10"
-          range
-          :max="600"
-          :min="0"
-          class="slider"
-          @update:model-value="filter"
-        />
+        <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" @update:model-value="filter" />
       </div>
     </div>
     <!-- Global and group tags-->
     <div class="filterOption">
       <div class="filterContent tagFilterOption">
         <div v-for="tag in nonPlayerTags" :key="tag.id" class="one-filter">
-          <Button
-            :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'"
-            @click="onClickFilterWith(tag)"
-            class="filterButton"
-            >Only {{ tag.description }}</Button
-          >
-          <Button
-            :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
-            @click="onClickFilterWithout(tag)"
-            class="filterButton"
-            >No {{ tag.description }}</Button
-          >
+          <Button :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'" @click="onClickFilterWith(tag)"
+            class="filterButton">Only {{ tag.description }}</Button>
+          <Button :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
+            @click="onClickFilterWithout(tag)" class="filterButton">No {{ tag.description }}</Button>
         </div>
       </div>
     </div>
@@ -98,24 +52,12 @@
     <div class="filterOption">
       <div class="filterContent tagFilterOption">
         <div v-for="tag in playerTags" :key="tag.id" class="one-filter">
-          <Button
-            :severity="tag.selected === 'FILTER_EVERYONE' ? 'primary' : 'secondary'"
-            @click="onClickFilterEveryone(tag)"
-            class="filterButton"
-            >Everyone {{ tag.description }}</Button
-          >
-          <Button
-            :severity="tag.selected === 'FILTER_ANYONE' ? 'primary' : 'secondary'"
-            @click="onClickFilterAnyone(tag)"
-            class="filterButton"
-            >Anyone {{ tag.description }}</Button
-          >
-          <Button
-            :severity="tag.selected === 'FILTER_NOBODY' ? 'primary' : 'secondary'"
-            @click="onClickFilterNobody(tag)"
-            class="filterButton"
-            >Nobody {{ tag.description }}</Button
-          >
+          <Button :severity="tag.selected === 'FILTER_EVERYONE' ? 'primary' : 'secondary'"
+            @click="onClickFilterEveryone(tag)" class="filterButton">Everyone {{ tag.description }}</Button>
+          <Button :severity="tag.selected === 'FILTER_ANYONE' ? 'primary' : 'secondary'"
+            @click="onClickFilterAnyone(tag)" class="filterButton">Anyone {{ tag.description }}</Button>
+          <Button :severity="tag.selected === 'FILTER_NOBODY' ? 'primary' : 'secondary'"
+            @click="onClickFilterNobody(tag)" class="filterButton">Nobody {{ tag.description }}</Button>
         </div>
       </div>
     </div>
@@ -301,8 +243,8 @@ function filter() {
     nonPlayerTags: nonPlayerTags.value,
     playerTags: playerTags.value,
     numberOfPlayers: numberOfPlayers.value,
-    minPlayingTime: duration.value[0],
-    maxPlayingTime: duration.value[1],
+    minPlayingTime: duration.value[0] as number,
+    maxPlayingTime: duration.value[1] as number,
     playerFilterType: playerFilterType.value,
     notRatedYet: notRatedYet.value
   }

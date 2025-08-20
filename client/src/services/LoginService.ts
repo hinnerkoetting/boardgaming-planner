@@ -12,7 +12,12 @@ function getJwtPayload(): JwtPayload | undefined {
   if (localStorage.getItem('access-token')) {
     try {
       const splittedJwt = localStorage.getItem('access-token')!.split('.')
-      return JSON.parse(atob(splittedJwt[1]))
+      const payload = splittedJwt[1]
+      if (!payload) {
+        console.log('Could not parse JWT ' + splittedJwt)
+        return
+      }
+      return JSON.parse(atob(payload))
     } catch (e) {
       console.log('Could not parse JWT ' + e)
     }
