@@ -64,7 +64,10 @@ public class GameGroupService {
         groupEntity.setName(request.getName());
         groupEntity.setType(request.getType());
         groupEntity.setOpenForNewPlayers(request.isOpenForNewPlayers());
-        return gameGroupRepository.save(groupEntity);
+        var savedGameGroup = gameGroupRepository.save(groupEntity);
+        addPlayerById(CurrentUser.getCurrentPlayerId(), savedGameGroup.getId());
+        savedGameGroup.getPlayers().forEach(player -> player.setType(GameGroupMemberType.OWNER));
+        return savedGameGroup;
     }
 
     public void addPlayerById(long playerId, long gameGroupId) {
@@ -79,7 +82,9 @@ public class GameGroupService {
         if (gameGroup.getType() == GameGroupType.PERSONAL) {
             throw new ConflictException("Cannot join personal group");
         }
-        var membership = new GameGroupMembership(playerId, gameGroupId);
+        var membership = gameGroupMembershipRepository.save(new GameGroupMembership(playerId, gameGroupId));
+        membership.setPlayer(player);
+        membership.setGameGroup(gameGroup);
         gameGroup.addPlayer(membership);
 
         gameGroupEventService.playerAdded(gameGroupId, player);

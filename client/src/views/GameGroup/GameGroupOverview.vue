@@ -2,25 +2,14 @@
   <div class="wrapper">
     <div class="pageContent">
       <h1>My groups</h1>
-      <GameGroupCollection
-        :game-groups="myGameGroups"
-        :with-join-button="false"
-        action-button-text="Open"
-        @onRowClick="onClickOpenGroup"
-        empty-text="Try joining a group or create one below."
-        class="gameGroupCollection"
-      />
+      <GameGroupCollection :game-groups="myGameGroups" :with-join-button="false" action-button-text="Open"
+        @onRowClick="onClickOpenGroup" empty-text="Try joining a group or create one below."
+        class="gameGroupCollection" />
 
       <h1>Groups <Button @click="onClickLoadButton" severity="secondary">Find others</Button></h1>
-      <GameGroupCollection
-        :game-groups="gameGroups"
-        :with-join-button="true"
-        action-button-text="Join"
-        @onRowClick="onClickOpenGroup"
-        @onClickActionButton="onClickJoinGroup"
-        empty-text="No groups found..."
-        class="gameGroupCollection"
-      />
+      <GameGroupCollection :game-groups="gameGroups" :with-join-button="true" action-button-text="Join"
+        @onRowClick="onClickOpenGroup" @onClickActionButton="onClickJoinGroup" empty-text="No groups found..."
+        class="gameGroupCollection" />
       <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
 
       <CreateGameGroupWrapper @game-group-added="onGameGroupAdded" />
@@ -85,6 +74,7 @@ function onClickJoinGroup(gameGroup: GameGroup) {
 
 function onGameGroupAdded(gameGroup: GameGroup) {
   gameGroups.value.push(gameGroup)
+  openGroup(gameGroup)
 }
 
 function onClickOpenGroup(gameGroup: GameGroup) {
@@ -111,6 +101,7 @@ function openGroup(gameGroup: GameGroup) {
 .gameGroupCollection {
   --p-dataview-content-background: var(--color-background);
 }
+
 .wrapper {
   width: 100%;
   display: flex;

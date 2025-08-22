@@ -13,9 +13,6 @@ export async function createPersonalCollection(): Promise<ResponseWrapper<GameGr
   const myPlayer = getCurrentPlayerId()
   const response = await authorizedFetch(`/api/players/${myPlayer}/personalCollection`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return await wrapResponse(response)
 }

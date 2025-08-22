@@ -1,7 +1,6 @@
 import type { GameGroup } from '@/model/GameGroup'
 import { authorizedFetch } from './ApiService'
 import { wrapEmptySuccessResponse, wrapResponse, type ResponseWrapper } from '@/model/api/Response'
-import type { Player } from '@/model/Player/Player'
 import type { RatedGame } from '@/model/Game'
 import { getCurrentPlayerId } from '../LoginService'
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
@@ -10,9 +9,6 @@ import type { GameGroupMember, GameGroupMemberType } from '@/model/GameGroupMemb
 export async function addGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
   const response = await authorizedFetch('/api/gameGroups', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       name: gameGroup.name,
       type: gameGroup.type,
@@ -82,9 +78,6 @@ export async function leaveGroup(gameGroupId: Number) {
 export async function addPlayerToGroup(gameGroupId: number, playerId: number) {
   await authorizedFetch(`/api/gameGroups/${gameGroupId}/players`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({ id: playerId })
   })
 }
@@ -95,9 +88,6 @@ export async function addGameToGroup(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({ id: gameId })
   })
   return wrapEmptySuccessResponse(response)
@@ -109,9 +99,6 @@ export async function removeGameFromGroup(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/games/${gameId}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapEmptySuccessResponse(response)
 }
@@ -123,9 +110,6 @@ export async function addTagToGameInGroup(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({ id: tagId })
   })
   return wrapEmptySuccessResponse(response)
@@ -140,9 +124,6 @@ export async function deleteTagFromGameInGroup(
     `/api/gameGroups/${gameGroupId}/${gameId}/gameGroupTag/${tagId}`,
     {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapEmptySuccessResponse(response)
@@ -158,9 +139,6 @@ export async function addTagToPlayereInGroup(
     `/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag`,
     {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({ id: tagId })
     }
   )
@@ -177,9 +155,6 @@ export async function deleteTagFromPlayerInGroup(
     `/api/gameGroups/${gameGroupId}/${gameId}/${playerId}/playerTag/${tagId}`,
     {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapEmptySuccessResponse(response)
@@ -192,9 +167,6 @@ export async function updatePlayerMembershipType(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/${playerId}/${type}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapEmptySuccessResponse(response)
 }
@@ -202,9 +174,6 @@ export async function updatePlayerMembershipType(
 export async function updateGameGroup(gameGroup: GameGroup): Promise<ResponseWrapper<GameGroup>> {
   const response = await authorizedFetch(`/api/gameGroups/${gameGroup.id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       name: gameGroup.name,
       type: gameGroup.type,

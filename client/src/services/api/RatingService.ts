@@ -13,9 +13,6 @@ export async function fetchInterests(gameGroupId: number): Promise<Interest[]> {
 export async function updateRating(rating: Interest): Promise<ResponseWrapper<Rating>> {
   const response = await authorizedFetch('/api/ratings', {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(rating)
   })
   return wrapResponse(response)
@@ -24,9 +21,6 @@ export async function updateRating(rating: Interest): Promise<ResponseWrapper<Ra
 export async function deleteInterest(rating: Interest): Promise<ResponseWrapper<Rating>> {
   const response = await authorizedFetch('/api/ratings', {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(rating)
   })
   return wrapResponse(response)

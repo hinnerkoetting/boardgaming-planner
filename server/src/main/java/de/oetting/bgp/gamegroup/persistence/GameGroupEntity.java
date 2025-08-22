@@ -1,6 +1,5 @@
 package de.oetting.bgp.gamegroup.persistence;
 
-import de.oetting.bgp.game.entity.Game;
 import de.oetting.bgp.tags.entity.GameGroupTagEntity;
 import de.oetting.bgp.tags.entity.PlayerTagEntity;
 import jakarta.persistence.Column;
@@ -15,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "GameGroup")
@@ -80,19 +80,21 @@ public class GameGroupEntity implements Serializable {
     }
 
     public void addPlayer(GameGroupMembership player) {
+        if (this.players == null) {
+            this.players = new HashSet<>();
+        }
         this.players.add(player);
         player.getPlayer().addGameGroup(player);
     }
 
     public void addGame(Game2GameGroupRelation gameRelation) {
+        if (this.games == null) {
+            this.games = new HashSet<>();
+        }
         this.games.add(gameRelation);
         gameRelation.getGame().addGameGroup(gameRelation);
     }
 
-    public void deleteGame(Game g) {
-        this.games.remove(g);
-        g.deleteGameGroup(this);
-    }
 
     public void deletePlayer(GameGroupMembership player) {
         this.players.remove(player);

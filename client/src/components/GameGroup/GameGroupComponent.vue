@@ -39,6 +39,8 @@
 
     <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
       @click="onClickLeaveButton">Leave group</Button>
+    <Button v-if="!isPartOfGroup && gameGroup?.openForNewPlayers" severity="info" @click="onClickJoinButton">Join
+      group</Button>
 
     <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
       <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" @player-removed="onPlayerRemoved" />
@@ -58,6 +60,7 @@ import GamesCollection from '@/components/Game/GamesCollection.vue'
 import router from '@/router'
 import {
   addGameToGroup,
+  addPlayerToGroup,
   fetchGamesInGroup,
   fetchPlayersInGroup,
   leaveGroup,
@@ -107,6 +110,17 @@ onMounted(async () => {
   loadGameGroup(props.gameGroupId).then((result) => {
     gameGroup.value = result
   })
+  loadPlayers()
+  fetchGamesInGroup(props.gameGroupId).then((result) => {
+    allGames.value = result
+    filterAndSort()
+  })
+  loadTags().then((response) => {
+    tags.value = response
+  })
+})
+
+function loadPlayers() {
   fetchPlayersInGroup(props.gameGroupId).then((result) => {
     if (!result.success) {
       console.error('Error fetching players in group:', result.error!.detail)
@@ -119,14 +133,7 @@ onMounted(async () => {
     }
     filterAndSort()
   })
-  fetchGamesInGroup(props.gameGroupId).then((result) => {
-    allGames.value = result
-    filterAndSort()
-  })
-  loadTags().then((response) => {
-    tags.value = response
-  })
-})
+}
 
 async function subscribeToEvents() {
   subscribeToEventsOnGameGroup(props.gameGroupId, (data) => {
@@ -193,7 +200,6 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
       player: []
     }
   }
-  displayedGames.value.push(gameGroupGame)
   allGames.value.push(gameGroupGame)
 
   callback(new EventMessage('Game added', true))
@@ -220,6 +226,11 @@ async function onClickLeaveButton() {
   EventBus.emit('gaming-group-removed')
   await router.push({ name: 'gameGroups' })
   router.go(0) // not sure why this is necessary, otherwise the page will not be displayed
+}
+
+async function onClickJoinButton() {
+  await addPlayerToGroup(props.gameGroupId, getCurrentPlayerId())
+  loadPlayers();
 }
 
 function onUpdatedFilters(filteredGames: RatedGame[]) {

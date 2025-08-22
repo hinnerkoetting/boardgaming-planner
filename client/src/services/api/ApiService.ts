@@ -27,7 +27,9 @@ export async function loginRequest(
 function defaultFetchOptions() {
   return {
     headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('access-token')
+      'Authorization': 'Bearer ' + localStorage.getItem('access-token'),
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     }
   }
 }

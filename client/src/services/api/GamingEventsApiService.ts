@@ -25,10 +25,10 @@ export async function fetchNextGamingEvents(
 ): Promise<GamingEvent[]> {
   const response = await authorizedFetch(
     `/api/gameGroup/${gameGroupId}/gamingEvents?` +
-      new URLSearchParams({
-        startTime: startTime.getTime().toString(),
-        number: '5'
-      })
+    new URLSearchParams({
+      startTime: startTime.getTime().toString(),
+      number: '5'
+    })
   )
   return await response.json()
 }
@@ -48,9 +48,6 @@ export async function createGamingEvent(
   const response = await authorizedFetch(`/api/gameGroup/${gameGroupId}/gamingEvents`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapResponse(response)
 }
@@ -74,9 +71,6 @@ export async function updateGamingEvent(
     {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapResponse(response)
@@ -87,9 +81,6 @@ export async function addAllGroupMembersToGamingEvent(
 ): Promise<ResponseWrapper<GamingEvent>> {
   const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/player/all`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapResponse(response)
 }
@@ -107,9 +98,6 @@ export async function updateParticipationStatus(
     {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapEmptySuccessResponse(response)
@@ -127,9 +115,6 @@ export async function addGameToEvent(
   const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/game`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapEmptySuccessResponse(response)
 }
@@ -147,9 +132,6 @@ export async function updateGameStatus(
     {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapEmptySuccessResponse(response)
@@ -197,9 +179,6 @@ export async function updateEvent(
     {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }
   )
   return wrapResponse(response)
@@ -208,9 +187,6 @@ export async function updateEvent(
 export async function deleteEvent(gamingEventId: number): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return wrapEmptySuccessResponse(response)
 }
