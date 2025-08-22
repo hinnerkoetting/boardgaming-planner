@@ -29,7 +29,7 @@ async function groupGamesByTag(games: RatedGame[]): Promise<TagAggregation[]> {
 
   games.forEach(game => {
     Object.values(tagsCounts).forEach((tagCount) => {
-      if (game.tags.global.some(tag => tag.id === tagCount.tagId) || (game.tags.group.some(tag => tag.id === tagCount.tagId) || (game.tags.player.some(tag => tag.id === tagCount.tagId)) {
+      if (game.tags.global.some(tag => tag.id === tagCount.tagId) || game.tags.group.some(tag => tag.id === tagCount.tagId) || game.tags.player.some(tag => tag.id === tagCount.tagId)) {
         tagCount.gamesWithTag += 1
       }
 
