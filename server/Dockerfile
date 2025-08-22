@@ -1,6 +1,6 @@
 FROM openjdk:23
-RUN groupadd spring && adduser spring -g spring
-USER spring:spring
+RUN groupadd boardgaming && adduser boardgaming -g boardgaming
+USER boardgaming:boardgaming
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar", "--spring.profiles.active=h2"]
+ENTRYPOINT ["java","-jar","/app.jar"]
