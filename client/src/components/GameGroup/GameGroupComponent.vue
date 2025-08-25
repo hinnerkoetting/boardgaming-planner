@@ -207,13 +207,13 @@ async function onGameAdded(game: Game, callback: (message: EventMessage) => void
 
 function sortGames() {
   displayedGames.value.sort((game1, game2) => {
-    const difference = game2.rating.averageRating - game1.rating.averageRating
+    const difference = (game2.rating.averageRating || 0) - (game1.rating.averageRating || 0)
     if (difference !== 0) {
       return difference
     }
     // if both games are rated differently, number of votes decided sorting.
     // If above 5 more votes are better, if below 5, less votes are better.
-    if (game1.rating.averageRating > 5) {
+    if (game1.rating.averageRating || 0 > 5) {
       return game2.rating.numberOfVotes - game1.rating.numberOfVotes
     } else {
       return game1.rating.numberOfVotes - game2.rating.numberOfVotes

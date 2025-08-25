@@ -25,9 +25,6 @@ export async function deleteGame(id: Number) {
 export async function addGame(game: Game): Promise<ResponseWrapper<Game>> {
   const response = await authorizedFetch(`/api/games`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(game)
   })
   return await wrapResponse<Game>(response)
@@ -36,9 +33,6 @@ export async function addGame(game: Game): Promise<ResponseWrapper<Game>> {
 export async function updateGame(game: Game): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/games/${game.id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(game)
   })
   return await wrapEmptySuccessResponse(response)
@@ -50,9 +44,6 @@ export async function addTagToGame(game: Game, tagId: number): Promise<ResponseW
   }
   const response = await authorizedFetch(`/api/games/${game.id}/globalTag`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(body)
   })
   return await wrapEmptySuccessResponse(response)
@@ -64,9 +55,6 @@ export async function removeTagFromGame(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch(`/api/games/${game.id}/globalTag/${tagId}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
   return await wrapEmptySuccessResponse(response)
 }

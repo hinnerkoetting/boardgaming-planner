@@ -18,9 +18,30 @@
               <Tag severity="danger">Vetoed</Tag><br />
             </div>
             <div v-if="!!game.rating?.averageRating || !!game.rating?.myRating" class="center-horizontally rating">
-              Rating: &Oslash; {{ game.rating?.averageRating || '?' }} &#183; Me
-              {{ game.rating?.myRating || '?' }} &#183;
-              {{ game.rating?.numberOfVotes || '0' }} votes
+              &nbsp; &Oslash; rating
+              <template v-if="game.rating?.averageRating">
+                <span v-for="n in numberOfStars(game.rating?.averageRating)" :key="n" class="pi pi-star-fill"
+                  style="color: gold; font-size: 1rem"></span>
+                <span v-for="n in missingStars(numberOfStars(game.rating?.averageRating))" :key="n" class="pi pi-star"
+                  style="color: black; font-size: 1rem"></span>
+                ({{
+                  game.rating?.numberOfVotes || '0' }} votes)
+              </template>
+              <br />
+
+              My rating
+              <template v-if="game.rating?.myRating">
+                <span v-for="n in numberOfStars(game.rating?.myRating)" :key="n" class="pi pi-star-fill"
+                  style="color: gold; font-size: 1rem"></span>
+                <span v-for="n in missingStars(numberOfStars(game.rating?.myRating))" :key="n" class="pi pi-star"
+                  style="color: black; font-size: 1rem"></span>
+              </template>
+              <span v-else class="missing-rating">
+                Not rated yet
+              </span>
+              <br />
+
+
             </div>
             <div v-if="!game.rating?.averageRating && !game.rating?.myRating" class="center-horizontally">
               Not rated yet
@@ -129,6 +150,29 @@ function menuItems(game: RatedGame): MenuItem[] {
     },
   ]
 };
+
+function numberOfStars(rating: number): number {
+  if (rating === 0) {
+    return 0
+  }
+  if (rating <= 1) {
+    return 1
+  }
+  if (rating <= 4) {
+    return 2
+  }
+  if (rating <= 7) {
+    return 3
+  }
+  if (rating <= 9) {
+    return 4
+  }
+  return 5
+}
+
+function missingStars(stars: number): number[] {
+  return Array.from(Array(5 - stars).keys()).map((number) => number + stars)
+}
 </script>
 
 <style lang="css" scoped>
@@ -172,7 +216,8 @@ function menuItems(game: RatedGame): MenuItem[] {
   overflow: hidden;
   white-space: nowrap;
   text-align: center;
-  max-width: 200px;
+  max-width: 220px;
+  text-align: left;
 }
 
 .p-dialog {
@@ -189,5 +234,10 @@ function menuItems(game: RatedGame): MenuItem[] {
   justify-content: space-between;
   gap: 8px;
   width: 100%;
+}
+
+.missing-rating {
+  color: var(--highlight-text-color);
+  font-weight: 800;
 }
 </style>

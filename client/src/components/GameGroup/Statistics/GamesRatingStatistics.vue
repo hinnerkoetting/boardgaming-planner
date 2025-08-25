@@ -15,14 +15,19 @@ const props = defineProps({
 const average: Ref<Record<number, number>> = ref({})
 
 function groupGamesByRating(games: RatedGame[]): void {
-  Array.from(Array(10).keys()).forEach((i) => {
+  Array.from(Array(11).keys()).forEach((i) => {
     average.value[i] = 0
   })
 
   games.forEach((game) => {
-    const rating = Math.floor(game.rating.averageRating)
+    if (game.rating.averageRating) {
+      const rating = Math.floor(game.rating.averageRating)
+      average.value[rating + 1] = (average.value[rating + 1] || 0) + 1
+    } else {
+      // not rated yet
+      average.value[0] = (average.value[0] || 0) + 1
+    }
 
-    average.value[rating] = (average.value[rating] || 0) + 1
   })
 }
 
@@ -35,6 +40,7 @@ onMounted(() => {
   const option = {
     xAxis: {
       type: 'category',
+      data: ['Not voted', '❌ (0)', '', '⭐ (2)', '', '⭐⭐ (4)', '', '⭐⭐⭐ (6)', '', '⭐⭐⭐⭐ (8)', '', '⭐⭐⭐⭐⭐ (10)'],
       axisTick: {
         alignWithLabel: true
       }
@@ -46,7 +52,7 @@ onMounted(() => {
       {
         data: Object.values(average.value),
         type: 'bar',
-        name: 'Average',
+        name: 'Average rating',
         label: {
           show: true,
           position: 'top',

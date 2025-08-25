@@ -56,7 +56,7 @@ onMounted(() => {
   const option = {
     xAxis: {
       type: 'category',
-      data: ['Not voted', '👎', '✋', '👍', '👍👍', '👍👍👍']
+      data: ['Not voted', '❌ (0)', '⭐ (2)', '⭐⭐ (4)', '⭐⭐⭐ (6)', '⭐⭐⭐⭐ (8)', '⭐⭐⭐⭐⭐ (10)']
     },
     yAxis: {
       type: 'value'

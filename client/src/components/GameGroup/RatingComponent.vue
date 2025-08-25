@@ -1,42 +1,50 @@
 <template>
   <div>
-    <h3>Interested in playing {{ game.name }}?</h3>
+    <h2>{{ game.name }}</h2>
     <Message v-if="errorMessage" severity="error" class="full-width">{{ errorMessage }}</Message>
-    <div id="ratingButtons">
-      <Button @click="onClickRating(10)">&#128077;&#128077;&#128077; Absolutely</Button>
-      <Button @click="onClickRating(7)">&#128077;&#128077; </Button>
-      <Button @click="onClickRating(4)">&#128077; </Button>
-      <Button @click="onClickRating(1)" severity="warn"><div class="meh">&#128077;</div></Button>
-      <Button @click="onClickRating(0)" severity="danger"
-        ><div class="veto">&#128077;</div>
-        Veto</Button
-      >
+    <div class="ratingButtons">
+      <div class="ratingStars">
+        <span @click="onClickRating($event)" data-value="2" class="pi pi-star" @mouseover="onMouseOver($event)" />
+        <span @click="onClickRating($event)" data-value="4" class="pi pi-star" @mouseover="onMouseOver($event)" />
+        <span @click="onClickRating($event)" data-value="6" class="pi pi-star" @mouseover="onMouseOver($event)" />
+        <span @click="onClickRating($event)" data-value="8" class="pi pi-star" @mouseover="onMouseOver($event)" />
+        <span @click="onClickRating($event)" data-value="10" class="pi pi-star" @mouseover="onMouseOver($event)" />
+      </div>
 
-      <Button severity="secondary" @click="onClickDeleteRating()" class="delete"
-        >Forget rating</Button
-      >
+      <Button @click="onClickRating($event)" data-value="0" severity="danger" @mouseover="onMouseOver($event)">
+        <div class="veto" />
+
+        Veto
+      </Button>
+
+      <Button severity="secondary" @click="onClickDeleteRating()" class="delete">Forget rating</Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Game } from '@/model/Game'
+import { Game, RatedGame } from '@/model/Game'
 import type { Rating } from '@/model/Rating'
 import { deleteInterest, updateRating } from '@/services/api/RatingService'
 import { getCurrentPlayerId } from '@/services/LoginService'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import { ref, type PropType, type Ref } from 'vue'
+import { onMounted, ref, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
   game: {
-    type: Object as PropType<Game>,
+    type: Object as PropType<RatedGame>,
     required: true
   },
   gameGroupId: {
     type: Number,
     required: true
   }
+})
+
+onMounted(() => {
+  if (props.game.rating?.myRating)
+    markStarsBasedOnRating(props.game.rating.myRating)
 })
 
 const emit = defineEmits<{
@@ -47,17 +55,38 @@ const emit = defineEmits<{
 const game = ref(props.game)
 const errorMessage: Ref<string> = ref('')
 
-async function onClickRating(rating: number) {
+async function onClickRating(event: MouseEvent) {
   const response = await updateRating({
     gameId: game.value.id!,
     playerId: getCurrentPlayerId(),
     gameGroupId: props.gameGroupId,
-    rating: rating
+    rating: Number((event.target as HTMLElement).dataset.value)
   })
   if (response.success) {
     emit('gameRated', response.success)
   } else {
     errorMessage.value = response.error?.detail || 'Error'
+  }
+}
+
+async function onMouseOver(event: MouseEvent) {
+  const value = Number((event.target as HTMLElement).dataset.value)
+  markStarsBasedOnRating(value)
+}
+
+function markStarsBasedOnRating(rating: number) {
+  const stars = document.querySelectorAll('.ratingStars > span')
+  for (let i = 0; i < stars.length; i++) {
+    const star = stars[i] as HTMLSpanElement
+    if (Number(star.dataset.value) <= rating) {
+      star.style.color = 'gold'
+      star.classList.add('pi-star-fill')
+      star.classList.remove('pi-star')
+    } else {
+      star.style.color = 'black'
+      star.classList.remove('pi-star-fill')
+      star.classList.add('pi-star')
+    }
   }
 }
 
@@ -77,19 +106,26 @@ async function onClickDeleteRating() {
 </script>
 
 <style lang="css" scoped>
-#ratingButtons {
+.ratingButtons {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-Button {
-  margin-top: 4px;
+.ratingStars {
+
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+
+  span {
+    font-size: 32px
+  }
 }
 
-.meh {
-  transform: rotate(90deg);
+Button {
+  margin-top: 4px;
 }
 
 .veto {
@@ -98,5 +134,9 @@ Button {
 
 .delete {
   margin-top: 16px;
+}
+
+.pi {
+  cursor: pointer;
 }
 </style>

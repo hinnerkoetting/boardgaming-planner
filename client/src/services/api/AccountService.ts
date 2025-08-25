@@ -5,9 +5,6 @@ import type { LoginResponse } from '@/model/LoginResponse'
 export async function updateName(newName: string): Promise<ResponseWrapper<LoginResponse>> {
   const response = await authorizedFetch('/api/me/name', {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       newName
     })
@@ -21,9 +18,6 @@ export async function updatePassword(
 ): Promise<ResponseWrapper<boolean>> {
   const response = await authorizedFetch('/api/me/password', {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify({
       oldPassword,
       newPassword

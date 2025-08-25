@@ -15,7 +15,7 @@
       </template>
     </DataView>
 
-    <Dialog v-model:visible="ratingWindowVisible" modal :header="selectedGame?.name">
+    <Dialog v-model:visible="ratingWindowVisible" modal header="Rating">
       <RatingComponent :game="selectedGame!" :game-group-id="gameGroupId" @game-rated="onGameRated"
         @game-rating-deleted="onGameRatingDeleted" />
     </Dialog>
