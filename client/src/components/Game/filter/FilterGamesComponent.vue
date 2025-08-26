@@ -1,65 +1,20 @@
 <template>
   <div>
-    <div>
-      <div class="numberOfPlayers filterOption">
-        <div class="filterHeader">Player count</div>
-        <div class="filterContent">
-          <InputNumber v-model="numberOfPlayers" showButtons class="numberOfPlayersInput" :min="0" :max="99"
-            @update:model-value="filter" />
-          <br />
-        </div>
-        <div class="playerFilterChoice">
-          <RadioButton v-model="playerFilterType" inputId="BEST" value="BEST" @change="filter" />
-          <label for="BEST" class="playerFilterLabel">Best</label>
-
-          <RadioButton v-model="playerFilterType" inputId="RECOMMENDED" value="RECOMMENDED" @change="filter" />
-          <label for="RECOMMENDED" class="playerFilterLabel">Recommended</label>
-
-          <RadioButton v-model="playerFilterType" inputId="PLAYABLE" value="PLAYABLE" @change="filter" />
-          <label for="PLAYABLE" class="playerFilterLabel">Playable</label>
-
-          <RadioButton v-model="playerFilterType" inputId="OFF" value="OFF" @change="filter" />
-          <label for="OFF" class="playerFilterLabel">Any</label>
-        </div>
-      </div>
+    <div class="filterOption">
+      <FilterGamesByPlayersComponent v-model:numberOfPlayers="numberOfPlayers"
+        v-model:playerFilterType="playerFilterType" @change="filter" />
     </div>
-    <div class="filterOption duration">
-      <div class="filterHeader">Duration <br />(minutes)</div>
-      <div class="filterContent durationContent">
-        <InputNumber v-model="duration[0]" showButtons class="durationInput" :min="0" :max="600" :step="10"
-          @update:model-value="filter" />
-        to
-        <InputNumber v-model="duration[1]" showButtons class="durationInput" :min="0" :max="600" :step="10"
-          @update:model-value="filter" />
-      </div>
-      <div class="newLine">
-        <Slider v-model="duration" :step="10" range :max="600" :min="0" class="slider" @update:model-value="filter" />
-      </div>
+    <div class="filterOption">
+      <FilterGamesByDurationComponent v-model:duration="duration" @change="filter" />
     </div>
     <!-- Global and group tags-->
     <div class="filterOption">
-      <div class="filterContent tagFilterOption">
-        <div v-for="tag in nonPlayerTags" :key="tag.id" class="one-filter">
-          <Button :severity="tag.selected === 'FILTER_WITH' ? 'primary' : 'secondary'" @click="onClickFilterWith(tag)"
-            class="filterButton">Only {{ tag.description }}</Button>
-          <Button :severity="tag.selected === 'FILTER_WITHOUT' ? 'primary' : 'secondary'"
-            @click="onClickFilterWithout(tag)" class="filterButton">No {{ tag.description }}</Button>
-        </div>
-      </div>
+      <FilterGamesByGlobalAndGroupTagsComponent v-model:nonPlayerTags="nonPlayerTags" @change="filter" />
     </div>
 
     <!-- Player Tags -->
     <div class="filterOption">
-      <div class="filterContent tagFilterOption">
-        <div v-for="tag in playerTags" :key="tag.id" class="one-filter">
-          <Button :severity="tag.selected === 'FILTER_EVERYONE' ? 'primary' : 'secondary'"
-            @click="onClickFilterEveryone(tag)" class="filterButton">Everyone {{ tag.description }}</Button>
-          <Button :severity="tag.selected === 'FILTER_ANYONE' ? 'primary' : 'secondary'"
-            @click="onClickFilterAnyone(tag)" class="filterButton">Anyone {{ tag.description }}</Button>
-          <Button :severity="tag.selected === 'FILTER_NOBODY' ? 'primary' : 'secondary'"
-            @click="onClickFilterNobody(tag)" class="filterButton">Nobody {{ tag.description }}</Button>
-        </div>
-      </div>
+      <FilterGamesByPlayerTagsComponent v-model:playerTags="playerTags" @change="filter" />
     </div>
 
     <div class="newLine"></div>
@@ -87,10 +42,11 @@ import {
 } from '@/services/FilterService'
 import { Checkbox } from 'primevue'
 import Button from 'primevue/button'
-import InputNumber from 'primevue/inputnumber'
-import RadioButton from 'primevue/radiobutton'
-import Slider from 'primevue/slider'
 import { onMounted, ref, watch, type PropType, type Ref } from 'vue'
+import FilterGamesByPlayersComponent from './FilterGamesByPlayersComponent.vue'
+import FilterGamesByDurationComponent from './FilterGamesByDurationComponent.vue'
+import FilterGamesByGlobalAndGroupTagsComponent from './FilterGamesByGlobalAndGroupTagsComponent.vue'
+import FilterGamesByPlayerTagsComponent from './FilterGamesByPlayerTagsComponent.vue'
 
 const props = defineProps({
   allTags: {
@@ -193,50 +149,6 @@ function createInitialPlayerTagSelection(allTags: TagModel[]): PlayerTagSelectio
     .map((tag) => new PlayerTagSelection(tag.description, tag.id, 'DO_NOT_FILTER'))
 }
 
-async function onClickFilterWith(tag: TagSelection) {
-  if (tag.selected === 'FILTER_WITH') {
-    tag.selected = 'DO_NOT_FILTER'
-  } else {
-    tag.selected = 'FILTER_WITH'
-  }
-  filter()
-}
-
-async function onClickFilterWithout(tag: TagSelection) {
-  if (tag.selected === 'FILTER_WITHOUT') {
-    tag.selected = 'DO_NOT_FILTER'
-  } else {
-    tag.selected = 'FILTER_WITHOUT'
-  }
-  filter()
-}
-
-async function onClickFilterEveryone(tag: PlayerTagSelection) {
-  if (tag.selected === 'FILTER_EVERYONE') {
-    tag.selected = 'DO_NOT_FILTER'
-  } else {
-    tag.selected = 'FILTER_EVERYONE'
-  }
-  filter()
-}
-
-async function onClickFilterAnyone(tag: PlayerTagSelection) {
-  if (tag.selected === 'FILTER_ANYONE') {
-    tag.selected = 'DO_NOT_FILTER'
-  } else {
-    tag.selected = 'FILTER_ANYONE'
-  }
-  filter()
-}
-
-async function onClickFilterNobody(tag: PlayerTagSelection) {
-  if (tag.selected === 'FILTER_NOBODY') {
-    tag.selected = 'DO_NOT_FILTER'
-  } else {
-    tag.selected = 'FILTER_NOBODY'
-  }
-  filter()
-}
 
 function filter() {
   const filterSettings = {
@@ -272,7 +184,7 @@ function onClickConfirm() {
 </script>
 
 <style lang="css" scoped>
-.one-filter {
+:deep(.one-filter) {
   display: flex;
   gap: 4px;
   flex-grow: 1;
@@ -281,24 +193,9 @@ function onClickConfirm() {
   margin: 4px 0;
 }
 
-.filterButton {
+:deep(.filterButton) {
   flex: 1;
   flex-grow: 1;
-}
-
-.numberOfPlayersInput {
-  width: 75px;
-  margin-right: 4px;
-}
-
-.numberOfPlayers {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.durationInput {
-  width: 75px;
 }
 
 .buttonWrapper {
@@ -312,7 +209,7 @@ function onClickConfirm() {
   float: right;
 }
 
-.filterOption {
+:deep(.filterOption) {
   border: 0;
   border-top: 1px dashed #ccc;
   display: flex;
@@ -322,16 +219,12 @@ function onClickConfirm() {
   margin-bottom: 8px;
 }
 
-.filterHeader {
+:deep(.filterHeader) {
   color: var(--p-slate-500);
   margin-top: 2px;
 }
 
-.slider {
-  margin-top: 4px;
-}
-
-.filterContent {
+:deep(.filterContent) {
   margin-top: 8px;
   margin-bottom: 8px;
   align-self: end;
@@ -341,33 +234,12 @@ function onClickConfirm() {
   width: 100%;
 }
 
-.durationContent {
-  display: flex;
-  gap: 16px;
-  justify-items: center;
-  align-items: center;
-}
-
-.newLine {
+:deep(.newLine) {
   flex-basis: 100%;
   height: 0;
 }
 
-.playerFilterChoice {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.playerFilterLabel {
-  line-height: 1.1;
-}
-
-.duration {
-  margin-bottom: 16px;
-}
-
-.p-inputnumber input {
+:deep(.p-inputnumber input) {
   width: 100%;
 }
 
