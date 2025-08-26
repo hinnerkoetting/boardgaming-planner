@@ -36,11 +36,12 @@
       <ImportCollectionFromBggComponent @imported="gamesImported" />
     </div>
 
-
-    <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
-      @click="onClickLeaveButton">Leave group</Button>
-    <Button v-if="!isPartOfGroup && gameGroup?.openForNewPlayers" severity="info" @click="onClickJoinButton">Join
-      group</Button>
+    <div class="bottom-buttons">
+      <Button v-if="isPartOfGroup && gameGroup?.type != GameGroupType.PERSONAL" severity="danger"
+        @click="onClickLeaveButton">Leave group</Button>
+      <Button v-if="!isPartOfGroup && gameGroup?.openForNewPlayers" severity="info" @click="onClickJoinButton">Join
+        group</Button>
+    </div>
 
     <Dialog v-model:visible="playerDialogVisible" :modal="true" header="Players in group">
       <PlayersInGroupComponent :players="players" :game-group-id="gameGroupId" @player-removed="onPlayerRemoved" />
@@ -305,5 +306,10 @@ h2 {
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
+}
+
+.bottom-buttons {
+  margin: 16px 0;
+  gap: 8px;
 }
 </style>

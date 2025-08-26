@@ -37,7 +37,7 @@
                   style="color: black; font-size: 1rem"></span>
               </template>
               <span v-else class="missing-rating">
-                Not rated yet
+                -
               </span>
               <br />
 
@@ -47,7 +47,8 @@
               Not rated yet
             </div>
             <div class="center-horizontally buttons" style="margin-top: 8px">
-              <Button style="float: left" v-if="withRateButton" severity="secondary"
+              <Button style="float: left" v-if="withRateButton"
+                :severity="!!game.rating?.myRating ? 'secondary' : 'primary'"
                 @click.stop="$emit('game-rating-selected', game)">Rate</Button>
 
               <!-- Prevent clicks from the splitbutton to be propaged to the card. -->
