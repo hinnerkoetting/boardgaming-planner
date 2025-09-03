@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@microsoft/fetch-event-source": "^2.0.1",
-    "@primevue/themes": "^4.3.7",
+    "@primevue/themes": "^4.3.8",
     "echarts": "^6.0.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.7",
