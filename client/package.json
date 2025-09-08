@@ -18,7 +18,7 @@
     "@primevue/themes": "^4.3.8",
     "echarts": "^6.0.0",
     "primeicons": "^7.0.0",
-    "primevue": "^4.3.8",
+    "primevue": "^4.3.9",
     "vue": "^3.5.20",
     "vue-router": "^4.3.3",
     "vuex": "^4.1.0"
