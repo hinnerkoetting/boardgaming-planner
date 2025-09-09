@@ -3,26 +3,45 @@ package de.oetting.bgp.gamingevent.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
-import de.oetting.bgp.game.model.GameConverter;
 import de.oetting.bgp.game.repository.GameRepository;
 import de.oetting.bgp.gamegroup.service.GameGroupService;
 import de.oetting.bgp.gamingevent.GameEventStatus;
 import de.oetting.bgp.gamingevent.ParticipationStatus;
-import de.oetting.bgp.gamingevent.entity.*;
-import de.oetting.bgp.gamingevent.model.*;
-import de.oetting.bgp.player.controller.PlayerMapper;
+import de.oetting.bgp.gamingevent.entity.GamingEventEntity;
+import de.oetting.bgp.gamingevent.entity.GamingEventGameEntity;
+import de.oetting.bgp.gamingevent.entity.GamingEventGameRepository;
+import de.oetting.bgp.gamingevent.entity.GamingEventParticipantsEntity;
+import de.oetting.bgp.gamingevent.entity.GamingEventParticipantsRepository;
+import de.oetting.bgp.gamingevent.entity.GamingEventRepository;
+import de.oetting.bgp.gamingevent.entity.Schedule;
+import de.oetting.bgp.gamingevent.model.AddGameToEventRequest;
+import de.oetting.bgp.gamingevent.model.AddPlayerToEventRequest;
+import de.oetting.bgp.gamingevent.model.GamingEventModel;
+import de.oetting.bgp.gamingevent.model.GamingEventModelMapper;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "api/")
@@ -46,6 +65,9 @@ public class GamingEventController {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private GamingEventModelMapper gamingEventModelMapper;
+
     @Transactional
     @GetMapping("/gameGroup/{gameGroupId}/gamingEvents")
     public List<GamingEventModel> listGamingEvents(@PathVariable("gameGroupId") long gameGroupId,
@@ -54,14 +76,14 @@ public class GamingEventController {
         var events = findGameEvents(gameGroupId, startTime, number);
 
         return events.stream()
-                .map(this::map)
+                .map(gamingEventModelMapper::map)
                 .toList();
     }
 
     @Transactional
     @GetMapping("/gamingEvents/{gamingEventId}")
     public GamingEventModel getGamingEvent(@PathVariable("gamingEventId") long gamingEventId) {
-        return map(gamingEventRepository.findById(gamingEventId).orElseThrow());
+        return gamingEventModelMapper.map(gamingEventRepository.findById(gamingEventId).orElseThrow());
     }
 
     @Transactional
@@ -73,9 +95,9 @@ public class GamingEventController {
             throw new UnprocessableEntityException("GameGroupId must have same value in url and body");
         }
 
-        var entity = map(model);
+        var entity = gamingEventModelMapper.map(model);
         GamingEventEntity savedEntity = gamingEventRepository.save(entity);
-        return map(savedEntity);
+        return gamingEventModelMapper.map(savedEntity);
     }
 
     @Transactional
@@ -105,7 +127,7 @@ public class GamingEventController {
         savedEntity.setGames(clone(toBeCloned, savedEntity));
         savedEntity.setParticipants(cloneParticipants(toBeCloned, savedEntity));
 
-        return map(savedEntity);
+        return gamingEventModelMapper.map(savedEntity);
     }
 
 
@@ -125,7 +147,7 @@ public class GamingEventController {
             throw new UnprocessableEntityException("GameGroupId cannot be changed");
         }
         update(model, gamingEvent);
-        return map(gamingEvent);
+        return gamingEventModelMapper.map(gamingEvent);
     }
 
     @Transactional
@@ -199,7 +221,7 @@ public class GamingEventController {
         allGroupPlayers.forEach(player -> {
             addPlayerIfMissing(player.getPlayer(), gamingEvent);
         });
-        return map(gamingEvent);
+        return gamingEventModelMapper.map(gamingEvent);
     }
 
     @Transactional
@@ -255,40 +277,5 @@ public class GamingEventController {
         entity.setSchedule(model.getSchedule());
     }
 
-    private GamingEventModel map(GamingEventEntity entity) {
-        var model = new GamingEventModel();
-        model.setDescription(entity.getDescription());
-        model.setStart(entity.getStart().toInstant().toEpochMilli());
-        model.setId(entity.getId());
-        model.setGames(entity.getGames() == null ? Collections.emptyList() : entity.getGames().stream().map(this::map).toList());
-        model.setParticipants(entity.getParticipants() == null ? Collections.emptyList() : entity.getParticipants().stream().map(this::map).toList());
-        model.setSchedule(entity.getSchedule());
-        return model;
-    }
-
-    private GamingEventGameModel map(GamingEventGameEntity gamingEventGameEntity) {
-        var model = new GamingEventGameModel();
-        model.setGame(GameConverter.convert(gamingEventGameEntity.getGame()));
-        model.setComment(gamingEventGameEntity.getComment());
-        model.setGameStatus(gamingEventGameEntity.getGameStatus());
-        return model;
-    }
-
-    private GamingEventParticipantsModel map(GamingEventParticipantsEntity entity) {
-        var model = new GamingEventParticipantsModel();
-        model.setParticipant(PlayerMapper.map(entity.getParticipant()));
-        model.setParticipationStatus(entity.getParticipationStatus());
-        model.setComment(entity.getComment());
-        return model;
-    }
-
-    private GamingEventEntity map(GamingEventModel model) {
-        var entity = new GamingEventEntity();
-        entity.setDescription(model.getDescription());
-        entity.setStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(model.getStart()), ZoneOffset.UTC));
-        entity.setGameGroup(gameGroupService.find(model.getGameGroupId()).orElseThrow());
-        entity.setSchedule(model.getSchedule());
-        return entity;
-    }
 
 }

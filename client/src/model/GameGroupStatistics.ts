@@ -1,3 +1,5 @@
+import type { GamingEvent } from "./GamingEvent";
+
 export class GameGroupStatistics {
-  constructor(readonly playDates: number[]) {}
+  constructor(readonly events: GamingEvent[]) { }
 }

@@ -1,16 +1,18 @@
 package de.oetting.bgp.gamegroup.model;
 
+import de.oetting.bgp.gamingevent.model.GamingEventModel;
+
 import java.util.List;
 
 public class GameGroupStatisticsModel {
 
-    private List<Long> playDates;
+    private List<GamingEventModel> events;
 
-    public List<Long> getPlayDates() {
-        return playDates;
+    public List<GamingEventModel> getEvents() {
+        return events;
     }
 
-    public void setPlayDates(List<Long> playDates) {
-        this.playDates = playDates;
+    public void setEvents(List<GamingEventModel> events) {
+        this.events = events;
     }
 }

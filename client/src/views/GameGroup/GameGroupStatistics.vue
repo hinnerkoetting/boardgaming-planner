@@ -2,6 +2,7 @@
   <div class="charts">
     <h1>Statistics</h1>
 
+    <PlayedGamesPieChart v-if="gameGroupStatistics" :gameGroupStatistics="gameGroupStatistics" />
     <GamesRatingStatistics :games="games" v-if="games.length > 0" />
     <MyGamesRatingStatistics :games="games" v-if="games.length > 0" />
     <GamesTagsStatisticsPieCollection :games="games" v-if="games.length > 0" />
@@ -16,6 +17,7 @@ import GamesRatingStatistics from '@/components/GameGroup/Statistics/GamesRating
 import GamesStatisticsPlayDates from '@/components/GameGroup/Statistics/GamesStatisticsPlayDates.vue'
 import GamesTagsStatisticsPieCollection from '@/components/GameGroup/Statistics/GamesTagsStatisticsPieCollection.vue'
 import MyGamesRatingStatistics from '@/components/GameGroup/Statistics/MyGamesRatingStatistics.vue'
+import PlayedGamesPieChart from '@/components/GameGroup/Statistics/PlayedGamesPieChart.vue'
 import type { RatedGame } from '@/model/Game'
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
 import { fetchGameGrouptStatistics, fetchGamesInGroup } from '@/services/api/GameGroupApiService'

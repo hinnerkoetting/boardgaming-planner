@@ -24,7 +24,7 @@ onMounted(async () => {
     return d
   })
 
-  const playdates: Date[] = props.gameGroupStatistics.playDates.map((pd) => new Date(pd))
+  const playdates: Date[] = props.gameGroupStatistics.events.map((pd) => new Date(pd.start))
   const yData = allDates.map(
     (monthDate) =>
       playdates.filter(
