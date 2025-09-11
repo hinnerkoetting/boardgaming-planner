@@ -13,6 +13,7 @@ public class GamingEventModel {
     private List<GamingEventGameModel> games;
     private List<GamingEventParticipantsModel> participants;
     private Schedule schedule;
+    private Long parentEventId;
 
     public Long getId() {
         return id;
@@ -68,5 +69,13 @@ public class GamingEventModel {
 
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+    }
+
+    public Long getParentEventId() {
+        return parentEventId;
+    }
+
+    public void setParentEventId(Long parentEventId) {
+        this.parentEventId = parentEventId;
     }
 }

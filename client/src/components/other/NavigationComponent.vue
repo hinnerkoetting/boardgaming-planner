@@ -8,7 +8,7 @@
             <template v-if="selectedGameGroup">
               <RouterLink :to="{ name: 'gameGroup', params: { gameGroupId: selectedGameGroup?.id } }">Games</RouterLink>
               &#183;
-              <RouterLink :to="{ name: 'groupGamingEventsOverview', params: { gameGroupId: selectedGameGroup?.id } }">
+              <RouterLink :to="{ name: 'calendarOverview', params: { gameGroupId: selectedGameGroup?.id } }">
                 Calendar</RouterLink>
               &#183;
               <RouterLink :to="{ name: 'gameGroupStatistics', params: { gameGroupId: selectedGameGroup?.id } }">

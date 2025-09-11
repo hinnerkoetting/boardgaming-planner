@@ -690,4 +690,15 @@
         <renameColumn tableName="GAME_GROUP_2_PLAYERS" oldColumnName="PLAYERS_ID" newColumnName="PLAYER_ID"/>
         <renameColumn tableName="GAME_GROUP_2_PLAYERS" oldColumnName="GAME_GROUPS_ID" newColumnName="GAME_GROUP_ID"/>
     </changeSet>
+
+    <changeSet id="event_parent_structure" author="Hinnerk">
+        <addColumn tableName="GAMING_EVENT">
+            <column name="PARENT_EVENT_ID" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="PARENT_EVENT_ID" baseTableName="GAMING_EVENT"
+                                 constraintName="GAMING_EVENT_PARENT_FK" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="GAMING_EVENT" validate="true"/>
+    </changeSet>
+
 </databaseChangeLog>

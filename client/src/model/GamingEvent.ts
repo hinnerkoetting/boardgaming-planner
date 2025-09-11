@@ -8,8 +8,9 @@ export class GamingEvent {
     public start: number,
     public schedule: Schedule,
     public participants: Participation[],
-    public games: EventGame[]
-  ) {}
+    public games: EventGame[],
+    public parentEventId: number | null
+  ) { }
 }
 
 export class Participation {
@@ -17,7 +18,7 @@ export class Participation {
     readonly participant: Player,
     public participationStatus: ParticipationStatus,
     readonly comment: string | null = null
-  ) {}
+  ) { }
 }
 
 export class EventGame {
@@ -25,7 +26,7 @@ export class EventGame {
     readonly game: Game,
     readonly gameStatus: GameStatus,
     readonly comment: string | null = null
-  ) {}
+  ) { }
 }
 
 export type ParticipationStatus = 'CONFIRMED' | 'DECLINED' | 'MAYBE' | 'NOT_RESPONDED'

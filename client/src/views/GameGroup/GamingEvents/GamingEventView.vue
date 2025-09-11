@@ -1,20 +1,27 @@
 <template>
   <div v-if="event">
-    <Button label="Back to events" variant="link" @click="onBackToEvents" />
+    <Button label="Back to calendar" variant="link" @click="onBackToEvents" />
 
     <h1>{{ startTime && formatDate(startTime) }}</h1>
-    <div v-if="event.schedule == 'WEEKLY'">
-      <i>Every week</i>
+    <div v-if="event.schedule == 'WEEKLY'" class="pi pi-replay">
+      <i style="padding-left: 4px">Every week</i>
       <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"
         v-if="isPartOfGroup" />
     </div>
-    <div v-if="event.schedule == 'MONTHLY'">
-      <i>Every month</i>
+    <div v-if="event.schedule == 'MONTHLY'" class="pi pi-replay">
+      <i style="padding-left: 4px">Every month</i>
       <Button label="Edit single event" severity="secondary" variant="link" @click="editSingleEvent"
         v-if="isPartOfGroup" />
     </div>
+    <div v-if="event.parentEventId">
+      <RouterLink
+        :to="{ name: 'groupGamingEvent', params: { gamingEventId: event.parentEventId, gameGroupId: gameGroupId }, query: { startTime: event.start } }">
+        To recurring event</RouterLink>
 
-    {{ event.description }}
+    </div>
+    <div>
+      {{ event.description }}
+    </div>
     <Button label="Edit" severity="secondary" @click="edit" v-if="isPartOfGroup" />
     <h2>Participants:</h2>
 
@@ -229,7 +236,8 @@ async function editSingleEvent() {
       result.success.id,
       newStartTime,
       'ONCE',
-      event.value!.description
+      event.value!.description,
+      gamingEventId
     )
     if (updateResult.success) {
       router.push({
@@ -255,7 +263,7 @@ async function onDeleteEvent() {
   const result = await deleteEvent(gamingEventId)
   if (result.success) {
     router.push({
-      name: 'groupGamingEventsOverview'
+      name: 'calendarOverview'
     })
   } else {
     errorMessage.value = result.error?.detail ?? 'Error'
@@ -264,7 +272,7 @@ async function onDeleteEvent() {
 
 function onBackToEvents() {
   router.push({
-    name: 'groupGamingEventsOverview',
+    name: 'calendarOverview',
     params: {
       gameGroupId: gameGroupId
     },

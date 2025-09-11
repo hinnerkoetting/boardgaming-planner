@@ -28,6 +28,7 @@ public class GamingEventModelMapper {
         model.setGames(entity.getGames() == null ? Collections.emptyList() : entity.getGames().stream().map(this::map).toList());
         model.setParticipants(entity.getParticipants() == null ? Collections.emptyList() : entity.getParticipants().stream().map(this::map).toList());
         model.setSchedule(entity.getSchedule());
+        model.setParentEventId(entity.getParent() != null ? entity.getParent().getId() : null);
         return model;
     }
 

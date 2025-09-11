@@ -6,8 +6,8 @@
       </div>
     </template>
     <template #content>
-      <div v-if="event.schedule !== 'ONCE'">
-        <i>{{ scheduleDescription(event.schedule) }}</i>
+      <div v-if="event.schedule !== 'ONCE'" class="pi pi-replay">
+        <i style="padding-left: 4px">{{ scheduleDescription(event.schedule) }}</i>
       </div>
       <div>
         {{

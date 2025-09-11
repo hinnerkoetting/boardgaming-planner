@@ -161,18 +161,20 @@ export async function cloneEvent(
 }
 
 export async function updateEvent(
-  gameGroupId: Number,
+  gameGroupId: number,
   gamingEventId: number,
   start: Date,
   schedule: Schedule,
-  description: string
+  description: string,
+  parentEventId: number
 ): Promise<ResponseWrapper<GamingEvent>> {
   const body = {
     start: start.getTime(),
     schedule,
     description,
     gameGroupId,
-    id: gamingEventId
+    id: gamingEventId,
+    parentEventId
   }
   const response = await authorizedFetch(
     `/api/gameGroup/${gameGroupId}/gamingEvents/${gamingEventId}`,

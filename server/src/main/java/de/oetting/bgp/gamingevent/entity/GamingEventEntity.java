@@ -1,7 +1,18 @@
 package de.oetting.bgp.gamingevent.entity;
 
 import de.oetting.bgp.gamegroup.persistence.GameGroupEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -32,6 +43,11 @@ public class GamingEventEntity {
 
     @ManyToMany(mappedBy = "gamingEvent")
     private List<GamingEventGameEntity> games;
+
+    // For non-recurring events the parent event can be the reference to the recurring event it belongs to.
+    @OneToOne
+    @JoinColumn(name = "PARENT_EVENT_ID")
+    private GamingEventEntity parent;
 
     public Long getId() {
         return id;
@@ -89,4 +105,11 @@ public class GamingEventEntity {
         this.games = games;
     }
 
+    public GamingEventEntity getParent() {
+        return parent;
+    }
+
+    public void setParent(GamingEventEntity parent) {
+        this.parent = parent;
+    }
 }

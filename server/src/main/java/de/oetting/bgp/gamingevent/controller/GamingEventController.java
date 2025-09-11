@@ -271,10 +271,11 @@ public class GamingEventController {
         return result;
     }
 
-    private static void update(GamingEventModel model, GamingEventEntity entity) {
+    private void update(GamingEventModel model, GamingEventEntity entity) {
         entity.setStart(ZonedDateTime.ofInstant(Instant.ofEpochMilli(model.getStart()), ZoneOffset.UTC));
         entity.setDescription(model.getDescription());
         entity.setSchedule(model.getSchedule());
+        entity.setParent(model.getParentEventId() != null ? gamingEventRepository.findById(model.getParentEventId()).orElseThrow() : null);
     }
 
 
