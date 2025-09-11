@@ -18,6 +18,7 @@ import de.oetting.bgp.gamingevent.model.AddGameToEventRequest;
 import de.oetting.bgp.gamingevent.model.AddPlayerToEventRequest;
 import de.oetting.bgp.gamingevent.model.GamingEventModel;
 import de.oetting.bgp.gamingevent.model.GamingEventModelMapper;
+import de.oetting.bgp.gamingevent.service.GamingEventService;
 import de.oetting.bgp.player.persistence.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,9 @@ public class GamingEventController {
 
     @Autowired
     private GamingEventModelMapper gamingEventModelMapper;
+
+    @Autowired
+    private GamingEventService gamingEventService;
 
     @Transactional
     @GetMapping("/gameGroup/{gameGroupId}/gamingEvents")
@@ -119,13 +123,7 @@ public class GamingEventController {
         gameGroupService.checkUserIsPartOfGroup(gameGroupId);
         var toBeCloned = gamingEventRepository.findById(gamingEventId).orElseThrow();
 
-        var newEntity = new GamingEventEntity();
-        newEntity.setSchedule(toBeCloned.getSchedule());
-        newEntity.setStart(toBeCloned.getStart());
-        newEntity.setGameGroup(toBeCloned.getGameGroup());
-        GamingEventEntity savedEntity = gamingEventRepository.save(newEntity);
-        savedEntity.setGames(clone(toBeCloned, savedEntity));
-        savedEntity.setParticipants(cloneParticipants(toBeCloned, savedEntity));
+        GamingEventEntity savedEntity = gamingEventService.cloneEvent(toBeCloned);
 
         return gamingEventModelMapper.map(savedEntity);
     }
@@ -233,15 +231,7 @@ public class GamingEventController {
 
         participant.setParticipationStatus(ParticipationStatus.valueOf(status));
     }
-
-    private List<GamingEventGameEntity> clone(GamingEventEntity toBeCloned, GamingEventEntity newEntity) {
-        return toBeCloned.getGames() != null ? toBeCloned.getGames().stream().map(g -> gamingEventGameRepository.save(g.cloneTo(newEntity))).toList() : null;
-    }
-
-    private List<GamingEventParticipantsEntity> cloneParticipants(GamingEventEntity toBeCloned, GamingEventEntity newEntity) {
-        return toBeCloned.getParticipants() != null ? toBeCloned.getParticipants().stream().map(p -> gamingEventParticipantsRepository.save(p.cloneTo(newEntity))).toList() : null;
-    }
-
+    
     private void addPlayerIfMissing(Player player, GamingEventEntity gamingEvent) {
         boolean doesNotExistYet = gamingEvent.getParticipants().stream().noneMatch(participant -> Objects.equals(participant.getParticipant().getId(), player.getId()));
 

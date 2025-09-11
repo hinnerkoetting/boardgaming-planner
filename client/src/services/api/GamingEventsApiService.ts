@@ -27,7 +27,7 @@ export async function fetchNextGamingEvents(
     `/api/gameGroup/${gameGroupId}/gamingEvents?` +
     new URLSearchParams({
       startTime: startTime.getTime().toString(),
-      number: '5'
+      number: '50'
     })
   )
   return await response.json()

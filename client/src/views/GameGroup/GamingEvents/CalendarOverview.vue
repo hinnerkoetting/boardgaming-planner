@@ -197,7 +197,7 @@ function onEventCreated(gamingEvent: GamingEvent) {
 
 function onClickPreviousEvents() {
   router.replace({
-    name: 'groupGamingEventsOverview',
+    name: 'calendarOverview',
     params: {
       gameGroupId: gameGroupId
     },
@@ -209,7 +209,7 @@ function onClickPreviousEvents() {
 
 function onClickNextEvents() {
   router.replace({
-    name: 'groupGamingEventsOverview',
+    name: 'calendarOverview',
     params: {
       gameGroupId: gameGroupId
     },
