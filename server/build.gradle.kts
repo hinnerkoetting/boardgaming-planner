@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     clientOutput(project(":client", "clientOutput"))
-    h2Database("com.h2database:h2:2.3.232")
+    h2Database("com.h2database:h2:2.4.240")
 
     implementation("org.audux.bgg:bggclient:1.2.1") {
         exclude(group = "org.slf4j", module = "slf4j-simple")
