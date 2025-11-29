@@ -1,6 +1,8 @@
 <template>
   <div>
-    <Button @click="openDialog" class="import-button">Import collection from BoardGameGeek</Button>
+    <Button @click="openDialog" class="import-button">Import collection from BoardGameGeek <img
+        src="https://cf.geekdo-images.com/HZy35cmzmmyV9BarSuk6ug__small/img/gbE7sulIurZE_Tx8EQJXnZSKI6w=/fit-in/200x150/filters:strip_icc()/pic7779581.png"
+        height="28px" /></Button>
 
     <Dialog v-model:visible="dialogVisible" header="Import collection from BoardGameGeek" :modal="true">
 

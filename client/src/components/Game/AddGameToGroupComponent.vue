@@ -70,7 +70,10 @@ defineExpose({
   <div>
     <InputText id="searchTerm" name="searchTerm" v-model="searchTerm" placeholder="Searchterm..."
       v-on:keyup.enter="onClickSearch" @focus="($event.target as any).select()" size="small"></InputText>
-    <Button @click="onClickSearch" class="searchButton">Search</Button>
+    <Button @click="onClickSearch" class="searchButton">Search <img
+        src="https://cf.geekdo-images.com/HZy35cmzmmyV9BarSuk6ug__small/img/gbE7sulIurZE_Tx8EQJXnZSKI6w=/fit-in/200x150/filters:strip_icc()/pic7779581.png"
+        height="28px" /></Button>
+
 
     <AddExistingGameTable :searchItems="searchItems" @game-added="onClickAdd" />
     <template v-if="someGamesFound">

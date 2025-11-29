@@ -34,6 +34,7 @@ dependencies {
     implementation("org.audux.bgg:bggclient:1.3.0") {
         exclude(group = "org.slf4j", module = "slf4j-simple")
     }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-rest")

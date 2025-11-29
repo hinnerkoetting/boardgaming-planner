@@ -6,7 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface GamingEventRepository extends CrudRepository<GamingEventEntity, Long> {
 
@@ -16,7 +15,7 @@ public interface GamingEventRepository extends CrudRepository<GamingEventEntity,
 
     List<GamingEventEntity> findByGameGroupIdAndScheduleIn(long gameGroupId, List<Schedule> schedules);
 
-    Optional<GamingEventEntity> findByGameGroupIdAndScheduleAndStart(long gameGroupId, Schedule schedule, ZonedDateTime start);
+    List<GamingEventEntity> findByGameGroupIdAndScheduleAndStart(long gameGroupId, Schedule schedule, ZonedDateTime start);
 
     List<GamingEventEntity> findByScheduleIn(List<Schedule> schedules);
 
