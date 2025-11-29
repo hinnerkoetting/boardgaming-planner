@@ -35,6 +35,7 @@ dependencies {
         exclude(group = "org.slf4j", module = "slf4j-simple")
     }
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.21")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
