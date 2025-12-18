@@ -1,6 +1,5 @@
 package de.oetting.bgp.controller;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import de.oetting.bgp.exceptions.HTTPException;
 import de.oetting.bgp.infrastructure.HttpErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
