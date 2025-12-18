@@ -1,6 +1,5 @@
 package de.oetting.bgp.gamingevent.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.oetting.bgp.entities.Player;
 import de.oetting.bgp.exceptions.UnprocessableEntityException;
 import de.oetting.bgp.game.repository.GameRepository;
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import tools.jackson.databind.JsonNode;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -202,7 +202,7 @@ public class GamingEventController {
     @Transactional
     @PutMapping("/gamingEvents/{gamingEventId}/game/{gameId}/status")
     public void updateGameStatus(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("gameId") long gameId, @RequestBody JsonNode body) {
-        var status = body.findValue("status").asText();
+        var status = body.findValue("status").asString();
         var game = gamingEventGameRepository.findByGamingEventIdAndGameId(gamingEventId, gameId).orElseThrow();
 
         game.setGameStatus(GameEventStatus.valueOf(status));
@@ -225,13 +225,13 @@ public class GamingEventController {
     @Transactional
     @PutMapping("/gamingEvents/{gamingEventId}/player/{playerId}/status")
     public void updateParticipationStatus(@PathVariable("gamingEventId") long gamingEventId, @PathVariable("playerId") long playerId, @RequestBody JsonNode body) {
-        var status = body.findValue("status").asText();
+        var status = body.findValue("status").asString();
         var participant = gamingEventParticipantsRepository.findByGamingEventIdAndParticipantId(gamingEventId, playerId).orElseThrow();
         gameGroupService.checkUserIsPartOfGroup(participant.getGamingEvent().getGameGroup().getId());
 
         participant.setParticipationStatus(ParticipationStatus.valueOf(status));
     }
-    
+
     private void addPlayerIfMissing(Player player, GamingEventEntity gamingEvent) {
         boolean doesNotExistYet = gamingEvent.getParticipants().stream().noneMatch(participant -> Objects.equals(participant.getParticipant().getId(), player.getId()));
 
