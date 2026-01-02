@@ -155,13 +155,13 @@ public class GlobalExceptionHandler {
         LOG.debug("IOException");
     }
 
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_CONTENT)
     @ExceptionHandler(NumberFormatException.class)
     public void numberFormatException(NumberFormatException e) {
         LOG.info("NumberFormatException {}", e.getMessage());
     }
 
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_CONTENT)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public void methodArgumentTypeMismatchException(NumberFormatException e) {
         LOG.info("MethodArgumentTypeMismatchException {}", e.getMessage());
