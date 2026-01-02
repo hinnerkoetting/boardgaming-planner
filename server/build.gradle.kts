@@ -83,3 +83,7 @@ tasks.register<JavaExec>("h2_server_mode") {
     mainClass = "org.h2.tools.Server"
     args("-tcp", "-tcpPort", "9092");
 }
+
+tasks.withType<JavaCompile>() {
+    options.setDeprecation(true)
+}
