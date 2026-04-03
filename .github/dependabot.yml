@@ -4,8 +4,12 @@ updates:
     directory: "/client"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 5
 
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 5

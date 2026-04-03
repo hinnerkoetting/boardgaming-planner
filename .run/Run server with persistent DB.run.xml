@@ -18,7 +18,7 @@
       <option name="taskNames">
         <list>
           <option value="bootRun" />
-          <option value="--args='--spring.profiles.active=h2'" />
+          <option value="--args='--spring.profiles.active=h2,dev'" />
         </list>
       </option>
       <option name="vmOptions" />
