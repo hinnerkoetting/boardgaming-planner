@@ -156,7 +156,7 @@ function numberOfStars(rating: number): number {
   if (rating === 0) {
     return 0
   }
-  if (rating <= 1) {
+  if (rating <= 2) {
     return 1
   }
   if (rating <= 4) {
