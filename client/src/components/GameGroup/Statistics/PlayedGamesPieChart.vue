@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
 import { init } from 'echarts'
-import { onMounted, ref, useTemplateRef, type PropType, type Ref } from 'vue'
+import { onMounted, ref, useTemplateRef, watch, type PropType, type Ref } from 'vue'
 
 const chart = useTemplateRef('chart')
 
@@ -12,8 +12,19 @@ const props = defineProps({
   }
 })
 
+watch(
+  () => props.gameGroupStatistics,
+  () => {
+    updateChart();
+  }
+)
+
 
 onMounted(async () => {
+  updateChart();
+})
+
+function updateChart() {
   var myChart = init(chart.value)
 
   const games = props.gameGroupStatistics.events
@@ -52,7 +63,7 @@ onMounted(async () => {
   }
 
   option && myChart.setOption(option)
-})
+}
 
 
 </script>

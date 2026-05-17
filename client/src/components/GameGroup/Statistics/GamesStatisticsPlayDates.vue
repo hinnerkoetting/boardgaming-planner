@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameGroupStatistics } from '@/model/GameGroupStatistics'
 import { init } from 'echarts'
-import { onMounted, useTemplateRef, type PropType } from 'vue'
+import { onMounted, useTemplateRef, watch, type PropType } from 'vue'
 
 const chart = useTemplateRef('chart')
 
@@ -12,7 +12,20 @@ const props = defineProps({
   }
 })
 
+
+watch(
+  () => props.gameGroupStatistics,
+  () => {
+    updateChart();
+  }
+)
+
+
 onMounted(async () => {
+  updateChart();
+})
+
+function updateChart() {
   var myChart = init(chart.value)
 
   new ResizeObserver(() => myChart.resize()).observe(chart.value!)
@@ -66,7 +79,7 @@ onMounted(async () => {
   }
 
   option && myChart.setOption(option)
-})
+}
 
 function formatDate(date: Date) {
   return date.toLocaleDateString(undefined, { year: '2-digit', month: 'short' })

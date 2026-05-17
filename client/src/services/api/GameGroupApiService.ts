@@ -48,9 +48,16 @@ export async function fetchGamesInGroup(gameGroupId: Number): Promise<RatedGame[
 }
 
 export async function fetchGameGrouptStatistics(
-  gameGroupId: Number
+  gameGroupId: Number,
+  startDate: Date | undefined,
+  endDate: Date | undefined
 ): Promise<ResponseWrapper<GameGroupStatistics>> {
-  const response = await authorizedFetch(`/api/gameGroups/${gameGroupId}/statistics`)
+  const params = new URLSearchParams()
+  if (startDate !== undefined) params.append('startDate', startDate.toISOString())
+  if (endDate !== undefined) params.append('endDate', endDate.toISOString())
+
+  const url = `/api/gameGroups/${gameGroupId}/statistics?${params.toString()}`
+  const response = await authorizedFetch(url)
   return await wrapResponse(response)
 }
 

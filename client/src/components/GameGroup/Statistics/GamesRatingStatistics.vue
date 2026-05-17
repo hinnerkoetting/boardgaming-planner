@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RatedGame } from '@/model/Game'
 import { init } from 'echarts'
-import { onMounted, ref, useTemplateRef, type PropType, type Ref } from 'vue'
+import { onMounted, ref, useTemplateRef, watch, type PropType, type Ref } from 'vue'
 
 const chart = useTemplateRef('chart')
 
@@ -31,8 +31,19 @@ function groupGamesByRating(games: RatedGame[]): void {
   })
 }
 
+watch(
+  () => props.games,
+  (games) => {
+    updateChart(games);
+  }
+)
+
 onMounted(() => {
-  groupGamesByRating(props.games)
+  updateChart(props.games);
+})
+
+function updateChart(games: RatedGame[]) {
+  groupGamesByRating(games)
   var myChart = init(chart.value)
 
   new ResizeObserver(() => myChart.resize()).observe(chart.value!)
@@ -71,8 +82,9 @@ onMounted(() => {
     }
   }
 
-  option && myChart.setOption(option)
-})
+  option && myChart.setOption(option, { replaceMerge: ['xAxis', 'yAxis', 'series'] })
+}
+
 </script>
 
 <template>

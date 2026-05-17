@@ -21,11 +21,12 @@ public interface GamingEventRepository extends CrudRepository<GamingEventEntity,
 
     @Query("from GamingEventEntity ge" +
             " where element(ge.games).game.id = :gameId" +
-            " and exists (select p from GamingEventParticipantsEntity p where p.gamingEvent = gamingEvent and p.participant.id = :playerId and p.participationStatus in ('CONFIRMED', 'MAYBE'))")
+            " and exists (select p from GamingEventParticipantsEntity p where p.gamingEvent = ge and p.participant.id = :playerId and p.participationStatus in ('CONFIRMED', 'MAYBE'))")
     List<GamingEventEntity> findGamingEventsWithGame(long gameId, long playerId);
 
     @Query("from GamingEventEntity ge" +
             " where ge.gameGroup.id = :gameGroupId" +
-            " and exists (select p from GamingEventParticipantsEntity p where p.gamingEvent = gamingEvent and p.participant.id = :playerId and p.participationStatus in ('CONFIRMED', 'MAYBE'))")
-    List<GamingEventEntity> findGamingEvents(long gameGroupId, long playerId);
+            " and ge.start between :startDate and :endDate " +
+            " and exists (select p from GamingEventParticipantsEntity p where p.gamingEvent = ge and p.participant.id = :playerId and p.participationStatus in ('CONFIRMED', 'MAYBE'))")
+    List<GamingEventEntity> findGamingEvents(long gameGroupId, long playerId, ZonedDateTime startDate, ZonedDateTime endDate);
 }
