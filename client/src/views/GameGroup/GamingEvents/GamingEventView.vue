@@ -212,10 +212,11 @@ async function onGameAdded(game: Game) {
   if (response.error) {
     console.log("Cannot add game to group, already part of group. Continuing...")
   }
-  await addGameToEvent(gamingEventId, game.id!)
+  const gameStatus = event.value?.start && event.value.start < new Date().getTime() ? 'PLAYED' : 'SUGGESTED'
+  await addGameToEvent(gamingEventId, game.id!, gameStatus)
   event.value?.games.push({
     game,
-    gameStatus: 'SUGGESTED',
+    gameStatus,
     comment: null
   })
 }

@@ -105,11 +105,12 @@ export async function updateParticipationStatus(
 
 export async function addGameToEvent(
   gamingEventId: number,
-  gameId: number
+  gameId: number,
+  gameStatus: GameStatus
 ): Promise<ResponseWrapper<boolean>> {
   const body = {
     gameId: gameId,
-    gameStatus: 'SUGGESTED',
+    gameStatus,
     comment: null
   }
   const response = await authorizedFetch(`/api/gamingEvents/${gamingEventId}/game`, {
