@@ -15,11 +15,11 @@
 <script setup lang="ts">
 import type { PlayerTagSelection } from '@/services/FilterService';
 import { Button } from 'primevue';
-
+import type { PropType } from 'vue';
 
 const playerTags = defineModel('playerTags', {
-  type: Array as () => PlayerTagSelection[],
-  default: () => []
+  type: Array as PropType<PlayerTagSelection[]>,
+  required: true
 })
 
 const emits = defineEmits<{
