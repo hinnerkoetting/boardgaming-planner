@@ -90,27 +90,27 @@ import EditGamingEventComponent from '@/components/GamingEvents/EditGamingEventC
 
 const route = useRoute()
 
-let gameGroupId: number
-let gamingEventId: number
-let startTime: Date | null = null
+const gameGroupId = ref(0)
+const gamingEventId = ref(0)
+const startTime = ref<Date | null>(null)
 const errorMessage = ref('')
 const event: Ref<GamingEvent | null> = ref(null)
 const isPartOfGroup = ref(false)
 const editEventDialogVisible = ref(false)
 
 onBeforeRouteUpdate(async (to, from, next) => {
-  gameGroupId = Number(to.params.gameGroupId)
-  gamingEventId = Number(to.params.gamingEventId)
-  startTime = parse(to.query)
+  gameGroupId.value = Number(to.params.gameGroupId)
+  gamingEventId.value = Number(to.params.gamingEventId)
+  startTime.value = parse(to.query)
   event.value = null
   await loadData()
   next()
 })
 
 onMounted(async () => {
-  gameGroupId = Number(route.params.gameGroupId)
-  gamingEventId = Number(route.params.gamingEventId)
-  startTime = parse(route.query)
+  gameGroupId.value = Number(route.params.gameGroupId)
+  gamingEventId.value = Number(route.params.gamingEventId)
+  startTime.value = parse(route.query)
   await loadData()
 })
 
@@ -131,17 +131,17 @@ function onEventUpdated(newEvent: GamingEvent) {
 }
 
 async function loadData() {
-  const result = await fetchGamingEvent(gamingEventId)
+  const result = await fetchGamingEvent(gamingEventId.value)
   if (result.success) {
     event.value = result.success
-    if (!startTime) {
-      startTime = new Date(event.value.start)
+    if (!startTime.value) {
+      startTime.value = new Date(event.value.start)
     }
   } else {
-    console.error('Error when loading event ' + gamingEventId)
+    console.error('Error when loading event ' + gamingEventId.value)
   }
 
-  const playersResult = await fetchPlayersInGroup(gameGroupId)
+  const playersResult = await fetchPlayersInGroup(gameGroupId.value)
   if (playersResult.success) {
     isPartOfGroup.value = playersResult.success.some((player) => player.id === getCurrentPlayerId())
   } else {
@@ -182,7 +182,7 @@ async function onMaybeParticipation(participantId: number) {
 
 async function updateStatus(participantId: number, status: ParticipationStatus) {
   errorMessage.value = ''
-  const result = await updateParticipationStatus(gamingEventId, participantId, 'CONFIRMED')
+  const result = await updateParticipationStatus(gamingEventId.value, participantId, status)
   if (result.error) {
     errorMessage.value = result.error.detail ?? 'Error'
   } else {
@@ -195,7 +195,7 @@ async function updateStatus(participantId: number, status: ParticipationStatus) 
 }
 
 async function addMissingPlayers() {
-  const result = await addAllGroupMembersToGamingEvent(gamingEventId)
+  const result = await addAllGroupMembersToGamingEvent(gamingEventId.value)
   if (result.success) {
     event.value = result.success
   } else {
@@ -208,12 +208,12 @@ function isMe(playerId: number): boolean {
 }
 
 async function onGameAdded(game: Game) {
-  const response = await addGameToGroup(gameGroupId, game.id!)
+  const response = await addGameToGroup(gameGroupId.value, game.id!)
   if (response.error) {
     console.log("Cannot add game to group, already part of group. Continuing...")
   }
   const gameStatus = event.value?.start && event.value.start < new Date().getTime() ? 'PLAYED' : 'SUGGESTED'
-  await addGameToEvent(gamingEventId, game.id!, gameStatus)
+  await addGameToEvent(gamingEventId.value, game.id!, gameStatus)
   event.value?.games.push({
     game,
     gameStatus,
@@ -229,23 +229,23 @@ function onGameRemoved(game: Game) {
 }
 
 async function editSingleEvent() {
-  const result = await cloneEvent(gameGroupId, gamingEventId)
+  const result = await cloneEvent(gameGroupId.value, gamingEventId.value)
   if (result.success) {
-    const newStartTime = startTime ?? new Date()
+    const newStartTime = startTime.value ?? new Date()
     const updateResult = await updateEvent(
-      gameGroupId,
+      gameGroupId.value,
       result.success.id,
       newStartTime,
       'ONCE',
       event.value!.description,
-      gamingEventId
+      gamingEventId.value
     )
     if (updateResult.success) {
       router.push({
         name: 'groupGamingEvent',
         params: {
           gamingEventId: updateResult.success.id,
-          gameGroupId: gameGroupId
+          gameGroupId: gameGroupId.value
         },
         query: {
           startTime: newStartTime.getTime().toString()
@@ -261,7 +261,7 @@ async function editSingleEvent() {
 }
 
 async function onDeleteEvent() {
-  const result = await deleteEvent(gamingEventId)
+  const result = await deleteEvent(gamingEventId.value)
   if (result.success) {
     router.push({
       name: 'calendarOverview'
@@ -275,10 +275,10 @@ function onBackToEvents() {
   router.push({
     name: 'calendarOverview',
     params: {
-      gameGroupId: gameGroupId
+      gameGroupId: gameGroupId.value
     },
     query: {
-      startTime: startTime && startOfMonth(startTime).getTime().toString()
+      startTime: startTime.value ? startOfMonth(startTime.value).getTime().toString() : undefined
     }
   })
 }
