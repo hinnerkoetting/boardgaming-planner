@@ -4,8 +4,8 @@ plugins {
 
 node {
     download = true
-    version = "22.17.1"
-    npmVersion = "10.9.2"
+    version = "24.22.1"
+    npmVersion = "11.19.1"
 }
 
 val buildTask = tasks.getByName("npm_run_build") {
@@ -14,7 +14,7 @@ val buildTask = tasks.getByName("npm_run_build") {
     outputs.dir("dist")
 }
 
-val clientOutput by configurations.creating {
+val clientOutput = configurations.create("clientOutput") {
     isCanBeConsumed = true
     isCanBeResolved = false
 }

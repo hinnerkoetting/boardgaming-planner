@@ -1,15 +1,15 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.1.0"
+    id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-val clientOutput by configurations.creating {
+val clientOutput = configurations.create("clientOutput") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val h2Database by configurations.creating {
+val h2Database = configurations.create("h2Database") {
     isCanBeConsumed = true
     isCanBeResolved = true
 }
@@ -29,13 +29,13 @@ repositories {
 
 dependencies {
     clientOutput(project(":client", "clientOutput"))
-    h2Database("com.h2database:h2:2.4.240")
+    h2Database("com.h2database:h2:2.5.252")
 
     implementation("org.audux.bgg:bggclient:1.3.0") {
         exclude(group = "org.slf4j", module = "slf4j-simple")
     }
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.4.10")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.4.21")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
