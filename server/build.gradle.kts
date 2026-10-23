@@ -4,12 +4,12 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-val clientOutput by configurations.creating {
+val clientOutput = configurations.create("clientOutput") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val h2Database by configurations.creating {
+val h2Database = configurations.create("h2Database") {
     isCanBeConsumed = true
     isCanBeResolved = true
 }
