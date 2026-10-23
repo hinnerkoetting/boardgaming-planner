@@ -6,6 +6,9 @@ updates:
       interval: "daily"
     cooldown:
       default-days: 5
+    ignore:
+      - dependency-name: "primevue"
+        versions: [ ">=5.0.0" ]
 
   - package-ecosystem: "gradle"
     directory: "/"
